@@ -24,7 +24,7 @@ $arregloUsuario = $_SESSION['datos_login'];
   <link rel="apple-touch-icon" sizes="76x76" href="./assets/img/apple-icon.png">
   <link rel="icon" type="image/png" href="./assets/img/favicon.png">
   <title>
-    Panel Categorias
+    Panel perfil
   </title>
   <!--     Fonts and icons     -->
   <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" />
@@ -36,6 +36,9 @@ $arregloUsuario = $_SESSION['datos_login'];
   <link href="./assets/css/nucleo-svg.css" rel="stylesheet" />
   <!-- CSS Files -->
   <link id="pagestyle" href="./assets/css/argon-dashboard.css?v=2.0.4" rel="stylesheet" />
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <!-- Agrega jQuery a tu página -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 
 <body class="g-sidenav-show   bg-gray-100">
@@ -55,17 +58,14 @@ $arregloUsuario = $_SESSION['datos_login'];
             <div class="content-wrapper">
 
             </div>
-
             <section class="content">
               <div class="container-fluid">
-
                 <?php
                 if (isset($_GET['error'])) {
                 ?>
                   <div class="alert alert-danger" role="alert">
                     <?php echo $_GET['error']; ?>
                   </div>
-
                 <?php  } ?>
                 <?php
                 if (isset($_GET['success'])) {
@@ -73,34 +73,20 @@ $arregloUsuario = $_SESSION['datos_login'];
                   <div class="alert alert-success" role="alert">
                     Se ha insertado correctamente.
                   </div>
-
                 <?php  } ?>
-
               </div>
-              <form class="needs-validation" action="./php/editarperfil.php" method="post" novalidate>
+              <form class="needs-validation" action="./php/editarperfil.php" method="post" novalidate onsubmit="return validarFormulario(this);">
                 <div class="form-group container">
                   <div class="row">
                     <div class="col-md-6 mb-3">
                       <label for="nombre">Nombre</label>
-                      <input type="text" name="nombre" value="<?php echo $arregloUsuario['nombre']; ?>" id="nombreEdit" class="form-control" required>
+                      <input type="text" name="nombre" value="<?php echo $arregloUsuario['nombre']; ?>" id="editarPerfilForm" class="form-control" required>
                       <div class="valid-feedback">Ya es válido</div>
                       <div class="invalid-feedback">Complete los campos</div>
                     </div>
                     <div class="col-md-6 mb-3">
                       <label for="telefono">Telefono</label>
-                      <input type="text" name="telefono" value="" id="telefonoEdit" class="form-control" required>
-                      <div class="valid-feedback">Ya es válido</div>
-                      <div class="invalid-feedback">Complete los campos</div>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                      <label for="pass1">Contraseña</label>
-                      <input type="password" name="pass1" value="" id="pass1" class="form-control" required>
-                      <div class="valid-feedback">Ya es válido</div>
-                      <div class="invalid-feedback">Complete los campos</div>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                      <label for="pass2">Validar Contraseña</label>
-                      <input type="password" name="pass2" value="" id="pass2" class="form-control" required>
+                      <input type="text" name="telefono" value="<?php echo $arregloUsuario['telefono']; ?>" id="telefono" id="cambiarPassForm" class="form-control" required>
                       <div class="valid-feedback">Ya es válido</div>
                       <div class="invalid-feedback">Complete los campos</div>
                     </div>
@@ -111,8 +97,43 @@ $arregloUsuario = $_SESSION['datos_login'];
                   <button type="submit" class="btn btn-primary">Guardar</button>
                 </div>
               </form>
-
+              <form class="needs-validation" action="./php/cambiarpass.php" method="post" novalidate onsubmit="return validarFormulario(this);">
+                <div class="form-group container">
+                  <div class="row">
+                    <div class="col-md-6 mb-3">
+                      <label for="pass1">Contraseña</label>
+                      <input type="password" name="p1" value="" id="p1" class="form-control" required>
+                      <div class="valid-feedback">Ya es válido</div>
+                      <div class="invalid-feedback">Complete los campos</div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                      <label for="pass2">Validar Contraseña</label>
+                      <input type="password" name="p2" value="" id="p2" class="form-control" required>
+                      <div class="valid-feedback">Ya es válido</div>
+                      <div class="invalid-feedback">Complete los campos</div>
+                    </div>
+                    <input type="hidden" id="id_usuario" name="id_usuario" value="<?php echo $arregloUsuario['id_usuario']; ?>" class="form-control" required>
+                  </div>
+                </div>
+                <div class="modal-footer d-flex justify-content-center align-items-center">
+                  <button type="submit" title="Cambiar contraseña" class="btn btn-primary">Cambiar contraseña</button>
+                </div>
+              </form>
             </section>
+
+            <script>
+              function validarFormulario(formulario) {
+                var inputs = formulario.getElementsByTagName('input');
+                for (var i = 0; i < inputs.length; i++) {
+                  if (inputs[i].hasAttribute('required') && inputs[i].value === '') {
+                    alert('Por favor, complete todos los campos.');
+                    return false; // Evita que el formulario se envíe
+                  }
+                }
+                return true; // Permite que el formulario se envíe si todos los campos están completos
+              }
+            </script>
+
           </div>
         </div>
       </div>
@@ -139,43 +160,6 @@ $arregloUsuario = $_SESSION['datos_login'];
   <script src="js/aos.js"></script>
   <script src="js/main.js"></script>
   <script src="./dashboard/plugins/jquery/jquery.min.js"></script>
-  <script>
-    $(document).ready(function() {
-      var idEliminar = -1;
-      var idEditar = -1;
-      var fila;
-      $(".btnEliminar").click(function() {
-        idEliminar = $(this).data('id');
-        fila = $(this).parent('td').parent('tr');
-      });
-      $(".eliminar").click(function() {
-        $.ajax({
-          url: './php/eliminarcategoria.php',
-          method: 'POST',
-          data: {
-            id: idEliminar
-          }
-        }).done(function(res) {
-
-          $(fila).fadeOut(1000);
-        });
-
-      });
-      $(".btnEditar").click(function() {
-        idEditar = $(this).data('id');
-        var nombre = $(this).data('nombre');
-        var descripcion = $(this).data('descripcion');
-        $("#nombreEdit").val(nombre);
-        $("#descripcionEdit").val(descripcion);
-        $("#idEdit").val(idEditar);
-      });
-    });
-  </script>
-
-  <!-- Code injected by live-server -->
-
-
-
 </body>
 
 </html>

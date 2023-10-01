@@ -11,11 +11,6 @@ if ($arregloUsuario['nivel'] != '1') {
 $arregloUsuario = $_SESSION['datos_login'];
 $idUsuario = $arregloUsuario['id_usuario'];
 
-$resultado = $conexion->query("
-select tickets.*, categorias.nombre as catego  from 
-tickets 
-inner join categorias on tickets.id_categoria = categorias.id") or die($conexion->error);
-
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -64,7 +59,46 @@ inner join categorias on tickets.id_categoria = categorias.id") or die($conexion
     <!-- Navbar -->
     <?php include("./layouts/header.php"); ?>
     <!-- End Navbar -->
+
     <div class="container-fluid py-4">
+      <?php
+      // Obtén los valores de los filtros si se han enviado
+      $filtroEstado = isset($_GET['estado']) ? $_GET['estado'] : '';
+      $filtroPrioridad = isset($_GET['prioridad']) ? $_GET['prioridad'] : '';
+
+      // Modifica tu consulta SQL para incluir los filtros de estado y prioridad
+      $sql = "SELECT tickets.*, categorias.nombre AS catego FROM tickets ";
+      $sql .= "INNER JOIN categorias ON tickets.id_categoria = categorias.id ";
+
+      // Agrega las condiciones de los filtros de estado y prioridad si se han seleccionado
+      if (!empty($filtroEstado)) {
+        if (strpos($sql, "WHERE") !== false) {
+          // Si ya hay una condición WHERE en la consulta, agrega AND para unir las condiciones
+          $sql .= " AND ";
+        } else {
+          // Si no hay una condición WHERE, agrégala
+          $sql .= " WHERE ";
+        }
+
+        $sql .= "tickets.id_estado = " . $filtroEstado;
+      }
+
+      if (!empty($filtroPrioridad)) {
+        if (strpos($sql, "WHERE") !== false) {
+          // Si ya hay una condición WHERE en la consulta, agrega AND para unir las condiciones
+          $sql .= " AND ";
+        } else {
+          // Si no hay una condición WHERE, agrégala
+          $sql .= " WHERE ";
+        }
+
+        $sql .= "tickets.id_prioridad = " . $filtroPrioridad;
+      }
+
+      $resultado = $conexion->query($sql) or die($conexion->error);
+      ?>
+
+
       <div class="row">
         <div class="col-12">
           <div class="card mb-4">
@@ -79,14 +113,43 @@ inner join categorias on tickets.id_categoria = categorias.id") or die($conexion
                       <button type="button" title="Crear solicitud" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
                         <i class="fa fa-plus"></i> Crear solicitud
                       </button>
+                      <form action="" method="GET" class="form-inline">
+  <div class="form-group">
+    <label for="estado">Filtrar por Estado:</label>
+    <select class="form-control" name="estado" id="estado">
+      <option value="">Todos los estados</option>
+      <option value="1">Activo</option>
+      <option value="2">Denegado</option>
+      <option value="3">Finalizado</option>
+      <option value="4">Asignado</option>
+      <!-- Agrega más opciones según tus estados reales -->
+    </select>
+  </div>
+  <div class="form-group">
+    <label for="prioridad">Filtrar por Prioridad:</label>
+    <select class="form-control" name="prioridad" id="prioridad">
+      <option value="">Todas las prioridades</option>
+      <option value="1">Baja</option>
+      <option value="2">Media</option>
+      <option value="3">Alta</option>
+      <!-- Agrega más opciones según tus prioridades reales -->
+    </select>
+  </div>
+  <button type="submit" class="btn btn-primary">Filtrar</button>
+</form>
+
+
+
                     </div>
                   </div>
                 </div>
               </div>
+
               <section class="content">
                 <div class="container-fluid">
 
                   <?php
+
                   if (isset($_GET['error'])) {
                   ?>
                     <div class="alert alert-danger" role="alert">
@@ -168,29 +231,28 @@ inner join categorias on tickets.id_categoria = categorias.id") or die($conexion
 
                           <td>
                             <?php
-                            $botonDetalles = '<button class="btn btn-primary btn-small btndetalles" title="Ver detalles" data-id="' . $f['id_ticket'] . '" data-categoria="' . $f['id_categoria'] . '" data-prioridad="' . $f['id_prioridad'] . '" data-encargado="' . $f['id_encargado'] . '" data-titulo="' . $f['titulo'] . '" data-editor="' . htmlspecialchars($f['resumen']) . '" data-toggle="modal" data-target="#modalDetalles"><i class="fa fa-eye"></i></button>';
+                            $botonDetalles = '<button class="btn btn-primary btn-small btndetalles" title="Ver detalles" data-id="' . $f['id_ticket'] . '" data-categoria="' . $f['id_categoria'] . '"data-id_usuario="' . $f['id_usuario'] . '" data-prioridad="' . $f['id_prioridad'] . '" data-encargado="' . $f['id_encargado'] . '" data-titulo="' . $f['titulo'] . '" data-editor="' . htmlspecialchars($f['resumen']) . '" data-toggle="modal" data-target="#modalDetalles"><i class="fa fa-eye"></i></button>';
 
                             if ($f['id_estado'] == 3 || $f['id_estado'] == 4) {
                               // Mostrar el botón "detalles2" si el estado es 3 o 4
-                              $botonDetalles = '<button class="btn btn-primary btn-small btndetalles2" title="Ver detalles"  data-id="' . $f['id_ticket'] . '" data-categoria="' . $f['id_categoria'] . '" data-prioridad="' . $f['id_prioridad'] . '" data-encargado="' . $f['id_encargado'] . '" data-titulo="' . $f['titulo'] . '" data-editor="' . htmlspecialchars($f['resumen']) . '" data-toggle="modal" data-target="#modalDetalles2"><i class="fa fa-eye"></i></button>';
+                              $botonDetalles = '<button class="btn btn-primary btn-small btndetalles2" title="Ver detalles" data-imagen="' . $f['imagen'] . '" data-id="' . $f['id_ticket'] . '" data-categoria="' . $f['id_categoria'] . '" data-prioridad="' . $f['id_prioridad'] . '" data-encargado="' . $f['id_encargado'] . '" data-titulo="' . $f['titulo'] . '" data-editor="' . htmlspecialchars($f['resumen']) . '" data-toggle="modal" data-target="#modalDetalles2" data-coment_encargado="' . $f['coment_encargado'] . '" data-coment_usuario="' . $f['coment_usuario'] . '" data-estado="' . $f['id_estado'] . '"><i class="fa fa-eye"></i></button>';
                             }
-
                             echo $botonDetalles;
 
-                            if ($f['id_usuario'] == $idUsuario) {
-                              // Mostrar el botón de editar solo si el id_usuario coincide con $idUsuario
+                            if ($f['id_usuario'] == $idUsuario && ($f['id_estado'] != '3' && $f['id_estado'] != '4')) {
+                              // Mostrar el botón de editar solo si el id_usuario coincide con $idUsuario coment_usuario
                             ?>
                               <button class="btn btn-info btn-small btnEditar" title="Editar ticket" data-id="<?php echo $f['id_ticket']; ?>" data-categoria="<?php echo $f['id_categoria']; ?>" data-prioridad="<?php echo $f['id_prioridad']; ?>" data-titulo="<?php echo $f['titulo']; ?>" data-editor="<?php echo htmlspecialchars($f['resumen']); ?>" data-encargado="<?php echo $f['id_encargado']; ?>" data-toggle="modal" data-target="#modalEditar">
-                                <i class="fa fa-edit" ></i>
+                                <i class="fa fa-edit"></i>
                               </button>
                             <?php
                             }
                             ?>
                             <?php
-                            if ($f['id_encargado'] == $idUsuario) {
-                              // Mostrar el botón de editar solo si el id_usuario coincide con $idUsuario
+                            if ($f['id_encargado'] == $idUsuario && ($f['id_estado'] != '3' && $f['id_estado'] != '4')) {
+                              // Tu código aquí si ambas condiciones son verdaderas
                             ?>
-                              <button class="btn btn-danger btn-small btncerrar" title="Cerrar ticket"  data-id="<?php echo $f['id_ticket']; ?>" data-id_usuario="<?php echo $f['id_usuario']; ?>" data-toggle="modal" data-target="#modalcerrar">
+                              <button class="btn btn-danger btn-small btncerrar" title="Cerrar ticket" data-id="<?php echo $f['id_ticket']; ?>" data-id_usuario="<?php echo $f['id_usuario']; ?>" data-estado="<?php echo $f['id_estado']; ?>" data-toggle="modal" data-target="#modalcerrar">
                                 <i class="fa fa-clipboard-check"></i>
                               </button>
                             <?php
@@ -332,6 +394,7 @@ inner join categorias on tickets.id_categoria = categorias.id") or die($conexion
             </div>
             <div class="modal-body">
               <input type="hidden" id="idDetalles" name="id">
+              <input type="hidden" id="id_usuarioDetalles" name="id_usuario">
               <div class="form-group">
                 <label for="titulo">Titulo</label>
                 <input type="text" name="titulo" placeholder="titulo" id="tituloDetalles" class="form-control" required readonly>
@@ -389,8 +452,8 @@ inner join categorias on tickets.id_categoria = categorias.id") or die($conexion
     </div>
     <!-- Modal ver y asignar -->
 
-     <!-- Modal ver y asignar 2-->
-     <div class="modal fade" id="modalDetalles2" tabindex="-1" role="dialog" aria-labelledby="modalDetalles2" aria-hidden="true">
+    <!-- Modal ver sin editar-->
+    <div class="modal fade" id="modalDetalles2" tabindex="-1" role="dialog" aria-labelledby="modalDetalles2" aria-hidden="true">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <form action="./php/encargado.php" method="POST" enctype="multipart/form-data">
@@ -446,7 +509,14 @@ inner join categorias on tickets.id_categoria = categorias.id") or die($conexion
                   ?>
                 </select>
               </div>
-
+              <div class="form-group">
+                <label for="editor">Comentarios encargado</label>
+                <textarea name="coment_encargado" id="coment_encargadoDetalles2" class="form-control editorEdit2" readonly></textarea>
+              </div>
+              <div class="form-group">
+                <label for="editor">Comentarios creador</label>
+                <textarea name="coment_usuario" id="coment_usuarioDetalles2" class="form-control editorEdit2" readonly></textarea>
+              </div>
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
@@ -456,10 +526,10 @@ inner join categorias on tickets.id_categoria = categorias.id") or die($conexion
       </div>
 
     </div>
-    <!-- Modal ver y asignar 2-->
+    <!-- Modal ver sin editar-->
 
-        <!-- Modal cerrar -->
-        <div class="modal cerrar" id="modalcerrar" tabindex="-1" role="dialog" aria-labelledby="modalcerrar" aria-hidden="true">
+    <!-- Modal cerrar -->
+    <div class="modal cerrar" id="modalcerrar" tabindex="-1" role="dialog" aria-labelledby="modalcerrar" aria-hidden="true">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <form action="./php/cerrarticket.php" method="POST" enctype="multipart/form-data">
@@ -474,7 +544,7 @@ inner join categorias on tickets.id_categoria = categorias.id") or die($conexion
               <input type="hidden" id="id_usuariocerrar" name="id_usuario">
               <div class="form-group">
                 <label for="editorcerrar">Comentario</label>
-                <textarea name="editor" id="editorcerrar" class="form-control editorEdit2" required></textarea>
+                <textarea name="editor" id="editorcerrar" class="form-control" required></textarea>
               </div>
               <div class="form-group">
                 <label for="estadocerrar">Estado</label>
@@ -488,6 +558,10 @@ inner join categorias on tickets.id_categoria = categorias.id") or die($conexion
                   }
                   ?>
                 </select>
+              </div>
+              <div class="form-group">
+                <label for="imagen">Prueba</label>
+                <input type="file" name="imagen" id="imagen" class="form-control" required>
               </div>
             </div>
             <div class="modal-footer">
@@ -592,6 +666,7 @@ inner join categorias on tickets.id_categoria = categorias.id") or die($conexion
       });
       $(".btndetalles").click(function() {
         idDetalles = $(this).data('id');
+        id_usuarioDetalles = $(this).data('id_usuario');
         var titulo = $(this).data('titulo');
         var editor = $(this).data('editor');
         var categoria = $(this).data('categoria');
@@ -602,6 +677,7 @@ inner join categorias on tickets.id_categoria = categorias.id") or die($conexion
         $("#categoriaDetalles").val(categoria);
         $("#prioridadDetalles").val(prioridad);
         $("#encargadoDetalles").val(encargado);
+        $("#id_usuarioDetalles").val(id_usuarioDetalles);
         $("#idDetalles").val(idDetalles);
       });
       $(".btndetalles2").click(function() {
@@ -611,20 +687,28 @@ inner join categorias on tickets.id_categoria = categorias.id") or die($conexion
         var categoria = $(this).data('categoria');
         var prioridad = $(this).data('prioridad');
         var encargado = $(this).data('encargado');
+        var estado = $(this).data('id_estado');
+        var imagen = $(this).data('imagen');
+        var coment_usuario = $(this).data('coment_usuario');
+        var coment_encargado = $(this).data('coment_encargado');
         $("#tituloDetalles2").val(titulo);
         $("#editorDetalles2").val(editor);
         $("#categoriaDetalles2").val(categoria);
         $("#prioridadDetalles2").val(prioridad);
         $("#encargadoDetalles2").val(encargado);
+        $("#id_estadoDetalles2").val(estado);
+        $("#imagenDetalles2").val(imagen);
+        $("#coment_usuarioDetalles2").val(coment_usuario);
+        $("#coment_encargadoDetalles2").val(coment_encargado);
         $("#idDetalles2").val(idDetalles2);
       });
       $(".btncerrar").click(function() {
         idcerrar = $(this).data('id');
         id_usuariocerrar = $(this).data('id_usuario');
         var estado = $(this).data('estado');
-        var editor = $(this).data('editor');
+        var imagen = $(this).data('imagen');
         $("#estadoEdit").val(estado);
-        $("#editorcerrar").val(editor);
+        $("#imagen").val(imagen);
         $("#id_usuariocerrar").val(id_usuariocerrar);
         $("#idcerrar").val(idcerrar);
       });

@@ -14,11 +14,13 @@ if(  isset($_POST['email'])  && isset($_POST['password'])  ){
         $nombre= $datos_usuario[2];
         $email= $datos_usuario[4];
         $nivel= $datos_usuario[6];
+        $telefono = $datos_usuario[7];
      
         $_SESSION['datos_login']= array(
             'nombre'=>$nombre,
             'id_usuario'=>$id_usuario,
             'email'=>$email,
+            'telefono'=>$telefono,
             'nivel'=>$nivel 
         );
         header("Location: ../index.php");
