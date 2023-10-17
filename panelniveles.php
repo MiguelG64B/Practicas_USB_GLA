@@ -10,12 +10,19 @@ if (!isset($_SESSION['datos_login'])) {
 
 $arregloUsuario = $_SESSION['datos_login'];
 $idUsuario = $arregloUsuario['id_usuario'];
+$nivel = $arregloUsuario['nivel'];
 
-if ($arregloUsuario['permisos']['per_categoria'] != 'si') {
-  header("Location: ./nose.php");
+if ($arregloUsuario['permisos']['per_niveles'] != 'si') {
+  header("Location: ./missolicitudes.php");
   exit(); // Asegúrate de que el script se detenga después de redirigir
 }
-$sql = "SELECT * FROM categorias";
+
+if ($nivel == 1) {
+  $sql = "SELECT * FROM permisos";
+} else {
+  $sql = "SELECT * FROM permisos WHERE id_superior = $idUsuario";
+}
+
 $resultado = mysqli_query($conexion, $sql);
 
 ?>
@@ -28,7 +35,7 @@ $resultado = mysqli_query($conexion, $sql);
   <link rel="apple-touch-icon" sizes="76x76" href="./assets/img/apple-icon.png">
   <link rel="icon" type="image/png" href="./assets/img/favicon.png">
   <title>
-    Panel Categorias
+    Panel Permisos
   </title>
   <!--     Fonts and icons     -->
   <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" />
@@ -54,18 +61,7 @@ $resultado = mysqli_query($conexion, $sql);
         <div class="col-12">
           <div class="card mb-4">
             <div class="card-header pb-0">
-              <h6>Categorias</h6>
-            </div>
-            <div class="content-wrapper">
-              <div class="content-header">
-                <div class="container-fluid">
-                  <div class="col-sm-6 text-right">
-                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
-                      <i class="fa fa-plus"></i> Agregar categoria
-                    </button>
-                  </div>
-                </div>
-              </div>
+              <h6>Permisos</h6>
             </div>
 
             <section class="content">
@@ -91,10 +87,9 @@ $resultado = mysqli_query($conexion, $sql);
                   <thead>
                     <tr>
                       <th>Id</th>
+                      <th>Rol</th>
                       <th>Nombre</th>
-                      <th>Descripcion</th>
-                      <th>Area</th>
-                      <th></th>
+                      <th>Superior</th>
                     </tr>
 
                   </thead>
@@ -104,23 +99,36 @@ $resultado = mysqli_query($conexion, $sql);
                     while ($f = mysqli_fetch_array($resultado)) {
                     ?>
                       <tr>
-                        <td><?php echo $f['id']; ?></td>
+                        <td><?php echo $f['id_permiso']; ?></td>
                         <td>
-                          <?php echo $f['nombre']; ?>
+                          <?php
+                          $res = $conexion->query("SELECT tu.descrip 
+                           FROM usuarios AS u 
+                           INNER JOIN tipo_usuario AS tu ON u.id_permiso = tu.id 
+                           WHERE u.id = " . $f['id_usuario']);
+
+                          if ($categoria = mysqli_fetch_array($res)) {
+                            echo $categoria['descrip'];
+                          }
+                          ?>
                         </td>
-                        <td><?php echo $f['descripcion']; ?></td>
-                        <td><?php $res = $conexion->query("SELECT descrip FROM tipo_usuario WHERE id = " . $f['id_area']);
-                            if ($area = mysqli_fetch_array($res)) {
-                              echo $area['descrip'];
-                            }
-                            ?>
+                        <td> <?php
+                              $res2 = $conexion->query("SELECT nom_persona FROM usuarios WHERE id = " . $f['id_usuario']);
+                              if ($usuario = mysqli_fetch_array($res2)) {
+                                echo $usuario['nom_persona'];
+                              }
+                              ?>
+                        </td>
+                        <td> <?php
+                              $res3 = $conexion->query("SELECT nom_persona FROM usuarios WHERE id = " . $f['id_superior']);
+                              if ($superior = mysqli_fetch_array($res3)) {
+                                echo $superior['nom_persona'];
+                              }
+                              ?>
                         </td>
                         <td>
-                          <button class="btn btn-primary btn-small btnEditar" data-id="<?php echo $f['id']; ?>" data-id_area="<?php echo $f['id_area']; ?>" data-nombre="<?php echo $f['nombre']; ?>" data-descripcion="<?php echo $f['descripcion']; ?>" data-toggle="modal" data-target="#modalEditar">
+                          <button class="btn btn-primary btn-small btnEditar" data-id="<?php echo $f['id_permiso']; ?>" data-per_conlibro="<?php echo $f['per_conlibro']; ?>" data-per_libros="<?php echo $f['per_libros']; ?>" data-per_tickets="<?php echo $f['per_tickets']; ?>" data-per_categoria="<?php echo $f['per_categoria']; ?>" data-per_niveles="<?php echo $f['per_niveles']; ?>" data-id_usuario="<?php echo $f['id_usuario']; ?>" data-id_superior="<?php echo $f['id_superior']; ?>" data-toggle="modal" data-target="#modalEditar">
                             <i class="fa fa-edit"></i>
-                          </button>
-                          <button class="btn btn-danger btn-small btnEliminar" data-id="<?php echo $f['id']; ?>" data-toggle="modal" data-target="#modalEliminar">
-                            <i class="fa fa-trash"></i>
                           </button>
                         </td>
                       </tr>
@@ -136,64 +144,12 @@ $resultado = mysqli_query($conexion, $sql);
 
         </div>
 
-
-        <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-          <div class="modal-dialog" role="document">
-            <div class="modal-content">
-              <form action="./php/insertarcategorias.php" method="POST" enctype="multipart/form-data">
-                <div class="modal-header">
-                  <h5 class="modal-title" id="exampleModalLabel">Insertar Categoria</h5>
-                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                  </button>
-                </div>
-                <div class="modal-body">
-                  <div class="form-group">
-                    <label for="nombre">Nombre</label>
-                    <input type="text" name="nombre" placeholder="nombre" id="nombre" class="form-control" required>
-                  </div>
-                  <div class="form-group">
-                    <label for="descripcion">Descripcion</label>
-                    <input type="text" name="descripcion" placeholder="descripcion" id="descripcion" class="form-control" required>
-                  </div>
-                </div>
-                <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                  <button type="submit" class="btn btn-primary">Guardar</button>
-                </div>
-              </form>
-            </div>
-          </div>
-        </div>
-
-        <div class="modal fade" id="modalEliminar" tabindex="-1" role="dialog" aria-labelledby="modalEliminarLabel" aria-hidden="true">
-          <div class="modal-dialog" role="document">
-            <div class="modal-content">
-
-              <div class="modal-header">
-                <h5 class="modal-title" id="modalEliminarLabel">Eliminar categoria</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                  <span aria-hidden="true">&times;</span>
-                </button>
-              </div>
-              <div class="modal-body">
-                ¿Desea eliminar esta categoria?
-              </div>
-              <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                <button type="submit" class="btn btn-danger eliminar" data-dismiss="modal">Eliminar</button>
-              </div>
-
-            </div>
-          </div>
-        </div>
-
         <div class="modal fade" id="modalEditar" tabindex="-1" role="dialog" aria-labelledby="modalEditar" aria-hidden="true">
           <div class="modal-dialog" role="document">
             <div class="modal-content">
-              <form action="./php/editarcategoria.php" method="POST" enctype="multipart/form-data">
+              <form action="./php/modpermisos.php" method="POST" enctype="multipart/form-data">
                 <div class="modal-header">
-                  <h5 class="modal-title" id="modalEditar">Editar categoria</h5>
+                  <h5 class="modal-title" id="modalEditar">Editar Permisos</h5>
                   <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                   </button>
@@ -210,15 +166,36 @@ $resultado = mysqli_query($conexion, $sql);
                     <input type="text" name="descripcion" placeholder="descripcion" id="descripcionEdit" class="form-control" required>
                   </div>
                   <div class="form-group">
-                    <label for="id_areaEdit">Area encargada</label>
-                    <select name="id_area" id="id_areaEdit" class="form-control" required >
-                      <?php
-                      $res = $conexion->query("select * from tipo_usuario WHERE id NOT IN (1, 5, 6, 7, 8, 9)");
-                      while ($f = mysqli_fetch_array($res)) {
-                        echo '<option value="' . $f['id'] . '" >' . $f['descrip'] . '</option>';
-                      }
-                      ?>
-                    </select>
+                  <label for="descripcionEdit">Insertar libros</label>
+                  <select class="form-control" name="libroEdit" id="conlibroEdit">
+                    <option value="conlibroEdit"></option>
+                    <option value="si">Si</option>
+                    <option value="no">No</option>
+                  </select>
+                  </div>
+                  <div class="form-group">
+                  <label for="descripcionEdit">Modificar niveles</label>
+                  <select class="form-control" name="nivelesEdit" id="nivelesEdit">
+                    <option value="nivelesEdit"></option>
+                    <option value="si">Si</option>
+                    <option value="no">No</option>
+                  </select>
+                  </div>
+                  <div class="form-group">
+                  <label for="descripcionEdit">Crear y atender tickets</label>
+                  <select class="form-control" name="ticketsEdit" id="ticketsEdit">
+                    <option value="ticketsEdit"></option>
+                    <option value="si">Si</option>
+                    <option value="no">No</option>
+                  </select>
+                  </div>
+                  <div class="form-group">
+                  <label for="descripcionEdit">Insertar categorias</label>
+                  <select class="form-control" name="categoriaEdit" id="categoriaEdit">
+                    <option value="categoriaEdit"></option>
+                    <option value="si">Si</option>
+                    <option value="no">No</option>
+                  </select>
                   </div>
                 </div>
                 <div class="modal-footer">
@@ -277,13 +254,21 @@ $resultado = mysqli_query($conexion, $sql);
       });
       $(".btnEditar").click(function() {
         idEditar = $(this).data('id');
-        var nombre = $(this).data('nombre');
-        var descripcion = $(this).data('descripcion');
-        var id_area = $(this).data('id_area');
-        $("#nombreEdit").val(nombre);
-        $("#descripcionEdit").val(descripcion);
+        var conlibro = $(this).data('conlibro');
+        var libros = $(this).data('libros');
+        var tickets = $(this).data('tickets');
+        var categoria = $(this).data('categoria');
+        var superior = $(this).data('superior');
+        var niveles = $(this).data('niveles');
+        var usuario = $(this).data('usuario');
+        $("#conlibroEdit").val(conlibro);
+        $("#superiorEdit").val(superior);
+        $("#nivelesEdit").val(niveles);
+        $("#usuarioEdit").val(usuario);
+        $("#librosEdit").val(libros);
+        $("#ticketsEdit").val(tickets);
+        $("#categoriaEdit").val(categoria);
         $("#idEdit").val(idEditar);
-        $("#id_areaEdit").val(id_area);
       });
     });
   </script>

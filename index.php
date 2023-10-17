@@ -1,16 +1,22 @@
 <?php
 session_start();
 include "./php/conexion.php";
+
+// Verifica si el usuario ha iniciado sesión y tiene permisos adecuados
 if (!isset($_SESSION['datos_login'])) {
   header("Location: ./login.php");
+  exit(); // Asegúrate de que el script se detenga después de redirigir
 }
-$arregloUsuario = $_SESSION['datos_login'];
-if ($arregloUsuario['nivel'] != '1') {
-  header("Location: ./login.php");
-}
+
 $arregloUsuario = $_SESSION['datos_login'];
 $idUsuario = $arregloUsuario['id_usuario'];
 
+// Verifica si 'per_tickets' es igual a 'si'
+if ($arregloUsuario['permisos']['per_tickets'] != 'si') {
+  // Si 'per_tickets' no es igual a 'si', puedes redirigir a otra página o mostrar un mensaje de error.
+  header("Location: ./nose.php");
+  exit(); // Asegúrate de que el script se detenga después de redirigir
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -114,29 +120,29 @@ $idUsuario = $arregloUsuario['id_usuario'];
                         <i class="fa fa-plus"></i> Crear solicitud
                       </button>
                       <form action="" method="GET" class="form-inline">
-  <div class="form-group">
-    <label for="estado">Filtrar por Estado:</label>
-    <select class="form-control" name="estado" id="estado">
-      <option value="">Todos los estados</option>
-      <option value="1">Activo</option>
-      <option value="2">Denegado</option>
-      <option value="3">Finalizado</option>
-      <option value="4">Asignado</option>
-      <!-- Agrega más opciones según tus estados reales -->
-    </select>
-  </div>
-  <div class="form-group">
-    <label for="prioridad">Filtrar por Prioridad:</label>
-    <select class="form-control" name="prioridad" id="prioridad">
-      <option value="">Todas las prioridades</option>
-      <option value="1">Baja</option>
-      <option value="2">Media</option>
-      <option value="3">Alta</option>
-      <!-- Agrega más opciones según tus prioridades reales -->
-    </select>
-  </div>
-  <button type="submit" class="btn btn-primary">Filtrar</button>
-</form>
+                        <div class="form-group">
+                          <label for="estado">Filtrar por Estado:</label>
+                          <select class="form-control" name="estado" id="estado">
+                            <option value="">Todos los estados</option>
+                            <option value="1">Activo</option>
+                            <option value="2">Denegado</option>
+                            <option value="3">Finalizado</option>
+                            <option value="4">Asignado</option>
+                            <!-- Agrega más opciones según tus estados reales -->
+                          </select>
+                        </div>
+                        <div class="form-group">
+                          <label for="prioridad">Filtrar por Prioridad:</label>
+                          <select class="form-control" name="prioridad" id="prioridad">
+                            <option value="">Todas las prioridades</option>
+                            <option value="1">Baja</option>
+                            <option value="2">Media</option>
+                            <option value="3">Alta</option>
+                            <!-- Agrega más opciones según tus prioridades reales -->
+                          </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Filtrar</button>
+                      </form>
 
 
 
