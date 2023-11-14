@@ -44,7 +44,7 @@ $arregloUsuario = $_SESSION['datos_login'];
         <div class="col-12">
           <div class="card mb-4">
             <div class="card-header pb-0">
-              <h6>Categorias</h6>
+              <h6>Editar perfil</h6>
             </div>
             <div class="content-wrapper">
 
@@ -72,6 +72,12 @@ $arregloUsuario = $_SESSION['datos_login'];
                     <div class="col-md-6 mb-3">
                       <label for="nombre">Nombre</label>
                       <input type="text" name="nombre" value="<?php echo $arregloUsuario['nombre']; ?>" id="editarPerfilForm" class="form-control" required>
+                      <div class="valid-feedback">Ya es válido</div>
+                      <div class="invalid-feedback">Complete los campos</div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                      <label for="usuario">Documento</label>
+                      <input type="text" name="usuario" value="<?php echo $arregloUsuario['usuario']; ?>" id="usuario" class="form-control" required>
                       <div class="valid-feedback">Ya es válido</div>
                       <div class="invalid-feedback">Complete los campos</div>
                     </div>

@@ -2,69 +2,77 @@
   <div class="sidenav-header">
     <i class="fas fa-times p-3 cursor-pointer text-secondary opacity-5 position-absolute end-0 top-0 d-none d-xl-none" aria-hidden="true" id="iconSidenav"></i>
     <a class="navbar-brand m-0" target="_blank">
-      <span class="ms-1 font-weight-bold">Gimnasio Los Almendros</span>
+      <img src="./images/logo.png" width="70" alt="Gimnasio Los Almendros" id="logo" data-height-percentage="100">
+      <span class="ms-1 font-weight-bold">GLA</span>
     </a>
   </div>
   <hr class="horizontal dark mt-0">
   <div class="collapse navbar-collapse w-auto ps" id="sidenav-collapse-main">
     <ul class="navbar-nav">
-      <li class="nav-item">
-        <a class="nav-link" title="Perfil" href="perfil.php">
-          <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
-            <i class="fa fa-caret-right text-warning text-sm opacity-10"></i>
+      <?php if ($arregloUsuario['permisos']['per_tickets'] == '1'|| $arregloUsuario['permisos']['per_mistickets'] == '1'|| $arregloUsuario['permisos']['per_crear'] == '1') { ?>
+        <li class="list-group mt-2">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
+              <i class="fa fa-caret-right text-warning opacity-10"></i>
+            </div>
+            <span class="nav-link-text">Solicitudes</span>
+          </a>
+          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <?php if ($arregloUsuario['permisos']['per_tickets'] == '1') { ?>
+              <a class="dropdown-item" href="index.php">Todas las Solicitudes</a>
+            <?php } ?>
+            <?php if ($arregloUsuario['permisos']['per_mistickets'] == '1' || $arregloUsuario['permisos']['per_crear'] == '1') { ?>
+              <a class="dropdown-item" href="mistickets.php">Mis solicitudes</a>
+            <?php } ?>
           </div>
-          <span class="nav-link-text ms-1">Perfil</span>
-        </a>
-      </li>
-      <ul class="navbar-nav">
-      <!--<li class="nav-item">
-        <a class="nav-link" title="Perfil" href="perfil.php">
-          <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
-            <i class="fa fa-caret-right text-warning text-sm opacity-10"></i>
+        </li>
+      <?php } ?>
+      <?php if ($arregloUsuario['permisos']['per_niveles'] == '1') { ?>
+        <li class="list-group mt-2">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
+              <i class="fa fa-caret-right text-warning opacity-10"></i>
+            </div>
+            <span class="nav-link-text">Gestion de Permisos</span>
+          </a>
+          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <?php if ($arregloUsuario['permisos']['per_niveles'] == '1') { ?>
+              <a class="dropdown-item" href="trabajadores.php">Trabajadores</a>
+              <a class="dropdown-item" href="estudiantes.php">Estudiantes</a>
+              <a class="dropdown-item" href="egresadosfamilia.php">Egresados/Familiares</a>
+            <?php } ?>
           </div>
-          <span class="nav-link-text ms-1">libros</span>
-        </a>
-      </li>-->
-      <?php if ($arregloUsuario['permisos']['per_niveles'] == 'si') { ?>
-        <li class="nav-item">
-          <a class="nav-link" title="Gestion de Permisos" href="panelniveles.php">
-            <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
-              <i class="fa fa-caret-right text-warning text-sm opacity-10"></i>
-            </div>
-            <span class="nav-link-text ms-1" >Gestion de Permisos</span>
-          </a>
         </li>
       <?php } ?>
-      <?php if ($arregloUsuario['permisos']['per_categoria'] == 'si') { ?>
-        <li class="nav-item">
-          <a class="nav-link" title="Categorias" href="panelcategorias.php">
+
+      <?php if ($arregloUsuario['permisos']['per_categoria'] == '1' || $arregloUsuario['permisos']['per_seccion'] == '1' || $arregloUsuario['permisos']['per_con'] == '1') { ?>
+        <li class="list-group mt-2">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
-              <i class="fa fa-caret-right text-warning text-sm opacity-10"></i>
+              <i class="fa fa-caret-right text-warning opacity-10"></i>
             </div>
-            <span class="nav-link-text ms-1" >Categorias</span>
+            <span class="nav-link-text">Mantenimiento</span>
           </a>
+          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <?php if ($arregloUsuario['permisos']['per_categoria'] == '1') { ?>
+              <a class="dropdown-item" href="panelcategorias.php">Categorias</a>
+            <?php } ?>
+            <?php if ($arregloUsuario['permisos']['per_seccion'] == '1') { ?>
+              <a class="dropdown-item" href="panelseccion.php">Secciones</a>
+            <?php } ?>
+            <?php if ($arregloUsuario['permisos']['per_con'] == '1') { ?>
+              <a class="dropdown-item" href="panelarea.php">Areas</a>
+              <a class="dropdown-item" href="panelautor.php">Autor</a>
+              <a class="dropdown-item" href="panelciudad.php">Ciudad</a>
+              <a class="dropdown-item" href="panelclase.php">Clase</a>
+              <a class="dropdown-item" href="paneleditorial.php">Editorial</a>
+            <?php } ?>
+          </div>
         </li>
       <?php } ?>
-      <?php if ($arregloUsuario['permisos']['per_tickets'] == 'si') { ?>
-        <li class="nav-item">
-          <a class="nav-link" title="Solicitudes" href="index.php">
-            <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
-              <i class="fa fa-caret-right text-warning text-sm opacity-10"></i>
-            </div>
-            <span class="nav-link-text ms-1" >Solicitudes</span>
-          </a>
-        </li>
-      <?php } ?>
-      <?php if ($arregloUsuario['permisos']['per_mistickets'] == 'si') { ?>
-        <li class="nav-item">
-          <a class="nav-link" title="Mis solicitudes" href="missolicitudes.php">
-            <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
-              <i class="fa fa-caret-right text-warning text-sm opacity-10"></i>
-            </div>
-            <span class="nav-link-text ms-1" >Mis solicitudes</span>
-          </a>
-        </li>
-      <?php } ?>
+
+      <!-- Otros elementos de la lista si es necesario -->
     </ul>
   </div>
 </aside>
+

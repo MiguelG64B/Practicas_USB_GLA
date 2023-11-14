@@ -1,12 +1,14 @@
 <?php
 session_start();
 include "./php/conexion.php";
+
+// Verifica si el usuario ha iniciado sesión y tiene permisos adecuados
 if (!isset($_SESSION['datos_login'])) {
-  header("Location: ./index.php");
+    header("Location: ./login.php");
+    exit(); // Asegúrate de que el script se detenga después de redirigir
 }
-
 $arregloUsuario = $_SESSION['datos_login'];
-
+$idUsuario = $arregloUsuario['id_usuario'];
 include("./php/conexion.php");
 if (isset($_GET['id']) && isset($_GET['comentarios'])) {
   $resultado = $conexion->query("select * from tickets where id_ticket=" . $_GET['id']) or die($conexion->error);
@@ -185,7 +187,7 @@ if (isset($_GET['id']) && isset($_GET['comentarios'])) {
                           if ($res) {
                             // La consulta se ejecutó correctamente, ahora puedes verificar si hay resultados
                             $coment = mysqli_fetch_array($res);
-                            if ($coment && $coment['coment_usuario'] == 'N/A') { ?>
+                            if ($fila[1] == $idUsuario && $coment && $coment['coment_usuario'] == 'N/A') { ?>
                               <div class="form-group">
                                 <label for="editor">Comentarios creador</label>
                                 <textarea name="coment_usuario" id="coment_usuarioDetalles2" class="form-control editorEdit2" required></textarea>

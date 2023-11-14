@@ -22,8 +22,8 @@
           $arregloUsuario = $_SESSION['datos_login'];
         ?>
           <div class="nav-link text-white font-weight-bold px-0 d-sm-inline d-none">
-            <i class="fa fa-user me-sm-1"></i>
-            <a href="index.php" title="Panel" class="mnav-link text-white font-weight-bold px-0"><?php echo $arregloUsuario['nombre']; ?></a>
+            <i class="fa fa-user me-sm-1" title="perfil"></i>
+            <a href="perfil.php" title="perfil" class="mnav-link text-white font-weight-bold px-0"><?php echo $arregloUsuario['nombre']; ?></a>
             <span class="mx-2">|</span> <!-- Clase mx-2 para agregar margen horizontal -->
             <i class="fa fa-sign-out" aria-hidden="true"></i>
             <a href="./php/cerrar_sesion.php" title="Cerrar sesion" class="mnav-link text-white font-weight-bold px-0">Salir</a>

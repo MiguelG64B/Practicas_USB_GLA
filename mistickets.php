@@ -10,13 +10,43 @@ if (!isset($_SESSION['datos_login'])) {
 
 $arregloUsuario = $_SESSION['datos_login'];
 $idUsuario = $arregloUsuario['id_usuario'];
-
+$nivel = $arregloUsuario['nivel'];
+$id_seccion = $arregloUsuario['id_seccion'];
 // Verifica si 'per_tickets' es igual a 'si'
-if ($arregloUsuario['permisos']['per_mistickets'] != 'si') {
+if ($arregloUsuario['permisos']['per_mistickets'] != '1' && $arregloUsuario['permisos']['per_crear'] != '1') {
   // Si 'per_tickets' no es igual a 'si', puedes redirigir a otra página o mostrar un mensaje de error.
-  header("Location: ./nose.php");
+  header("Location: ./perfil.php");
   exit(); // Asegúrate de que el script se detenga después de redirigir
 }
+$registrosPorPagina = 50;
+
+// Página actual
+if (isset($_GET['page'])) {
+  $paginaActual = $_GET['page'];
+} else {
+  $paginaActual = 1;
+}
+
+// Búsqueda por nombre
+$searchTerm = isset($_GET['search']) ? $_GET['search'] : '';
+
+// Calcular el desplazamiento (offset) para la consulta SQL
+$offset = ($paginaActual - 1) * $registrosPorPagina;
+// Consulta SQL con limit y offset
+
+
+
+// Consulta SQL con limit, offset y búsqueda
+$searchTerm = isset($_GET['search']) ? mysqli_real_escape_string($conexion, $_GET['search']) : '';
+$sql2 = "SELECT COUNT(*) AS totalCategorias FROM tickets";
+$resultado2 = mysqli_query($conexion, $sql2);
+$row = mysqli_fetch_assoc($resultado2);
+$totalCategorias = $row['totalCategorias'];
+$totalBotones = round($totalCategorias / $registrosPorPagina);
+
+// Calcular el número total de páginas
+$totalRegistros = mysqli_num_rows($resultado2); // Reemplaza con la cantidad total de registros en tu tabla
+$totalPaginas = ceil($totalRegistros / $registrosPorPagina);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -71,42 +101,50 @@ if ($arregloUsuario['permisos']['per_mistickets'] != 'si') {
       // Obtén los valores de los filtros si se han enviado
       $filtroEstado = isset($_GET['estado']) ? $_GET['estado'] : '';
       $filtroPrioridad = isset($_GET['prioridad']) ? $_GET['prioridad'] : '';
+      $filtroMes = isset($_GET['mes']) ? $_GET['mes'] : '';
+      $searchTerm = isset($_GET['search']) ? $_GET['search'] : '';
 
-      // Modifica tu consulta SQL para incluir los filtros de estado y prioridad, además de la condición de usuario o encargado
+      // Modifica tu consulta SQL para incluir los filtros de estado, prioridad, mes y búsqueda por nombre
       $sql = "SELECT tickets.*, categorias.nombre AS catego FROM tickets ";
       $sql .= "INNER JOIN categorias ON tickets.id_categoria = categorias.id ";
-      $sql .= "WHERE tickets.id_usuario = $idUsuario OR tickets.id_encargado = $idUsuario";
-      // Agrega las condiciones de los filtros de estado y prioridad si se han seleccionado
-      if (!empty($filtroEstado)) {
-        if (strpos($sql, "WHERE") !== false) {
-          // Si ya hay una condición WHERE en la consulta, agrega AND para unir las condiciones
-          $sql .= " AND ";
-        } else {
-          // Si no hay una condición WHERE, agrégala
-          $sql .= " WHERE ";
+
+      // Agrega las condiciones de los filtros de estado, prioridad y mes si se han seleccionado
+      if (!empty($filtroEstado) || !empty($filtroPrioridad) || !empty($filtroMes) || !empty($searchTerm)) {
+        $sql .= " WHERE ";
+
+        if (!empty($filtroEstado)) {
+          $sql .= "tickets.id_estado = " . $filtroEstado;
         }
 
-        $sql .= "tickets.id_estado = " . $filtroEstado;
-      }
-
-      if (!empty($filtroPrioridad)) {
-        if (strpos($sql, "WHERE") !== false) {
-          // Si ya hay una condición WHERE en la consulta, agrega AND para unir las condiciones
-          $sql .= " AND ";
-        } else {
-          // Si no hay una condición WHERE, agrégala
-          $sql .= " WHERE ";
+        if (!empty($filtroPrioridad)) {
+          if (!empty($filtroEstado)) {
+            $sql .= " AND ";
+          }
+          $sql .= "tickets.id_prioridad = " . $filtroPrioridad;
         }
 
-        $sql .= "tickets.id_prioridad = " . $filtroPrioridad;
+        if (!empty($filtroMes)) {
+          if (!empty($filtroEstado) || !empty($filtroPrioridad)) {
+            $sql .= " AND ";
+          }
+          $sql .= "MONTH(tickets.fecha) = " . $filtroMes;
+        }
+
+        // Agrega la condición para la búsqueda por nombre
+        if (!empty($searchTerm)) {
+          if (!empty($filtroEstado) || !empty($filtroPrioridad) || !empty($filtroMes)) {
+            $sql .= " AND ";
+          }
+          $sql .= "tickets.titulo LIKE '%$searchTerm%'";
+        }
       }
 
-      // Agrega la condición de usuario o encargado
+      // Agrega la condición para 'id_usuario' o 'id_encargado' igual a $idUsuario
       $sql .= " AND (tickets.id_usuario = $idUsuario OR tickets.id_encargado = $idUsuario)";
 
+      $sql .= " ORDER BY tickets.fecha DESC";
       $resultado = $conexion->query($sql) or die($conexion->error);
       ?>
-
 
 
       <div class="row">
@@ -123,37 +161,80 @@ if ($arregloUsuario['permisos']['per_mistickets'] != 'si') {
                       <button type="button" title="Crear solicitud" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
                         <i class="fa fa-plus"></i> Crear solicitud
                       </button>
-                      <form action="" method="GET" class="form-inline">
-                        <div class="form-group">
-                          <label for="estado">Filtrar por Estado:</label>
-                          <select class="form-control" name="estado" id="estado">
-                            <option value="">Todos los estados</option>
-                            <option value="1">Activo</option>
-                            <option value="2">Denegado</option>
-                            <option value="3">Finalizado</option>
-                            <option value="4">Asignado</option>
-                            <!-- Agrega más opciones según tus estados reales -->
-                          </select>
-                        </div>
-                        <div class="form-group">
-                          <label for="prioridad">Filtrar por Prioridad:</label>
-                          <select class="form-control" name="prioridad" id="prioridad">
-                            <option value="">Todas las prioridades</option>
-                            <option value="1">Baja</option>
-                            <option value="2">Media</option>
-                            <option value="3">Alta</option>
-                            <!-- Agrega más opciones según tus prioridades reales -->
-                          </select>
-                        </div>
-                        <button type="submit" class="btn btn-primary">Filtrar</button>
-                      </form>
+                      <td>
 
+                        <div class="container">
+                          <form action="" method="GET" class="form-inline">
+                            <div class="row">
+                              <div class="col-sm">
+                                <div class="form-group">
+                                  <label for="estado">Filtrar por Estado:</label>
+                                  <select class="form-control" name="estado" id="estado">
+                                    <option value="">Todos los estados</option>
+                                    <option value="1">Activo</option>
+                                    <option value="3">Denegado</option>
+                                    <option value="4">Finalizado</option>
+                                    <option value="2">Asignado</option>
+                                    <!-- Agrega más opciones según tus estados reales -->
+                                  </select>
+                                </div>
+                              </div>
+                              <div class="col-sm">
+                                <div class="form-group">
+                                  <label for="prioridad">Filtrar por Prioridad:</label>
+                                  <select class="form-control" name="prioridad" id="prioridad">
+                                    <option value="">Todas las prioridades</option>
+                                    <option value="1">Baja</option>
+                                    <option value="2">Media</option>
+                                    <option value="3">Alta</option>
+                                    <!-- Agrega más opciones según tus prioridades reales -->
+                                  </select>
+                                </div>
+                              </div>
+                              <div class="col-sm">
+                                <div class="form-group">
+                                  <label for="mes">Filtrar por Mes:</label>
+                                  <select class="form-control" name="mes" id="mes">
+                                    <option value="">Todos los meses</option>
+                                    <option value="01">Enero</option>
+                                    <option value="02">Febrero</option>
+                                    <option value="03">Marzo</option>
+                                    <option value="04">Abril</option>
+                                    <option value="05">Mayo</option>
+                                    <option value="06">Junio</option>
+                                    <option value="07">Julio</option>
+                                    <option value="08">Agosto</option>
+                                    <option value="09">Septiembre</option>
+                                    <option value="10">Octubre</option>
+                                    <option value="11">Noviembre</option>
+                                    <option value="12">Diciembre</option>
+                                    <!-- Agrega más opciones para los otros meses -->
+                                  </select>
+                                </div>
+                              </div>
+                              <div class="">
+                                <form method="GET" action="">
+                                  <div class="input-group mb-3">
+                                    <input type="text" class="form-control" placeholder="Buscar por titulo" name="search" value="<?php echo $searchTerm; ?>">
+
+                                  </div>
+                                  <div class="input-group-append">
+                                    <button class="btn btn-outline-primary mb-0" type="submit">Buscar</button>
+                                  </div>
+                                </form>
+                              </div>
+                            </div>
+                          </form>
+                        </div>
 
 
                     </div>
                   </div>
                 </div>
               </div>
+
+
+
 
               <section class="content">
                 <div class="container-fluid">
@@ -180,6 +261,7 @@ if ($arregloUsuario['permisos']['per_mistickets'] != 'si') {
                       <tr>
                         <th>Id</th>
                         <th>Categoria</th>
+                        <th>Seccion</th>
                         <th>Titulo</th>
                         <th>Fecha</th>
                         <th>Priorirad</th>
@@ -197,6 +279,13 @@ if ($arregloUsuario['permisos']['per_mistickets'] != 'si') {
                                 $res = $conexion->query("SELECT nombre FROM categorias WHERE id = " . $f['id_categoria']);
                                 if ($categoria = mysqli_fetch_array($res)) {
                                   echo $categoria['nombre'];
+                                }
+                                ?>
+                          </td>
+                          <td> <?php
+                                $res = $conexion->query("SELECT s.descrip FROM seccion s, categorias c WHERE c.id_seccion = s.id AND c.id = " . $f['id_categoria']);
+                                if ($seccion = mysqli_fetch_array($res)) {
+                                  echo $seccion['descrip'];
                                 }
                                 ?>
                           </td>
@@ -241,26 +330,31 @@ if ($arregloUsuario['permisos']['per_mistickets'] != 'si') {
 
                           <td>
                             <?php
-                            $botonDetalles = '<button class="btn btn-primary btn-small btndetalles" title="Ver detalles" data-id="' . $f['id_ticket'] . '" data-categoria="' . $f['id_categoria'] . '"data-id_usuario="' . $f['id_usuario'] . '" data-prioridad="' . $f['id_prioridad'] . '" data-encargado="' . $f['id_encargado'] . '" data-titulo="' . $f['titulo'] . '" data-editor="' . htmlspecialchars($f['resumen']) . '" data-toggle="modal" data-target="#modalDetalles"><i class="fa fa-eye"></i></button>';
+                            $botonDetalles = '<button class="btn btn-primary btn-small btndetalles2" title="Ver detalles" data-imagen="' . $f['imagen'] . '" data-id="' . $f['id_ticket'] . '" data-categoria="' . $f['id_categoria'] . '" data-prioridad="' . $f['id_prioridad'] . '" data-encargado="' . $f['id_encargado'] . '" data-titulo="' . $f['titulo'] . '" data-editor="' . htmlspecialchars($f['resumen']) . '" data-toggle="modal" data-target="#modalDetalles2" data-coment_encargado="' . $f['coment_encargado'] . '" data-coment_usuario="' . $f['coment_usuario'] . '" data-estado="' . $f['id_estado'] . '"><i class="fa fa-eye"></i></button>';
 
-                            if ($f['id_estado'] == 3 || $f['id_estado'] == 4) {
+                            if ($f['id_usuario'] == $idUsuario && $f['id_estado'] == 3 || $f['id_estado'] == 4) {
                               // Mostrar el botón "detalles2" si el estado es 3 o 4
-                              $botonDetalles = '<button class="btn btn-primary btn-small btndetalles2" title="Ver detalles" data-imagen="' . $f['imagen'] . '" data-id="' . $f['id_ticket'] . '" data-categoria="' . $f['id_categoria'] . '" data-prioridad="' . $f['id_prioridad'] . '" data-encargado="' . $f['id_encargado'] . '" data-titulo="' . $f['titulo'] . '" data-editor="' . htmlspecialchars($f['resumen']) . '" data-toggle="modal" data-target="#modalDetalles2" data-coment_encargado="' . $f['coment_encargado'] . '" data-coment_usuario="' . $f['coment_usuario'] . '" data-estado="' . $f['id_estado'] . '"><i class="fa fa-eye"></i></button>';
+                              $ticket = $f['id_ticket'];
+                              $comentarios = $f['coment_encargado'];
+                              $satisfaccionURL = './satisfaccion.php?id=' . $ticket . '&comentarios=' . $comentarios;
+
+                              // Mostrar el botón "Satisfacción" que redirige a la URL
+
+                              $botonDetalles = '<a class="btn btn-warning btn-small btnSatisfaccion" title="Satisfacción" href="' . $satisfaccionURL . '"><i class="fa fa-smile-o"></i></a>';
                             }
                             echo $botonDetalles;
 
-                            if ($f['id_usuario'] == $idUsuario && ($f['id_estado'] != '3' && $f['id_estado'] != '4')) {
-                              // Mostrar el botón de editar solo si el id_usuario coincide con $idUsuario coment_usuario
+                            if (($f['id_usuario'] == $idUsuario || $arregloUsuario['permisos']['per_crear'] == '1') && ($f['id_estado'] != '3' && $f['id_estado'] != '4') && $arregloUsuario['permisos']['per_mistickets'] == '1') {
+                              // Mostrar el botón de editar si el id_usuario coincide con $idUsuario o tiene permisos de crear y permisos permiten
                             ?>
                               <button class="btn btn-info btn-small btnEditar" title="Editar ticket" data-id="<?php echo $f['id_ticket']; ?>" data-categoria="<?php echo $f['id_categoria']; ?>" data-prioridad="<?php echo $f['id_prioridad']; ?>" data-titulo="<?php echo $f['titulo']; ?>" data-editor="<?php echo htmlspecialchars($f['resumen']); ?>" data-encargado="<?php echo $f['id_encargado']; ?>" data-toggle="modal" data-target="#modalEditar">
                                 <i class="fa fa-edit"></i>
                               </button>
                             <?php
                             }
-                            ?>
-                            <?php
-                            if ($f['id_encargado'] == $idUsuario && ($f['id_estado'] != '3' && $f['id_estado'] != '4')) {
-                              // Tu código aquí si ambas condiciones son verdaderas
+
+                            if ($f['id_encargado'] == $idUsuario && ($f['id_estado'] != '3' && $f['id_estado'] != '4') && $arregloUsuario['permisos']['per_mistickets'] == '1') {
+                              // Mostrar el botón de cerrar solo si el id_encargado coincide con $idUsuario y permisos permiten
                             ?>
                               <button class="btn btn-danger btn-small btncerrar" title="Cerrar ticket" data-id="<?php echo $f['id_ticket']; ?>" data-id_usuario="<?php echo $f['id_usuario']; ?>" data-estado="<?php echo $f['id_estado']; ?>" data-toggle="modal" data-target="#modalcerrar">
                                 <i class="fa fa-clipboard-check"></i>
@@ -269,12 +363,29 @@ if ($arregloUsuario['permisos']['per_mistickets'] != 'si') {
                             }
                             ?>
                           </td>
+
+
                         </tr>
                       <?php
                       }
                       ?>
                     </tbody>
                   </table>
+                  <div class="pagination">
+                    <?php if ($paginaActual > 1) : ?>
+                      <a href="?page=<?php echo $paginaActual - 1; ?>&search=" class="btn btn-primary">Anterior</a>
+                    <?php endif; ?>
+
+                    <?php
+                    for ($i = 1; $i <= $totalBotones; $i++) :
+                    ?>
+                      <a href="?page=<?php echo $i; ?>&search=" class="btn btn-primary <?php if ($i == $paginaActual) echo 'active'; ?>"><?php echo $i; ?></a>
+                    <?php endfor; ?>
+
+                    <?php if ($paginaActual < $totalCategorias) : ?>
+                      <a href="?page=<?php echo $paginaActual + 1; ?>&search=" class="btn btn-primary">Siguiente</a>
+                    <?php endif; ?>
+                  </div>
                 </div>
               </section>
             </div>
@@ -288,7 +399,7 @@ if ($arregloUsuario['permisos']['per_mistickets'] != 'si') {
     <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
-          <form action="./php/insertarticket.php" method="POST" enctype="multipart/form-data">
+          <form action="./php/insertarticket2.php" method="POST" enctype="multipart/form-data">
             <div class="modal-header">
               <h5 class="modal-title" id="exampleModalLabel">Crear solicitid</h5>
               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -301,12 +412,14 @@ if ($arregloUsuario['permisos']['per_mistickets'] != 'si') {
                 <input type="text" name="titulo" placeholder="Titulo" id="titulo" class="form-control" required>
               </div>
               <div class="form-group">
-                <label for="categoria">Categoria(Area encargada)</label>
+                <label for="categoria">Categoria (Seccion)</label>
                 <select name="categoria" id="categoria" class="form-control" required>
                   <?php
-                  $res = $conexion->query("select * from categorias");
+                  $res = $conexion->query("SELECT categorias.id, categorias.nombre, seccion.descrip 
+                  FROM categorias 
+                  INNER JOIN seccion ON categorias.id_seccion = seccion.id");
                   while ($f = mysqli_fetch_array($res)) {
-                    echo '<option value="' . $f['id'] . '" >' . $f['nombre'] . '</option>';
+                    echo '<option value="' . $f['id'] . '">' . $f['nombre'] . ' - ' . $f['descrip'] . '</option>';
                   }
                   ?>
                 </select>
@@ -342,7 +455,7 @@ if ($arregloUsuario['permisos']['per_mistickets'] != 'si') {
     <div class="modal fade" id="modalEditar" tabindex="-1" role="dialog" aria-labelledby="modalEditar" aria-hidden="true">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
-          <form action="./php/editarticket.php" method="POST" enctype="multipart/form-data">
+          <form action="./php/editarticket2.php" method="POST" enctype="multipart/form-data">
             <div class="modal-header">
               <h5 class="modal-title" id="modalEditar">Editar ticket</h5>
               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -391,76 +504,6 @@ if ($arregloUsuario['permisos']['per_mistickets'] != 'si') {
       </div>
     </div>
     <!-- Modal Editar -->
-    <!-- Modal ver y asignar -->
-    <div class="modal fade" id="modalDetalles" tabindex="-1" role="dialog" aria-labelledby="modalDetalles" aria-hidden="true">
-      <div class="modal-dialog" role="document">
-        <div class="modal-content">
-          <form action="./php/encargado.php" method="POST" enctype="multipart/form-data">
-            <div class="modal-header">
-              <h5 class="modal-title" id="modalDetalles">Detalle ticket</h5>
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-              </button>
-            </div>
-            <div class="modal-body">
-              <input type="hidden" id="idDetalles" name="id">
-              <input type="hidden" id="id_usuarioDetalles" name="id_usuario">
-              <div class="form-group">
-                <label for="titulo">Titulo</label>
-                <input type="text" name="titulo" placeholder="titulo" id="tituloDetalles" class="form-control" required readonly>
-              </div>
-              <div class="form-group">
-                <label for="editor">Contenido</label>
-                <textarea name="editor" id="editorDetalles" class="form-control editorEdit2" readonly></textarea>
-              </div>
-              <div class="form-group">
-                <label for="categoriaDetalles">Categoria</label>
-                <select name="categoria" id="categoriaDetalles" class="form-control" required disabled>
-                  <?php
-                  $res = $conexion->query("select * from categorias");
-                  while ($f = mysqli_fetch_array($res)) {
-                    echo '<option value="' . $f['id'] . '" >' . $f['nombre'] . '</option>';
-                  }
-                  ?>
-                </select>
-              </div>
-              <div class="form-group">
-                <label for="prioridadDetalles">Prioridad</label>
-                <select name="prioridad" id="prioridadDetalles" class="form-control" required disabled>
-                  <?php
-                  $res = $conexion->query("select * from prioridad");
-                  while ($f = mysqli_fetch_array($res)) {
-                    echo '<option value="' . $f['id'] . '" >' . $f['nombre'] . '</option>';
-                  }
-                  ?>
-                </select>
-              </div>
-
-              <div class="form-group">
-                <label for="encargadoDetalles">Encargado</label>
-                <select name="encargado" id="encargadoDetalles" class="form-control" required>
-                  <?php
-                  $res = $conexion->query("SELECT u.id, u.nom_persona, t.descrip 
-              FROM usuarios u
-              LEFT JOIN tipo_usuario t ON u.tipo_usuario = t.id");
-                  while ($f = mysqli_fetch_array($res)) {
-                    echo '<option value="' . $f['id'] . '">' . $f['nom_persona'] . ' - ' . $f['descrip'] . '</option>';
-                  }
-                  ?>
-                </select>
-              </div>
-
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-              <button type="submit" class="btn btn-primary editar">Asignar encargado</button>
-            </div>
-          </form>
-        </div>
-      </div>
-
-    </div>
-    <!-- Modal ver y asignar -->
 
     <!-- Modal ver sin editar-->
     <div class="modal fade" id="modalDetalles2" tabindex="-1" role="dialog" aria-labelledby="modalDetalles2" aria-hidden="true">
@@ -542,7 +585,7 @@ if ($arregloUsuario['permisos']['per_mistickets'] != 'si') {
     <div class="modal cerrar" id="modalcerrar" tabindex="-1" role="dialog" aria-labelledby="modalcerrar" aria-hidden="true">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
-          <form action="./php/cerrarticket.php" method="POST" enctype="multipart/form-data">
+          <form action="./php/cerrarticket2.php" method="POST" enctype="multipart/form-data">
             <div class="modal-header">
               <h5 class="modal-title" id="modalcerrar">Cerrar ticket</h5>
               <button type="button" class="close" data-dismiss="modal" aria-label="Close">

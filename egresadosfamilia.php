@@ -10,12 +10,13 @@ if (!isset($_SESSION['datos_login'])) {
 
 $arregloUsuario = $_SESSION['datos_login'];
 $idUsuario = $arregloUsuario['id_usuario'];
+$nivel = $arregloUsuario['nivel'];
 
-if ($arregloUsuario['permisos']['per_categoria'] != '1') {
+if ($arregloUsuario['permisos']['per_niveles'] != '1') {
     header("Location: ./perfil.php");
     exit(); // Asegúrate de que el script se detenga después de redirigir
 }
-$registrosPorPagina = 4;
+$registrosPorPagina = 50;
 
 // Página actual
 if (isset($_GET['page'])) {
@@ -24,14 +25,26 @@ if (isset($_GET['page'])) {
     $paginaActual = 1;
 }
 
+// Búsqueda por nombre
+$searchTerm = isset($_GET['search']) ? $_GET['search'] : '';
+
 // Calcular el desplazamiento (offset) para la consulta SQL
 $offset = ($paginaActual - 1) * $registrosPorPagina;
 
+// Consulta SQL con limit y offset
+if ($nivel == 1) {
+    $sql = "SELECT * FROM usuarios WHERE id != $idUsuario AND (tipo_usuario = 8 OR tipo_usuario = 9) AND nom_persona LIKE '%$searchTerm%' LIMIT $offset, $registrosPorPagina;";
+} else {
+    $sql = "SELECT * FROM usuarios WHERE id_superior = $idUsuario AND nom_persona LIKE '%$searchTerm%' LIMIT $offset, $registrosPorPagina";
+}
+
+$estudiantes = mysqli_query($conexion, $sql);
+
 // Consulta SQL con limit, offset y búsqueda
 $searchTerm = isset($_GET['search']) ? mysqli_real_escape_string($conexion, $_GET['search']) : '';
-$sql = "SELECT * FROM categorias WHERE nombre LIKE '%$searchTerm%' LIMIT $offset, $registrosPorPagina";
+$sql = "SELECT * FROM usuarios WHERE nombre LIKE '%$searchTerm%' LIMIT $offset, $registrosPorPagina";
 $resultado = mysqli_query($conexion, $sql);
-$sql2 = "SELECT COUNT(*) AS totalCategorias FROM categorias";
+$sql2 = "SELECT COUNT(*) AS totalCategorias FROM usuarios";
 $resultado2 = mysqli_query($conexion, $sql2);
 $row = mysqli_fetch_assoc($resultado2);
 $totalCategorias = $row['totalCategorias'];
@@ -40,6 +53,7 @@ $totalBotones = round($totalCategorias / $registrosPorPagina);
 // Calcular el número total de páginas
 $totalRegistros = mysqli_num_rows($resultado2); // Reemplaza con la cantidad total de registros en tu tabla
 $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -50,7 +64,7 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
     <link rel="apple-touch-icon" sizes="76x76" href="./assets/img/apple-icon.png">
     <link rel="icon" type="image/png" href="./assets/img/favicon.png">
     <title>
-        Panel Categorias
+        Panel Egresado/Familiar
     </title>
     <!-- Fonts and icons -->
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" />
@@ -64,7 +78,7 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
     <link id="pagestyle" href="./assets/css/argon-dashboard.css?v=2.0.4" rel="stylesheet" />
 </head>
 
-<body class="g-sidenav-show bg-gray-100">
+<body class="g-sidenav-show   bg-gray-100">
     <div class="min-height-300 bg-primary position-absolute w-100"></div>
     <?php include("./layouts/admin/header.php"); ?>
     <main class="main-content position-relative border-radius-lg ps">
@@ -73,10 +87,11 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
         <!-- End Navbar -->
         <div class="container-fluid py-4">
             <div class="row">
+                <!-- estudiantes -->
                 <div class="col-12">
                     <div class="card mb-4">
                         <div class="card-header pb-0">
-                            <h6>Categorias</h6>
+                            <h6>Egresado/Familiar</h6>
                         </div>
                         <div class="content-wrapper">
                             <div class="content-header">
@@ -84,14 +99,14 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
                                     <div class="col-sm-3 text-right">
                                         <form method="GET" action="">
                                             <div class="input-group mb-3">
-                                                <input type="text" class="form-control" placeholder="Buscar por nombre" name="search">
+                                                <input type="text" class="form-control" placeholder="Buscar por nombre" name="search" value="<?php echo $searchTerm; ?>">
                                                 <div class="input-group-append">
                                                      <button class="btn btn-outline-primary mb-0" type="submit">Buscar</button>
                                                 </div>
                                             </div>
                                         </form>
-                                        <button type="button" title="Agregar Categoria" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
-                                            <i class="fa fa-plus"></i> Agregar categoria
+                                        <button type="button" title="Agregar Egresado/Familiar" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal2">
+                                            <i class="fa fa-plus"></i> Agregar Egresado/Familiar
                                         </button>
                                     </div>
                                 </div>
@@ -121,34 +136,47 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
                                     <thead>
                                         <tr>
                                             <th>Id</th>
+                                            <th>Rol</th>
                                             <th>Nombre</th>
-                                            <th>Descripcion</th>
-                                            <th>Seccion</th>
+                                            <th>Telefono</th>
+                                            <th>Documento</th>
+                                            <th>Correo</th>
+                                            <th>Estado</th>
                                             <th></th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <?php
-                                        while ($f = mysqli_fetch_array($resultado)) {
+                                        while ($f = mysqli_fetch_array($estudiantes)) {
                                         ?>
                                             <tr>
                                                 <td><?php echo $f['id']; ?></td>
                                                 <td>
-                                                    <?php echo $f['nombre']; ?>
+                                                    <?php
+                                                    $res2 = $conexion->query("SELECT descrip FROM tipo_usuario WHERE id = " . $f['tipo_usuario']);
+                                                    if ($seccion = mysqli_fetch_array($res2)) {
+                                                        echo $seccion['descrip'];
+                                                    }
+                                                    ?>
                                                 </td>
-                                                <td><?php echo $f['descripcion']; ?></td>
-                                                <td><?php $res = $conexion->query("SELECT descrip FROM seccion WHERE id = " . $f['id_seccion']);
-                                                    if ($area = mysqli_fetch_array($res)) {
-                                                        echo $area['descrip'];
+                                                <td><?php echo $f['nom_persona']; ?></td>
+                                                <td><?php echo $f['telefono']; ?></td>
+                                                <td><?php echo $f['usuario']; ?></td>
+                                                <td><?php echo $f['email']; ?></td>
+                                                <td>
+                                                    <?php
+                                                    $res2 = $conexion->query("SELECT descrip FROM estado WHERE id = " . $f['id_estado']);
+                                                    if ($seccion = mysqli_fetch_array($res2)) {
+                                                        echo $seccion['descrip'];
                                                     }
                                                     ?>
                                                 </td>
                                                 <td>
-                                                    <button class="btn btn-primary btn-small btnEditar" title="Editar Categoria" data-id="<?php echo $f['id']; ?>" data-id_seccion="<?php echo $f['id_seccion']; ?>" data-nombre="<?php echo $f['nombre']; ?>" data-descripcion="<?php echo $f['descripcion']; ?>" data-toggle="modal" data-target="#modalEditar">
-                                                        <i class="fa fa-edit"></i>
+                                                    <button class="btn btn-danger btn-small btnEliminar" title="Inactivar Egresado/Familiar" data-id="<?php echo $f['id']; ?>" data-toggle="modal" data-target="#modalEliminar">
+                                                        <i class="fa fa-low-vision"></i>
                                                     </button>
-                                                    <button class="btn btn-danger btn-small btnEliminar" title="Eliminar Categoria" data-id="<?php echo $f['id']; ?>" data-toggle="modal" data-target="#modalEliminar">
-                                                        <i class="fa fa-trash"></i>
+                                                    <button class="btn btn-info btn-small btnactivar" title="Activar Egresado/Familiar" data-id="<?php echo $f['id']; ?>" data-toggle="modal" data-target="#modalactivar">
+                                                        <i class="fa fa-eye"></i>
                                                     </button>
                                                 </td>
                                             </tr>
@@ -157,7 +185,6 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
                                         ?>
                                     </tbody>
                                 </table>
-
                                 <div class="pagination">
                                     <?php if ($paginaActual > 1) : ?>
                                         <a href="?page=<?php echo $paginaActual - 1; ?>&search=" class="btn btn-primary">Anterior</a>
@@ -173,6 +200,7 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
                                         <a href="?page=<?php echo $paginaActual + 1; ?>&search=" class="btn btn-primary">Siguiente</a>
                                     <?php endif; ?>
                                 </div>
+
                             </div>
                         </section>
                         <!-- Agregar botones de paginación -->
@@ -180,40 +208,43 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
                 </div>
             </div>
         </div>
- 
 
-
-
-        <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+     
+        <div class="modal fade" id="exampleModal2" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
           <div class="modal-dialog" role="document">
             <div class="modal-content">
-              <form action="./php/Insertarcategorias.php" method="POST" enctype="multipart/form-data">
+              <form action="./php/insertarfuera.php" method="POST" enctype="multipart/form-data">
                 <div class="modal-header">
-                  <h5 class="modal-title" id="exampleModalLabel">Insertar Categoria</h5>
+                  <h5 class="modal-title" id="exampleModalLabel">Agregar Egresado/Familiar</h5>
                   <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                   </button>
                 </div>
                 <div class="modal-body">
                   <div class="form-group">
+                    <label for="usuario">Documento</label>
+                    <input type="number" name="usuario" placeholder="Documento" id="usuario" class="form-control" required>
+                  </div>
+                  <div class="form-group">
                     <label for="nombre">Nombre</label>
                     <input type="text" name="nombre" placeholder="nombre" id="nombre" class="form-control" required>
                   </div>
                   <div class="form-group">
-                    <label for="descripcion">Descripcion</label>
-                    <input type="text" name="descripcion" placeholder="descripcion" id="descripcion" class="form-control" required>
+                    <label for="email">Correo</label>
+                    <input type="email" name="email" placeholder="Correo" id="correo" class="form-control" required>
                   </div>
                   <div class="form-group">
-                    <label for="id_seccionEdit">Seccion encargada</label>
-                    <select name="id_seccion" id="id_seccionEdit" class="form-control" required>
-                      <?php
-                      $res = $conexion->query("select * from seccion ");
-                      while ($f = mysqli_fetch_array($res)) {
-                        echo '<option value="' . $f['id'] . '" >' . $f['descrip'] . '</option>';
-                      }
-                      ?>
-                    </select>
+                    <label for="telefono">Telefono</label>
+                    <input type="number" name="telefono" placeholder="Telefono" id="telefono" class="form-control" required>
                   </div>
+                  <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" class="form-control" placeholder="Password" name="pass" aria-label="Password" required>
+                  </div>
+                  <div class="form-group">
+                    <label for="password">Confirmar Password</label>
+                    <input type="password" class="form-control" placeholder="Confirmar Password" name="pass2" aria-label="Password" required>
+                  </div>           
                 </div>
                 <div class="modal-footer">
                   <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
@@ -223,69 +254,48 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
             </div>
           </div>
         </div>
-
+      
         <div class="modal fade" id="modalEliminar" tabindex="-1" role="dialog" aria-labelledby="modalEliminarLabel" aria-hidden="true">
           <div class="modal-dialog" role="document">
             <div class="modal-content">
 
               <div class="modal-header">
-                <h5 class="modal-title" id="modalEliminarLabel">Eliminar categoria</h5>
+                <h5 class="modal-title" id="modalEliminarLabel">Inactivar usuario</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                   <span aria-hidden="true">&times;</span>
                 </button>
               </div>
               <div class="modal-body">
-                ¿Desea eliminar esta categoria?
+                ¿Desea Inactivar este usuario?
               </div>
               <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                <button type="submit" class="btn btn-danger eliminar" data-dismiss="modal">Eliminar</button>
+                <button type="submit" class="btn btn-danger eliminar" data-dismiss="modal">Inactivar</button>
               </div>
             </div>
           </div>
         </div>
-
-        <div class="modal fade" id="modalEditar" tabindex="-1" role="dialog" aria-labelledby="modalEditar" aria-hidden="true">
+        <div class="modal fade" id="modalactivar" tabindex="-1" role="dialog" aria-labelledby="modalactivarLabel" aria-hidden="true">
           <div class="modal-dialog" role="document">
             <div class="modal-content">
-              <form action="./php/editarcategoria.php" method="POST" enctype="multipart/form-data">
-                <div class="modal-header">
-                  <h5 class="modal-title" id="modalEditar">Editar categoria</h5>
-                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                  </button>
-                </div>
-                <div class="modal-body">
-                  <input type="hidden" id="idEdit" name="id">
 
-                  <div class="form-group">
-                    <label for="nombre">Nombre</label>
-                    <input type="nombreEdit" name="nombre" placeholder="nombre" id="nombreEdit" class="form-control" required>
-                  </div>
-                  <div class="form-group">
-                    <label for="descripcionEdit">Descripcion</label>
-                    <input type="text" name="descripcion" placeholder="descripcion" id="descripcionEdit" class="form-control" required>
-                  </div>
-                  <div class="form-group">
-                    <label for="id_seccionEdit">Area encargada</label>
-                    <select name="id_seccion" id="id_seccionEdit" class="form-control" required>
-                      <?php
-                      $res = $conexion->query("select * from seccion");
-                      while ($f = mysqli_fetch_array($res)) {
-                        echo '<option value="' . $f['id'] . '" >' . $f['descrip'] . '</option>';
-                      }
-                      ?>
-                    </select>
-                  </div>
-                </div>
-                <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                  <button type="submit" class="btn btn-primary editar">Guardar</button>
-                </div>
-              </form>
+              <div class="modal-header">
+                <h5 class="modal-title" id="modalactivarLabel">Activar usuario</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                ¿Desea activar este usuario?
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                <button type="submit" class="btn btn-info activar" data-dismiss="modal">Activar</button>
+              </div>
             </div>
           </div>
         </div>
+        <!-- estudiantes -->
       </div>
     </div>
     </div>
@@ -315,13 +325,15 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
       var idEliminar = -1;
       var idEditar = -1;
       var fila;
+      var idactivar = -1;
+      var idactivar = -1;
       $(".btnEliminar").click(function() {
         idEliminar = $(this).data('id');
         fila = $(this).parent('td').parent('tr');
       });
       $(".eliminar").click(function() {
         $.ajax({
-          url: './php/eliminarcategoria.php',
+          url: './php/desactivar.php',
           method: 'POST',
           data: {
             id: idEliminar
@@ -332,15 +344,43 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
         });
 
       });
+      $(".btnactivar").click(function() {
+        idactivar = $(this).data('id');
+        fila = $(this).parent('td').parent('tr');
+      });
+      $(".activar").click(function() {
+        $.ajax({
+          url: './php/activar.php',
+          method: 'POST',
+          data: {
+            id: idactivar
+          }
+        }).done(function(res) {
+
+          $(fila).fadeOut(1000);
+        });
+
+      });
+  
       $(".btnEditar").click(function() {
         idEditar = $(this).data('id');
-        var nombre = $(this).data('nombre');
-        var descripcion = $(this).data('descripcion');
+        var rol = $(this).data('rol');
         var id_seccion = $(this).data('id_seccion');
-        $("#nombreEdit").val(nombre);
-        $("#descripcionEdit").val(descripcion);
+        var id_superior = $(this).data('id_superior');
+        var per_niveles = $(this).data('per_niveles');
+        var per_tickets = $(this).data('per_tickets');
+        var per_categoria = $(this).data('per_categoria');
+        var per_con = $(this).data('per_con');
+        var per_seccion = $(this).data('per_seccion');
         $("#idEdit").val(idEditar);
+        $("#rolEdit").val(rol);
         $("#id_seccionEdit").val(id_seccion);
+        $("#id_superiorEdit").val(id_superior);
+        $("#per_nivelesEdit").val(per_niveles);
+        $("#per_ticketsEdit").val(per_tickets);
+        $("#per_categoriaEdit").val(per_categoria);
+        $("#per_seccionEdit").val(per_seccion);
+        $("#per_conEdit").val(per_con);
       });
     });
   </script>

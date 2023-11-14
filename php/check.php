@@ -4,41 +4,40 @@ include "./conexion.php";
 
 if (isset($_POST['email']) && isset($_POST['password'])) {
 
-    $resultado = $conexion->query("SELECT * FROM usuarios WHERE 
-        email='" . $_POST['email'] . "' AND 
-        password='" . $_POST['password'] . "' LIMIT 1") or die($conexion->error);
+    $resultado = $conexion->query("SELECT * FROM usuarios WHERE email = '" . $_POST['email'] . "' AND password = '" . $_POST['password'] . "' LIMIT 1") or die($conexion->error);
 
     if (mysqli_num_rows($resultado) > 0) {
-        $datos_usuario = mysqli_fetch_row($resultado);
-        $id_usuario = $datos_usuario[0];
-        $nombre = $datos_usuario[2];
-        $email = $datos_usuario[4];
-        $nivel = $datos_usuario[6];
-        $telefono = $datos_usuario[7];
-        $id_permiso = $datos_usuario[8];
-
-        // Consulta para obtener los datos de permisos
-        $permisos_resultado = $conexion->query("SELECT * FROM permisos WHERE id_usuario = $id_usuario") or die($conexion->error);
-        $datos_permisos = mysqli_fetch_assoc($permisos_resultado);
+        $datos_usuario = mysqli_fetch_assoc($resultado); // Usamos mysqli_fetch_assoc para obtener un array asociativo
+        $id_usuario = $datos_usuario['id'];
+        $nombre = $datos_usuario['nom_persona'];
+        $usuario = $datos_usuario['usuario'];
+        $email = $datos_usuario['email'];
+        $nivel = $datos_usuario['tipo_usuario'];
+        $telefono = $datos_usuario['telefono'];
+        $id_seccion = $datos_usuario['id_seccion'];
 
         // Crear un array con los valores de permisos
         $permisos_array = array(
-            'id_superior' => $datos_permisos['id_superior'],
-            'per_niveles' => $datos_permisos['per_niveles'],
-            'per_categoria' => $datos_permisos['per_categoria'],
-            'per_tickets' => $datos_permisos['per_tickets'],
-            'per_libros' => $datos_permisos['per_libros'],
-            'per_conlibro' => $datos_permisos['per_conlibro'],
-            'per_mistickets' => $datos_permisos['per_mistickets']
+            'id_superior' => $datos_usuario['id_superior'],
+            'per_niveles' => $datos_usuario['per_niveles'],
+            'per_categoria' => $datos_usuario['per_categoria'],
+            'per_tickets' => $datos_usuario['per_tickets'],
+            'per_seccion' => $datos_usuario['per_seccion'],
+            'per_con' => $datos_usuario['per_con'],
+            'per_mistickets' => $datos_usuario['per_mistickets'],
+            'per_crear' => $datos_usuario['per_crear']
+           // 'per_mistickets' => $datos_usuario['per_mistickets']
         );
 
         $_SESSION['datos_login'] = array(
+            'usuario' => $usuario,
             'nombre' => $nombre,
             'id_usuario' => $id_usuario,
             'email' => $email,
             'telefono' => $telefono,
             'nivel' => $nivel,
-            'permisos' => $permisos_array  // Agregar el array de permisos al array de sesión
+            'permisos' => $permisos_array,
+            'id_seccion' => $id_seccion
         );
 
         header("Location: ../index.php");
@@ -48,6 +47,5 @@ if (isset($_POST['email']) && isset($_POST['password'])) {
 } else {
     header("../index.php");
 }
-
 
 ?>

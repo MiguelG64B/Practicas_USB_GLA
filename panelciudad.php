@@ -11,11 +11,11 @@ if (!isset($_SESSION['datos_login'])) {
 $arregloUsuario = $_SESSION['datos_login'];
 $idUsuario = $arregloUsuario['id_usuario'];
 
-if ($arregloUsuario['permisos']['per_categoria'] != '1') {
+if ($arregloUsuario['permisos']['per_con'] != '1') {
     header("Location: ./perfil.php");
     exit(); // Asegúrate de que el script se detenga después de redirigir
 }
-$registrosPorPagina = 4;
+$registrosPorPagina = 10;
 
 // Página actual
 if (isset($_GET['page'])) {
@@ -29,17 +29,19 @@ $offset = ($paginaActual - 1) * $registrosPorPagina;
 
 // Consulta SQL con limit, offset y búsqueda
 $searchTerm = isset($_GET['search']) ? mysqli_real_escape_string($conexion, $_GET['search']) : '';
-$sql = "SELECT * FROM categorias WHERE nombre LIKE '%$searchTerm%' LIMIT $offset, $registrosPorPagina";
+$sql = "SELECT * FROM ciudad WHERE descrip LIKE '%$searchTerm%' LIMIT $offset, $registrosPorPagina";
 $resultado = mysqli_query($conexion, $sql);
-$sql2 = "SELECT COUNT(*) AS totalCategorias FROM categorias";
+
+$sql2 = "SELECT COUNT(*) AS totalCategorias FROM ciudad";
 $resultado2 = mysqli_query($conexion, $sql2);
 $row = mysqli_fetch_assoc($resultado2);
 $totalCategorias = $row['totalCategorias'];
-$totalBotones = round($totalCategorias / $registrosPorPagina);
+$totalBotones = round($totalCategorias[0] / $registrosPorPagina);
 
 // Calcular el número total de páginas
 $totalRegistros = mysqli_num_rows($resultado2); // Reemplaza con la cantidad total de registros en tu tabla
 $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -50,7 +52,7 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
     <link rel="apple-touch-icon" sizes="76x76" href="./assets/img/apple-icon.png">
     <link rel="icon" type="image/png" href="./assets/img/favicon.png">
     <title>
-        Panel Categorias
+        Panel Areas
     </title>
     <!-- Fonts and icons -->
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" />
@@ -76,7 +78,7 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
                 <div class="col-12">
                     <div class="card mb-4">
                         <div class="card-header pb-0">
-                            <h6>Categorias</h6>
+                            <h6>Ciudades</h6>
                         </div>
                         <div class="content-wrapper">
                             <div class="content-header">
@@ -85,13 +87,11 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
                                         <form method="GET" action="">
                                             <div class="input-group mb-3">
                                                 <input type="text" class="form-control" placeholder="Buscar por nombre" name="search">
-                                                <div class="input-group-append">
-                                                     <button class="btn btn-outline-primary mb-0" type="submit">Buscar</button>
-                                                </div>
+                                                 <button class="btn btn-outline-primary mb-0" type="submit">Buscar</button>
                                             </div>
                                         </form>
-                                        <button type="button" title="Agregar Categoria" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
-                                            <i class="fa fa-plus"></i> Agregar categoria
+                                        <button type="button" title="Agregar Ciudad" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+                                            <i class="fa fa-plus"></i> Agregar Ciudad
                                         </button>
                                     </div>
                                 </div>
@@ -100,75 +100,56 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
 
                         <section class="content">
                             <div class="container-fluid">
-
-                                <?php
-                                if (isset($_GET['error'])) {
-                                ?>
+                                <?php if (isset($_GET['error'])) : ?>
                                     <div class="alert alert-danger" role="alert">
                                         <?php echo $_GET['error']; ?>
                                     </div>
-
-                                <?php  } ?>
-                                <?php
-                                if (isset($_GET['success'])) {
-                                ?>
+                                <?php endif; ?>
+                                <?php if (isset($_GET['success'])) : ?>
                                     <div class="alert alert-success" role="alert">
                                         Se ha insertado correctamente.
                                     </div>
-
-                                <?php  } ?>
+                                <?php endif; ?>
                                 <table class="table">
                                     <thead>
                                         <tr>
                                             <th>Id</th>
                                             <th>Nombre</th>
-                                            <th>Descripcion</th>
-                                            <th>Seccion</th>
                                             <th></th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <?php
-                                        while ($f = mysqli_fetch_array($resultado)) {
+                                        while ($f = mysqli_fetch_array($resultado)) :
                                         ?>
                                             <tr>
                                                 <td><?php echo $f['id']; ?></td>
                                                 <td>
-                                                    <?php echo $f['nombre']; ?>
-                                                </td>
-                                                <td><?php echo $f['descripcion']; ?></td>
-                                                <td><?php $res = $conexion->query("SELECT descrip FROM seccion WHERE id = " . $f['id_seccion']);
-                                                    if ($area = mysqli_fetch_array($res)) {
-                                                        echo $area['descrip'];
-                                                    }
-                                                    ?>
+                                                    <?php echo $f['descrip']; ?>
                                                 </td>
                                                 <td>
-                                                    <button class="btn btn-primary btn-small btnEditar" title="Editar Categoria" data-id="<?php echo $f['id']; ?>" data-id_seccion="<?php echo $f['id_seccion']; ?>" data-nombre="<?php echo $f['nombre']; ?>" data-descripcion="<?php echo $f['descripcion']; ?>" data-toggle="modal" data-target="#modalEditar">
+                                                    <button class="btn btn-primary btn-small btnEditar" title="Editar Area" data-id="<?php echo $f['id']; ?>" data-nombre="<?php echo $f['descrip']; ?>" data-toggle="modal" data-target="#modalEditar">
                                                         <i class="fa fa-edit"></i>
                                                     </button>
-                                                    <button class="btn btn-danger btn-small btnEliminar" title="Eliminar Categoria" data-id="<?php echo $f['id']; ?>" data-toggle="modal" data-target="#modalEliminar">
+                                                    <button class="btn btn-danger btn-small btnEliminar" title="Eliminar Area" data-id="<?php echo $f['id']; ?>" data-toggle="modal" data-target="#modalEliminar">
                                                         <i class="fa fa-trash"></i>
                                                     </button>
                                                 </td>
                                             </tr>
                                         <?php
-                                        }
+                                        endwhile;
                                         ?>
                                     </tbody>
                                 </table>
-
                                 <div class="pagination">
                                     <?php if ($paginaActual > 1) : ?>
                                         <a href="?page=<?php echo $paginaActual - 1; ?>&search=" class="btn btn-primary">Anterior</a>
                                     <?php endif; ?>
-
                                     <?php
                                     for ($i = 1; $i <= $totalBotones; $i++) :
                                     ?>
                                         <a href="?page=<?php echo $i; ?>&search=" class="btn btn-primary <?php if ($i == $paginaActual) echo 'active'; ?>"><?php echo $i; ?></a>
                                     <?php endfor; ?>
-
                                     <?php if ($paginaActual < $totalCategorias) : ?>
                                         <a href="?page=<?php echo $paginaActual + 1; ?>&search=" class="btn btn-primary">Siguiente</a>
                                     <?php endif; ?>
@@ -180,39 +161,23 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
                 </div>
             </div>
         </div>
- 
 
 
 
         <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
           <div class="modal-dialog" role="document">
             <div class="modal-content">
-              <form action="./php/Insertarcategorias.php" method="POST" enctype="multipart/form-data">
+              <form action="./php/insertarciudad.php" method="POST" enctype="multipart/form-data">
                 <div class="modal-header">
-                  <h5 class="modal-title" id="exampleModalLabel">Insertar Categoria</h5>
+                  <h5 class="modal-title" id="exampleModalLabel">Insertar Ciudad</h5>
                   <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                   </button>
                 </div>
                 <div class="modal-body">
                   <div class="form-group">
-                    <label for="nombre">Nombre</label>
+                    <label for="nombre">Nombre de la Ciudad</label>
                     <input type="text" name="nombre" placeholder="nombre" id="nombre" class="form-control" required>
-                  </div>
-                  <div class="form-group">
-                    <label for="descripcion">Descripcion</label>
-                    <input type="text" name="descripcion" placeholder="descripcion" id="descripcion" class="form-control" required>
-                  </div>
-                  <div class="form-group">
-                    <label for="id_seccionEdit">Seccion encargada</label>
-                    <select name="id_seccion" id="id_seccionEdit" class="form-control" required>
-                      <?php
-                      $res = $conexion->query("select * from seccion ");
-                      while ($f = mysqli_fetch_array($res)) {
-                        echo '<option value="' . $f['id'] . '" >' . $f['descrip'] . '</option>';
-                      }
-                      ?>
-                    </select>
                   </div>
                 </div>
                 <div class="modal-footer">
@@ -229,13 +194,13 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
             <div class="modal-content">
 
               <div class="modal-header">
-                <h5 class="modal-title" id="modalEliminarLabel">Eliminar categoria</h5>
+                <h5 class="modal-title" id="modalEliminarLabel">Eliminar Ciudad</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                   <span aria-hidden="true">&times;</span>
                 </button>
               </div>
               <div class="modal-body">
-                ¿Desea eliminar esta categoria?
+                ¿Desea eliminar esta Ciudad?
               </div>
               <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
@@ -248,9 +213,9 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
         <div class="modal fade" id="modalEditar" tabindex="-1" role="dialog" aria-labelledby="modalEditar" aria-hidden="true">
           <div class="modal-dialog" role="document">
             <div class="modal-content">
-              <form action="./php/editarcategoria.php" method="POST" enctype="multipart/form-data">
+              <form action="./php/editarciudad.php" method="POST" enctype="multipart/form-data">
                 <div class="modal-header">
-                  <h5 class="modal-title" id="modalEditar">Editar categoria</h5>
+                  <h5 class="modal-title" id="modalEditar">Editar Ciudad</h5>
                   <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                   </button>
@@ -261,21 +226,6 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
                   <div class="form-group">
                     <label for="nombre">Nombre</label>
                     <input type="nombreEdit" name="nombre" placeholder="nombre" id="nombreEdit" class="form-control" required>
-                  </div>
-                  <div class="form-group">
-                    <label for="descripcionEdit">Descripcion</label>
-                    <input type="text" name="descripcion" placeholder="descripcion" id="descripcionEdit" class="form-control" required>
-                  </div>
-                  <div class="form-group">
-                    <label for="id_seccionEdit">Area encargada</label>
-                    <select name="id_seccion" id="id_seccionEdit" class="form-control" required>
-                      <?php
-                      $res = $conexion->query("select * from seccion");
-                      while ($f = mysqli_fetch_array($res)) {
-                        echo '<option value="' . $f['id'] . '" >' . $f['descrip'] . '</option>';
-                      }
-                      ?>
-                    </select>
                   </div>
                 </div>
                 <div class="modal-footer">
@@ -321,7 +271,7 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
       });
       $(".eliminar").click(function() {
         $.ajax({
-          url: './php/eliminarcategoria.php',
+          url: './php/eliminarciudad.php',
           method: 'POST',
           data: {
             id: idEliminar
@@ -335,12 +285,8 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
       $(".btnEditar").click(function() {
         idEditar = $(this).data('id');
         var nombre = $(this).data('nombre');
-        var descripcion = $(this).data('descripcion');
-        var id_seccion = $(this).data('id_seccion');
         $("#nombreEdit").val(nombre);
-        $("#descripcionEdit").val(descripcion);
         $("#idEdit").val(idEditar);
-        $("#id_seccionEdit").val(id_seccion);
       });
     });
   </script>
