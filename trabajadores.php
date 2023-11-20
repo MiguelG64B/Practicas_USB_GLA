@@ -11,12 +11,14 @@ if (!isset($_SESSION['datos_login'])) {
 $arregloUsuario = $_SESSION['datos_login'];
 $idUsuario = $arregloUsuario['id_usuario'];
 $nivel = $arregloUsuario['nivel'];
+$idestado = $arregloUsuario['id_estado'];
 
 if ($arregloUsuario['permisos']['per_niveles'] != '1') {
   header("Location: ./perfil.php");
   exit(); // Asegúrate de que el script se detenga después de redirigir
 }
-$registrosPorPagina = 50;
+
+$registrosPorPagina = 10;
 
 // Página actual
 if (isset($_GET['page'])) {
@@ -44,7 +46,7 @@ $estudiantes = mysqli_query($conexion, $sql);
 $searchTerm = isset($_GET['search']) ? mysqli_real_escape_string($conexion, $_GET['search']) : '';
 $sql = "SELECT * FROM usuarios WHERE nombre LIKE '%$searchTerm%' LIMIT $offset, $registrosPorPagina";
 $resultado = mysqli_query($conexion, $sql);
-$sql2 = "SELECT COUNT(*) AS totalCategorias FROM usuarios";
+$sql2 = "SELECT COUNT(*) AS totalCategorias FROM usuarios WHERE tipo_usuario NOT IN (1,7, 8, 9) ";
 $resultado2 = mysqli_query($conexion, $sql2);
 $row = mysqli_fetch_assoc($resultado2);
 $totalCategorias = $row['totalCategorias'];
@@ -192,13 +194,15 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
                   <?php if ($paginaActual > 1) : ?>
                     <a href="?page=<?php echo $paginaActual - 1; ?>&search=" class="btn btn-primary">Anterior</a>
                   <?php endif; ?>
-
                   <?php
-                  for ($i = 1; $i <= $totalBotones; $i++) :
+                  $maxButtons = 4; // Número máximo de botones a mostrar
+                  $start = max(1, $paginaActual - floor($maxButtons / 2));
+                  $end = min($start + $maxButtons - 1, $totalBotones);
+
+                  for ($i = $start; $i <= $end; $i++) :
                   ?>
                     <a href="?page=<?php echo $i; ?>&search=" class="btn btn-primary <?php if ($i == $paginaActual) echo 'active'; ?>"><?php echo $i; ?></a>
                   <?php endfor; ?>
-
                   <?php if ($paginaActual < $totalCategorias) : ?>
                     <a href="?page=<?php echo $paginaActual + 1; ?>&search=" class="btn btn-primary">Siguiente</a>
                   <?php endif; ?>

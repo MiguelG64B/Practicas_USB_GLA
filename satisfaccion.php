@@ -9,7 +9,7 @@ if (!isset($_SESSION['datos_login'])) {
 }
 $arregloUsuario = $_SESSION['datos_login'];
 $idUsuario = $arregloUsuario['id_usuario'];
-include("./php/conexion.php");
+
 if (isset($_GET['id']) && isset($_GET['comentarios'])) {
   $resultado = $conexion->query("select * from tickets where id_ticket=" . $_GET['id']) or die($conexion->error);
   if (mysqli_num_rows($resultado) > 0) {

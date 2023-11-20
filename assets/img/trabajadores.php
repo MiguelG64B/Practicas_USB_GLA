@@ -16,7 +16,7 @@ if ($arregloUsuario['permisos']['per_niveles'] != '1') {
   header("Location: ./perfil.php");
   exit(); // Asegúrate de que el script se detenga después de redirigir
 }
-$registrosPorPagina = 40;
+$registrosPorPagina = 50;
 
 // Página actual
 if (isset($_GET['page'])) {
@@ -33,7 +33,7 @@ $offset = ($paginaActual - 1) * $registrosPorPagina;
 
 // Consulta SQL con limit y offset
 if ($nivel == 1) {
-  $sql = "SELECT * FROM usuarios WHERE id != $idUsuario AND tipo_usuario = 7 AND nom_persona LIKE '%$searchTerm%' LIMIT $offset, $registrosPorPagina;";
+  $sql = "SELECT * FROM usuarios WHERE id != $idUsuario AND tipo_usuario NOT IN (1,7, 8, 9) AND nom_persona LIKE '%$searchTerm%' LIMIT $offset, $registrosPorPagina;";
 } else {
   $sql = "SELECT * FROM usuarios WHERE id_superior = $idUsuario AND nom_persona LIKE '%$searchTerm%' LIMIT $offset, $registrosPorPagina";
 }
@@ -44,7 +44,7 @@ $estudiantes = mysqli_query($conexion, $sql);
 $searchTerm = isset($_GET['search']) ? mysqli_real_escape_string($conexion, $_GET['search']) : '';
 $sql = "SELECT * FROM usuarios WHERE nombre LIKE '%$searchTerm%' LIMIT $offset, $registrosPorPagina";
 $resultado = mysqli_query($conexion, $sql);
-$sql2 = "SELECT COUNT(*) AS totalCategorias FROM usuarios WHERE tipo_usuario = 7";
+$sql2 = "SELECT COUNT(*) AS totalCategorias FROM usuarios";
 $resultado2 = mysqli_query($conexion, $sql2);
 $row = mysqli_fetch_assoc($resultado2);
 $totalCategorias = $row['totalCategorias'];
@@ -64,7 +64,7 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
   <link rel="apple-touch-icon" sizes="76x76" href="./assets/img/apple-icon.png">
   <link rel="icon" type="image/png" href="./assets/img/favicon.png">
   <title>
-    Panel Estudiantes
+    Panel Trabajadores
   </title>
   <!-- Fonts and icons -->
   <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" />
@@ -91,7 +91,7 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
         <div class="col-12">
           <div class="card mb-4">
             <div class="card-header pb-0">
-              <h6>Estudiante</h6>
+              <h6>Trabajadores</h6>
             </div>
             <div class="content-wrapper">
               <div class="content-header">
@@ -105,8 +105,8 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
                         </div>
                       </div>
                     </form>
-                    <button type="button" title="Agregar estudiante" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal2">
-                      <i class="fa fa-plus"></i> Agregar estudiante
+                    <button type="button" title="Agregar Trabajador" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+                      <i class="fa fa-plus"></i> Agregar Trabajador
                     </button>
                   </div>
                 </div>
@@ -172,10 +172,13 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
                           ?>
                         </td>
                         <td>
-                          <button class="btn btn-danger btn-small btnEliminar" title="Inactivar estudiante" data-id="<?php echo $f['id']; ?>" data-toggle="modal" data-target="#modalEliminar">
+                          <button class="btn btn-primary btn-small btnEditar" title="Editar permisos de usuario" data-id="<?php echo $f['id']; ?>" data-per_tickets="<?php echo $f['per_tickets']; ?>" data-per_categoria="<?php echo $f['per_categoria']; ?>" data-per_niveles="<?php echo $f['per_niveles']; ?>" data-per_seccion="<?php echo $f['per_seccion']; ?>" data-per_mistickets="<?php echo $f['per_mistickets']; ?>" data-per_con="<?php echo $f['per_con']; ?>" data-id_superior="<?php echo $f['id_superior']; ?>" data-toggle="modal" data-target="#modalEditar">
+                            <i class="fa fa-edit"></i>
+                          </button>
+                          <button class="btn btn-danger btn-small btnEliminar" title="Inactivar Trabajador" data-id="<?php echo $f['id']; ?>" data-toggle="modal" data-target="#modalEliminar">
                             <i class="fa fa-low-vision"></i>
                           </button>
-                          <button class="btn btn-info btn-small btnactivar" title="Activar estudiante" data-id="<?php echo $f['id']; ?>" data-toggle="modal" data-target="#modalactivar">
+                          <button class="btn btn-info btn-small btnactivar" title="Activar Trabajador" data-id="<?php echo $f['id']; ?>" data-toggle="modal" data-target="#modalactivar">
                             <i class="fa fa-eye"></i>
                           </button>
                         </td>
@@ -189,15 +192,13 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
                   <?php if ($paginaActual > 1) : ?>
                     <a href="?page=<?php echo $paginaActual - 1; ?>&search=" class="btn btn-primary">Anterior</a>
                   <?php endif; ?>
-                  <?php
-                  $maxButtons = 4; // Número máximo de botones a mostrar
-                  $start = max(1, $paginaActual - floor($maxButtons / 2));
-                  $end = min($start + $maxButtons - 1, $totalBotones);
 
-                  for ($i = $start; $i <= $end; $i++) :
+                  <?php
+                  for ($i = 1; $i <= $totalBotones; $i++) :
                   ?>
                     <a href="?page=<?php echo $i; ?>&search=" class="btn btn-primary <?php if ($i == $paginaActual) echo 'active'; ?>"><?php echo $i; ?></a>
                   <?php endfor; ?>
+
                   <?php if ($paginaActual < $totalCategorias) : ?>
                     <a href="?page=<?php echo $paginaActual + 1; ?>&search=" class="btn btn-primary">Siguiente</a>
                   <?php endif; ?>
@@ -212,12 +213,12 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
     </div>
 
 
-    <div class="modal fade" id="exampleModal2" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
-          <form action="./php/insertarestudiante.php" method="POST" enctype="multipart/form-data">
+          <form action="./php/insertartrabajador.php" method="POST" enctype="multipart/form-data">
             <div class="modal-header">
-              <h5 class="modal-title" id="exampleModalLabel">Agregar estudiante</h5>
+              <h5 class="modal-title" id="exampleModalLabel">Agregar trabajador</h5>
               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
               </button>
@@ -247,6 +248,90 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
                 <label for="password">Confirmar Password</label>
                 <input type="password" class="form-control" placeholder="Confirmar Password" name="pass2" aria-label="Password" required>
               </div>
+              <div class="form-group">
+                <label for="id_seccion">Seccion encargada</label>
+                <select name="id_seccion" id="id_seccion" class="form-control" required>
+                  <option value="0"></option>
+                  <?php
+                  $res = $conexion->query("select * from seccion ");
+                  while ($f = mysqli_fetch_array($res)) {
+                    echo '<option value="' . $f['id'] . '" >' . $f['descrip'] . '</option>';
+                  }
+                  ?>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="rol">Rol</label>
+                <select name="rol" id="rol" class="form-control" required>
+                  <option value="0"></option>
+                  <?php
+                  $res = $conexion->query("select * from tipo_usuario WHERE id NOT IN (1, 7, 8, 9);");
+                  while ($f = mysqli_fetch_array($res)) {
+                    echo '<option value="' . $f['id'] . '" >' . $f['descrip'] . '</option>';
+                  }
+                  ?>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="superior">superior</label>
+                <select name="superior" id="superior" class="form-control" required>
+                  <option value="0"></option>
+                  <?php
+                  $consulta = "SELECT usuarios.id, usuarios.nom_persona, tipo_usuario.descrip 
+             FROM usuarios
+             INNER JOIN tipo_usuario ON usuarios.tipo_usuario = tipo_usuario.id
+             WHERE usuarios.id NOT IN (1, 5, 6, 7, 8, 9)";
+
+                  $res = $conexion->query($consulta);
+
+                  while ($f = mysqli_fetch_array($res)) {
+                    echo '<option value="' . $f['id'] . '">' . $f['nom_persona'] . ' (' . $f['descrip'] . ')</option>';
+                  }
+                  ?>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="per_niveles">Modificar y insertar usuarios</label>
+                <select class="form-control" name="per_niveles" id="per_niveles">
+                  <option value="0">no</option>
+                  <option value="1">Si</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="descripcionEdit">Crear y asignar tickets</label>
+                <select class="form-control" name="per_tickets" id="per_tickets">
+                  <option value="0">no</option>
+                  <option value="1">Si</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="descripcionEdit">Atender tickets</label>
+                <select class="form-control" name="per_mistickets" id="per_mistickets">
+                  <option value="0">no</option>
+                  <option value="1">Si</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="descripcionEdit">Insertar categorias</label>
+                <select class="form-control" name="per_categoria" id="per_categoria">
+                  <option value="0">no</option>
+                  <option value="1">Si</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="descripcionEdit">Insertar secciones</label>
+                <select class="form-control" name="per_seccion" id="per_seccion">
+                  <option value="0">no</option>
+                  <option value="1">Si</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="descripcionEdit">Insertar contenido a la biblioteca</label>
+                <select class="form-control" name="per_con" id="per_con">
+                  <option value="0">no</option>
+                  <option value="1">Si</option>
+                </select>
+              </div>
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
@@ -256,7 +341,98 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
         </div>
       </div>
     </div>
+    <div class="modal fade" id="modalEditar" tabindex="-1" role="dialog" aria-labelledby="modalEditar" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <form action="./php/modpermisos.php" method="POST" enctype="multipart/form-data">
+            <div class="modal-header">
+              <h5 class="modal-title" id="modalEditar">Editar permisos y superior de trabajador</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <input type="hidden" id="idEdit" name="id">
+              <div class="form-group">
+                <label for="id_seccion">Seccion encargada</label>
+                <select name="id_seccion" id="id_seccionEdit" class="form-control" required>
+                  <option value="0"></option>
+                  <?php
+                  $res = $conexion->query("select * from seccion ");
+                  while ($f = mysqli_fetch_array($res)) {
+                    echo '<option value="' . $f['id'] . '" >' . $f['descrip'] . '</option>';
+                  }
+                  ?>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="id_superiorEdit">superior</label>
+                <select name="id_superior" id="id_superiorEdit" class="form-control" required>
+                  <?php
+                  $consulta = "SELECT usuarios.id, usuarios.nom_persona, tipo_usuario.descrip 
+             FROM usuarios
+             INNER JOIN tipo_usuario ON usuarios.tipo_usuario = tipo_usuario.id
+             WHERE usuarios.id NOT IN (1, 5, 6, 7, 8, 9)";
 
+                  $res = $conexion->query($consulta);
+
+                  while ($f = mysqli_fetch_array($res)) {
+                    echo '<option value="' . $f['id'] . '">' . $f['nom_persona'] . ' (' . $f['descrip'] . ')</option>';
+                  }
+                  ?>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="per_nivelesEdit">Modificar y insertar usuarios</label>
+                <select class="form-control" name="per_niveles" id="per_nivelesEdit">
+                  <option value="0">no</option>
+                  <option value="1">Si</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="per_ticketsEdit">Crear y asignar tickets</label>
+                <select class="form-control" name="per_tickets" id="per_ticketsEdit">
+                  <option value="0">no</option>
+                  <option value="1">Si</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="descripcionEdit">Atender tickets</label>
+                <select class="form-control" name="per_mistickets" id="per_misticketsEdit">
+                  <option value="0">no</option>
+                  <option value="1">Si</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="per_categoriaEdit">Insertar categorias</label>
+                <select class="form-control" name="per_categoria" id="per_categoriaEdit">
+                  <option value="0">no</option>
+                  <option value="1">Si</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="descripcionEdit">Insertar secciones</label>
+                <select class="form-control" name="per_seccion" id="per_seccionEdit">
+                  <option value="0">no</option>
+                  <option value="1">Si</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="descripcionEdit">Insertar contenido a la biblioteca</label>
+                <select class="form-control" name="per_con" id="per_conEdit">
+                  <option value="0">no</option>
+                  <option value="1">Si</option>
+                </select>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+              <button type="submit" class="btn btn-primary editar">Guardar</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
     <div class="modal fade" id="modalEliminar" tabindex="-1" role="dialog" aria-labelledby="modalEliminarLabel" aria-hidden="true">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -374,6 +550,7 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
         var per_categoria = $(this).data('per_categoria');
         var per_con = $(this).data('per_con');
         var per_seccion = $(this).data('per_seccion');
+        var per_mistickets = $(this).data('per_mistickets');
         $("#idEdit").val(idEditar);
         $("#rolEdit").val(rol);
         $("#id_seccionEdit").val(id_seccion);
@@ -382,6 +559,7 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
         $("#per_ticketsEdit").val(per_tickets);
         $("#per_categoriaEdit").val(per_categoria);
         $("#per_seccionEdit").val(per_seccion);
+        $("#per_misticketsEdit").val(per_mistickets);
         $("#per_conEdit").val(per_con);
       });
     });

@@ -5,6 +5,7 @@ if (!isset($_SESSION['datos_login'])) {
   header("Location: ./index.php");
 }
 $arregloUsuario = $_SESSION['datos_login'];
+
 ?>
 <!DOCTYPE html>
 <html lang="en">

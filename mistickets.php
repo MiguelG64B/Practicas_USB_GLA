@@ -12,13 +12,14 @@ $arregloUsuario = $_SESSION['datos_login'];
 $idUsuario = $arregloUsuario['id_usuario'];
 $nivel = $arregloUsuario['nivel'];
 $id_seccion = $arregloUsuario['id_seccion'];
+
 // Verifica si 'per_tickets' es igual a 'si'
 if ($arregloUsuario['permisos']['per_mistickets'] != '1' && $arregloUsuario['permisos']['per_crear'] != '1') {
   // Si 'per_tickets' no es igual a 'si', puedes redirigir a otra página o mostrar un mensaje de error.
   header("Location: ./perfil.php");
   exit(); // Asegúrate de que el script se detenga después de redirigir
 }
-$registrosPorPagina = 50;
+$registrosPorPagina = 10;
 
 // Página actual
 if (isset($_GET['page'])) {
@@ -375,13 +376,15 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
                     <?php if ($paginaActual > 1) : ?>
                       <a href="?page=<?php echo $paginaActual - 1; ?>&search=" class="btn btn-primary">Anterior</a>
                     <?php endif; ?>
-
                     <?php
-                    for ($i = 1; $i <= $totalBotones; $i++) :
+                    $maxButtons = 4; // Número máximo de botones a mostrar
+                    $start = max(1, $paginaActual - floor($maxButtons / 2));
+                    $end = min($start + $maxButtons - 1, $totalBotones);
+
+                    for ($i = $start; $i <= $end; $i++) :
                     ?>
                       <a href="?page=<?php echo $i; ?>&search=" class="btn btn-primary <?php if ($i == $paginaActual) echo 'active'; ?>"><?php echo $i; ?></a>
                     <?php endfor; ?>
-
                     <?php if ($paginaActual < $totalCategorias) : ?>
                       <a href="?page=<?php echo $paginaActual + 1; ?>&search=" class="btn btn-primary">Siguiente</a>
                     <?php endif; ?>
@@ -401,7 +404,7 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
         <div class="modal-content">
           <form action="./php/insertarticket2.php" method="POST" enctype="multipart/form-data">
             <div class="modal-header">
-              <h5 class="modal-title" id="exampleModalLabel">Crear solicitid</h5>
+              <h5 class="modal-title" id="exampleModalLabel">Crear solicitud</h5>
               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
               </button>

@@ -18,7 +18,8 @@ if ($arregloUsuario['permisos']['per_tickets'] != '1') {
   header("Location: ./perfil.php");
   exit(); // Asegúrate de que el script se detenga después de redirigir
 }
-$registrosPorPagina = 50;
+
+$registrosPorPagina = 10;
 
 // Página actual
 if (isset($_GET['page'])) {
@@ -379,13 +380,15 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
                     <?php if ($paginaActual > 1) : ?>
                       <a href="?page=<?php echo $paginaActual - 1; ?>&search=" class="btn btn-primary">Anterior</a>
                     <?php endif; ?>
-
                     <?php
-                    for ($i = 1; $i <= $totalBotones; $i++) :
+                    $maxButtons = 4; // Número máximo de botones a mostrar
+                    $start = max(1, $paginaActual - floor($maxButtons / 2));
+                    $end = min($start + $maxButtons - 1, $totalBotones);
+
+                    for ($i = $start; $i <= $end; $i++) :
                     ?>
                       <a href="?page=<?php echo $i; ?>&search=" class="btn btn-primary <?php if ($i == $paginaActual) echo 'active'; ?>"><?php echo $i; ?></a>
                     <?php endfor; ?>
-
                     <?php if ($paginaActual < $totalCategorias) : ?>
                       <a href="?page=<?php echo $paginaActual + 1; ?>&search=" class="btn btn-primary">Siguiente</a>
                     <?php endif; ?>
@@ -405,7 +408,7 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
         <div class="modal-content">
           <form action="./php/insertarticket.php" method="POST" enctype="multipart/form-data">
             <div class="modal-header">
-              <h5 class="modal-title" id="exampleModalLabel">Crear solicitid</h5>
+              <h5 class="modal-title" id="exampleModalLabel">Crear solicitud</h5>
               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
               </button>
@@ -459,37 +462,38 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
     <div class="modal fade" id="modalEditar" tabindex="-1" role="dialog" aria-labelledby="modalEditar" aria-hidden="true">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
-          <form action="./php/editarticket.php" method="POST" enctype="multipart/form-data">
+          <form action="./php/insertarticket.php" method="POST" enctype="multipart/form-data">
             <div class="modal-header">
-              <h5 class="modal-title" id="modalEditar">Editar ticket</h5>
+              <h5 class="modal-title" id="modalEditar">Crear solicitud</h5>
               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
               </button>
             </div>
             <div class="modal-body">
-              <input type="hidden" id="idEdit" name="id">
               <div class="form-group">
-                <label for="titulo">Titulo</label>
-                <input type="tituloEdit" name="titulo" placeholder="titulo" id="tituloEdit" class="form-control" required>
+                <label for="Titulo">Titulo</label>
+                <input type="text" name="titulo" placeholder="Titulo" id="titulo" class="form-control" required>
               </div>
               <div class="form-group">
-                <label for="editor">Contenido</label>
-                <textarea name="editor" id="editorEdit" class="form-control editorEdit2" required></textarea>
-              </div>
-              <div class="form-group">
-                <label for="categoriaEdit">Categoria</label>
-                <select name="categoria" id="categoriaEdit" class="form-control" required>
+                <label for="categoria">Categoria (Seccion)</label>
+                <select name="categoria" id="categoria" class="form-control" required>
                   <?php
-                  $res = $conexion->query("select * from categorias");
+                  $res = $conexion->query("SELECT categorias.id, categorias.nombre, seccion.descrip, categorias.id_seccion 
+            FROM categorias 
+            INNER JOIN seccion ON categorias.id_seccion = seccion.id");
                   while ($f = mysqli_fetch_array($res)) {
-                    echo '<option value="' . $f['id'] . '" >' . $f['nombre'] . '</option>';
+                    echo '<option value="' . $f['id'] . '" data-idseccion="' . $f['id_seccion'] . '">' . $f['nombre'] . ' - ' . $f['descrip'] . '</option>';
                   }
                   ?>
                 </select>
               </div>
               <div class="form-group">
-                <label for="prioridadEdit">Prioridad</label>
-                <select name="prioridad" id="prioridadEdit" class="form-control" required>
+                <label for="editor">Resumen</label>
+                <textarea name="editor" id="editor" class="form-control" required></textarea>
+              </div>
+              <div class="form-group">
+                <label for="prioridad">Prioridad</label>
+                <select name="prioridad" id="prioridad" class="form-control" required>
                   <?php
                   $res = $conexion->query("select * from prioridad");
                   while ($f = mysqli_fetch_array($res)) {
@@ -498,10 +502,11 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
                   ?>
                 </select>
               </div>
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-              <button type="submit" class="btn btn-primary editar">Guardar</button>
+              <input type="hidden" id="id_usuario" name="id_usuario" value=" <?php echo $arregloUsuario['id_usuario']; ?> " class="form-control" required>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                <button type="submit" class="btn btn-primary">Guardar</button>
+              </div>
             </div>
           </form>
         </div>

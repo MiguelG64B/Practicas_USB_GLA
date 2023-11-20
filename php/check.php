@@ -13,6 +13,7 @@ if (isset($_POST['email']) && isset($_POST['password'])) {
         $usuario = $datos_usuario['usuario'];
         $email = $datos_usuario['email'];
         $nivel = $datos_usuario['tipo_usuario'];
+        $id_estado = $datos_usuario['id_estado'];
         $telefono = $datos_usuario['telefono'];
         $id_seccion = $datos_usuario['id_seccion'];
 
@@ -37,7 +38,9 @@ if (isset($_POST['email']) && isset($_POST['password'])) {
             'telefono' => $telefono,
             'nivel' => $nivel,
             'permisos' => $permisos_array,
-            'id_seccion' => $id_seccion
+            'id_seccion' => $id_seccion,
+            'id_estado' => $id_estado
+            
         );
 
         header("Location: ../index.php");
