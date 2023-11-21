@@ -419,7 +419,7 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
                 <input type="text" name="titulo" placeholder="Titulo" id="titulo" class="form-control" required>
               </div>
               <div class="form-group">
-                <label for="categoria">Categoria (Seccion)</label>
+                <label for="categoria">Categoria (Seccion que se encarga)</label>
                 <select name="categoria" id="categoria" class="form-control" required>
                   <?php
                   $res = $conexion->query("SELECT categorias.id, categorias.nombre, seccion.descrip, categorias.id_seccion 
@@ -462,22 +462,23 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
     <div class="modal fade" id="modalEditar" tabindex="-1" role="dialog" aria-labelledby="modalEditar" aria-hidden="true">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
-          <form action="./php/insertarticket.php" method="POST" enctype="multipart/form-data">
+          <form action="./php/editarticket.php" method="POST" enctype="multipart/form-data">
             <div class="modal-header">
-              <h5 class="modal-title" id="modalEditar">Crear solicitud</h5>
+              <h5 class="modal-title" id="modalEditar">Editar solicitud</h5>
               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
               </button>
             </div>
             <div class="modal-body">
+            <input type="hidden" id="idEdit" name="id">
               <div class="form-group">
-                <label for="Titulo">Titulo</label>
-                <input type="text" name="titulo" placeholder="Titulo" id="titulo" class="form-control" required>
+                <label for="tituloEdit">Titulo</label>
+                <input type="text" name="titulo" placeholder="Titulo" id="tituloEdit" class="form-control" required>
               </div>
               <div class="form-group">
-                <label for="categoria">Categoria (Seccion)</label>
-                <select name="categoria" id="categoria" class="form-control" required>
-                  <?php
+                <label for="categoriaEdit">Categoria (Seccion que se encarga)</label>
+                <select name="categoria" id="categoriaEdit" class="form-control" required>
+                <?php
                   $res = $conexion->query("SELECT categorias.id, categorias.nombre, seccion.descrip, categorias.id_seccion 
             FROM categorias 
             INNER JOIN seccion ON categorias.id_seccion = seccion.id");
@@ -488,12 +489,12 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
                 </select>
               </div>
               <div class="form-group">
-                <label for="editor">Resumen</label>
-                <textarea name="editor" id="editor" class="form-control" required></textarea>
+                <label for="editorEdit">Resumen</label>
+                <textarea name="editor" id="editorEdit" class="form-control" required></textarea>
               </div>
               <div class="form-group">
-                <label for="prioridad">Prioridad</label>
-                <select name="prioridad" id="prioridad" class="form-control" required>
+                <label for="prioridadEdit">Prioridad</label>
+                <select name="prioridad" id="prioridadEdit" class="form-control" required>
                   <?php
                   $res = $conexion->query("select * from prioridad");
                   while ($f = mysqli_fetch_array($res)) {
@@ -536,12 +537,14 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
                 <textarea name="editor" id="editorDetalles" class="form-control editorEdit2" readonly></textarea>
               </div>
               <div class="form-group">
-                <label for="categoriaDetalles">Categoria</label>
+                <label for="categoriaDetalles">Categoria (Seccion que se encarga)</label>
                 <select name="categoria" id="categoriaDetalles" class="form-control" required disabled>
-                  <?php
-                  $res = $conexion->query("select * from categorias");
+                <?php
+                  $res = $conexion->query("SELECT categorias.id, categorias.nombre, seccion.descrip, categorias.id_seccion 
+            FROM categorias 
+            INNER JOIN seccion ON categorias.id_seccion = seccion.id");
                   while ($f = mysqli_fetch_array($res)) {
-                    echo '<option value="' . $f['id'] . '" >' . $f['nombre'] . '</option>';
+                    echo '<option value="' . $f['id'] . '" data-idseccion="' . $f['id_seccion'] . '">' . $f['nombre'] . ' - ' . $f['descrip'] . '</option>';
                   }
                   ?>
                 </select>
@@ -617,12 +620,14 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
                 <textarea name="editor" id="editorDetalles2" class="form-control editorEdit2" readonly></textarea>
               </div>
               <div class="form-group">
-                <label for="categoriaDetalles2">Categoria</label>
+                <label for="categoriaDetalles2">Categoria (Seccion que se encarga)</label>
                 <select name="categoria" id="categoriaDetalles2" class="form-control" required disabled>
-                  <?php
-                  $res = $conexion->query("select * from categorias");
+                <?php
+                  $res = $conexion->query("SELECT categorias.id, categorias.nombre, seccion.descrip, categorias.id_seccion 
+            FROM categorias 
+            INNER JOIN seccion ON categorias.id_seccion = seccion.id");
                   while ($f = mysqli_fetch_array($res)) {
-                    echo '<option value="' . $f['id'] . '" >' . $f['nombre'] . '</option>';
+                    echo '<option value="' . $f['id'] . '" data-idseccion="' . $f['id_seccion'] . '">' . $f['nombre'] . ' - ' . $f['descrip'] . '</option>';
                   }
                   ?>
                 </select>

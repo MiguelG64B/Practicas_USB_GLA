@@ -137,12 +137,12 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
                 <table class="table">
                   <thead>
                     <tr>
-                      <th>Id</th>
                       <th>Rol</th>
                       <th>Nombre</th>
                       <th>Telefono</th>
                       <th>Documento</th>
                       <th>Correo</th>
+                      <th>Seccion</th>
                       <th>Estado</th>
                       <th></th>
                     </tr>
@@ -152,7 +152,6 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
                     while ($f = mysqli_fetch_array($estudiantes)) {
                     ?>
                       <tr>
-                        <td><?php echo $f['id']; ?></td>
                         <td>
                           <?php
                           $res2 = $conexion->query("SELECT descrip FROM tipo_usuario WHERE id = " . $f['tipo_usuario']);
@@ -167,6 +166,14 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
                         <td><?php echo $f['email']; ?></td>
                         <td>
                           <?php
+                          $res2 = $conexion->query("SELECT descrip FROM seccion WHERE id = " . $f['id_seccion']);
+                          if ($seccion = mysqli_fetch_array($res2)) {
+                            echo $seccion['descrip'];
+                          }
+                          ?>
+                        </td>
+                        <td>
+                          <?php
                           $res2 = $conexion->query("SELECT descrip FROM estado WHERE id = " . $f['id_estado']);
                           if ($seccion = mysqli_fetch_array($res2)) {
                             echo $seccion['descrip'];
@@ -174,7 +181,7 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
                           ?>
                         </td>
                         <td>
-                          <button class="btn btn-primary btn-small btnEditar" title="Editar permisos de usuario" data-id="<?php echo $f['id']; ?>" data-per_tickets="<?php echo $f['per_tickets']; ?>" data-per_categoria="<?php echo $f['per_categoria']; ?>" data-per_niveles="<?php echo $f['per_niveles']; ?>" data-per_seccion="<?php echo $f['per_seccion']; ?>" data-per_mistickets="<?php echo $f['per_mistickets']; ?>" data-per_con="<?php echo $f['per_con']; ?>" data-id_superior="<?php echo $f['id_superior']; ?>" data-toggle="modal" data-target="#modalEditar">
+                          <button class="btn btn-primary btn-small btnEditar" title="Editar permisos de usuario" data-id="<?php echo $f['id']; ?>" data-per_tickets="<?php echo $f['per_tickets']; ?>" data-per_categoria="<?php echo $f['per_categoria']; ?>" data-per_niveles="<?php echo $f['per_niveles']; ?>" data-per_seccion="<?php echo $f['per_seccion']; ?>" data-per_mistickets="<?php echo $f['per_mistickets']; ?>" data-per_con="<?php echo $f['per_con']; ?>" data-id_superior="<?php echo $f['id_superior']; ?>" data-id_seccion="<?php echo $f['id_seccion']; ?>"data-toggle="modal" data-target="#modalEditar">
                             <i class="fa fa-edit"></i>
                           </button>
                           <button class="btn btn-danger btn-small btnEliminar" title="Inactivar Trabajador" data-id="<?php echo $f['id']; ?>" data-toggle="modal" data-target="#modalEliminar">
@@ -253,7 +260,7 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
                 <input type="password" class="form-control" placeholder="Confirmar Password" name="pass2" aria-label="Password" required>
               </div>
               <div class="form-group">
-                <label for="id_seccion">Seccion encargada</label>
+                <label for="id_seccion">Seccion que pertenece</label>
                 <select name="id_seccion" id="id_seccion" class="form-control" required>
                   <option value="0"></option>
                   <?php
@@ -302,14 +309,14 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
                 </select>
               </div>
               <div class="form-group">
-                <label for="descripcionEdit">Crear y asignar tickets</label>
+                <label for="descripcionEdit">Crear, atender y asignar tickets</label>
                 <select class="form-control" name="per_tickets" id="per_tickets">
                   <option value="0">no</option>
                   <option value="1">Si</option>
                 </select>
               </div>
               <div class="form-group">
-                <label for="descripcionEdit">Atender tickets</label>
+                <label for="descripcionEdit">Crear solo tickets</label>
                 <select class="form-control" name="per_mistickets" id="per_mistickets">
                   <option value="0">no</option>
                   <option value="1">Si</option>
@@ -358,7 +365,7 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
             <div class="modal-body">
               <input type="hidden" id="idEdit" name="id">
               <div class="form-group">
-                <label for="id_seccion">Seccion encargada</label>
+                <label for="id_seccion">Seccion que pertenece</label>
                 <select name="id_seccion" id="id_seccionEdit" class="form-control" required>
                   <option value="0"></option>
                   <?php
@@ -376,7 +383,7 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
                   $consulta = "SELECT usuarios.id, usuarios.nom_persona, tipo_usuario.descrip 
              FROM usuarios
              INNER JOIN tipo_usuario ON usuarios.tipo_usuario = tipo_usuario.id
-             WHERE usuarios.id NOT IN (1, 5, 6, 7, 8, 9)";
+             WHERE usuarios.id NOT IN ( 5, 6, 7, 8, 9)";
 
                   $res = $conexion->query($consulta);
 
@@ -394,14 +401,14 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
                 </select>
               </div>
               <div class="form-group">
-                <label for="per_ticketsEdit">Crear y asignar tickets</label>
+                <label for="per_ticketsEdit">Crear, atender y asignar tickets</label>
                 <select class="form-control" name="per_tickets" id="per_ticketsEdit">
                   <option value="0">no</option>
                   <option value="1">Si</option>
                 </select>
               </div>
               <div class="form-group">
-                <label for="descripcionEdit">Atender tickets</label>
+                <label for="descripcionEdit">Crear solo tickets</label>
                 <select class="form-control" name="per_mistickets" id="per_misticketsEdit">
                   <option value="0">no</option>
                   <option value="1">Si</option>

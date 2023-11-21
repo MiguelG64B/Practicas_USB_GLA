@@ -26,8 +26,8 @@
             $per_seccion=$_POST['per_seccion'];
             $per_con=$_POST['per_con'];
             $per_mistickets=$_POST['per_mistickets'];
-                $conexion->query("insert into usuarios (usuario,nom_persona,id_estado,email,password,tipo_usuario,telefono,id_seccion,id_superior,per_tickets,per_categoria,per_niveles,per_seccion,per_con,per_mistickets,per_crear) 
-                    values('$documento','$name','5','$email','$pass','$rol','$telefono','$id_seccion',$superior,$per_tickets,$per_categoria,$per_niveles,$per_seccion,$per_con,$per_mistickets,'0')  ")or die($conexion->error);
+                $conexion->query("insert into usuarios (usuario,nom_persona,id_estado,email,password,tipo_usuario,telefono,id_seccion,id_superior,per_tickets,per_categoria,per_niveles,per_seccion,per_con,per_mistickets) 
+                    values('$documento','$name','5','$email','$pass','$rol','$telefono','$id_seccion',$superior,$per_tickets,$per_categoria,$per_niveles,$per_seccion,$per_con,$per_mistickets)  ")or die($conexion->error);
                     header("Location: ../trabajadores.php");
         }else{
            

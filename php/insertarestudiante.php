@@ -16,8 +16,8 @@
             $email=$_POST['email'];
             $pass=$_POST['pass'];
             $telefono=$_POST['telefono'];
-                $conexion->query("insert into usuarios (usuario,nom_persona,id_estado,email,password,tipo_usuario,telefono,id_seccion,id_superior,per_tickets,per_categoria,per_niveles,per_seccion,per_con) 
-                    values('$documento','$name','5','$email','$pass','7','$telefono','0','0','0','0','0','0','0')  ")or die($conexion->error);
+                $conexion->query("insert into usuarios (usuario,nom_persona,id_estado,email,password,tipo_usuario,telefono,id_seccion,id_superior,per_tickets,per_categoria,per_niveles,per_seccion) 
+                    values('$documento','$name','5','$email','$pass','7','$telefono','0','0','0','0','0','0')  ")or die($conexion->error);
                     header("Location: ../estudiantes.php");
         }else{
            

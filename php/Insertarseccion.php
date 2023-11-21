@@ -1,12 +1,13 @@
 <?php 
 include "./conexion.php";
 
-if(isset($_POST['nombre'])) {
+if(isset($_POST['nombre'])&& isset($_POST['tipo'])) {
     
     $conexion->query("INSERT INTO seccion 
-        (descrip) VALUES
+        (descrip,tipo) VALUES
         (
-            '".$_POST['nombre']."'
+            '".$_POST['nombre']."',
+            '".$_POST['tipo']."'
         )") or die($conexion->error);
     
     header("Location: ../panelseccion.php?success");

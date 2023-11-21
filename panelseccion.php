@@ -129,10 +129,10 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
                           <?php echo $f['descrip']; ?>
                         </td>
                         <td>
-                          <button class="btn btn-primary btn-small btnEditar" title="Editar Area" data-id="<?php echo $f['id']; ?>" data-nombre="<?php echo $f['descrip']; ?>" data-toggle="modal" data-target="#modalEditar">
+                          <button class="btn btn-primary btn-small btnEditar" title="Editar Seccion" data-id="<?php echo $f['id']; ?>" data-nombre="<?php echo $f['descrip']; ?>"data-tipo="<?php echo $f['tipo']; ?>" data-toggle="modal" data-target="#modalEditar">
                             <i class="fa fa-edit"></i>
                           </button>
-                          <button class="btn btn-danger btn-small btnEliminar" title="Eliminar Area" data-id="<?php echo $f['id']; ?>" data-toggle="modal" data-target="#modalEliminar">
+                          <button class="btn btn-danger btn-small btnEliminar" title="Eliminar Seccion" data-id="<?php echo $f['id']; ?>" data-toggle="modal" data-target="#modalEliminar">
                             <i class="fa fa-trash"></i>
                           </button>
                         </td>
@@ -184,7 +184,15 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
                 <label for="nombre">Nombre de la Seccion</label>
                 <input type="text" name="nombre" placeholder="nombre" id="nombre" class="form-control" required>
               </div>
-            </div>
+            
+            <div class="form-group">
+                <label for="tipo">Tipo de seccion</label>
+                <select name="tipo" id="tipo" class="form-control" required>
+                  <option value="1">Operativo</option>
+                  <option value="2">Administrativo</option>
+                </select>
+              </div>
+              </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
               <button type="submit" class="btn btn-primary">Guardar</button>
@@ -232,7 +240,15 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
                 <label for="nombre">Nombre</label>
                 <input type="nombreEdit" name="nombre" placeholder="nombre" id="nombreEdit" class="form-control" required>
               </div>
-            </div>
+            
+            <div class="form-group">
+                <label for="tipoEdit">Tipo de seccion</label>
+                <select name="tipo" id="tipoEdit" class="form-control" required>
+                  <option value="1">Operativo</option>
+                  <option value="2">Administrativo</option>
+                </select>
+              </div>
+              </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
               <button type="submit" class="btn btn-primary editar">Guardar</button>
@@ -290,7 +306,9 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
       $(".btnEditar").click(function() {
         idEditar = $(this).data('id');
         var nombre = $(this).data('nombre');
+        var tipo = $(this).data('tipo');
         $("#nombreEdit").val(nombre);
+        $("#tipoEdit").val(tipo);
         $("#idEdit").val(idEditar);
       });
     });

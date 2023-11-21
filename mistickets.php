@@ -14,7 +14,7 @@ $nivel = $arregloUsuario['nivel'];
 $id_seccion = $arregloUsuario['id_seccion'];
 
 // Verifica si 'per_tickets' es igual a 'si'
-if ($arregloUsuario['permisos']['per_mistickets'] != '1' && $arregloUsuario['permisos']['per_crear'] != '1') {
+if ($arregloUsuario['permisos']['per_mistickets'] != '1') {
   // Si 'per_tickets' no es igual a 'si', puedes redirigir a otra página o mostrar un mensaje de error.
   header("Location: ./perfil.php");
   exit(); // Asegúrate de que el script se detenga después de redirigir
@@ -345,7 +345,7 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
                             }
                             echo $botonDetalles;
 
-                            if (($f['id_usuario'] == $idUsuario || $arregloUsuario['permisos']['per_crear'] == '1') && ($f['id_estado'] != '3' && $f['id_estado'] != '4') && $arregloUsuario['permisos']['per_mistickets'] == '1') {
+                            if (($f['id_usuario'] == $idUsuario) && ($f['id_estado'] != '3' && $f['id_estado'] != '4') && $arregloUsuario['permisos']['per_mistickets'] == '1') {
                               // Mostrar el botón de editar si el id_usuario coincide con $idUsuario o tiene permisos de crear y permisos permiten
                             ?>
                               <button class="btn btn-info btn-small btnEditar" title="Editar ticket" data-id="<?php echo $f['id_ticket']; ?>" data-categoria="<?php echo $f['id_categoria']; ?>" data-prioridad="<?php echo $f['id_prioridad']; ?>" data-titulo="<?php echo $f['titulo']; ?>" data-editor="<?php echo htmlspecialchars($f['resumen']); ?>" data-encargado="<?php echo $f['id_encargado']; ?>" data-toggle="modal" data-target="#modalEditar">
@@ -476,12 +476,14 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
                 <textarea name="editor" id="editorEdit" class="form-control editorEdit2" required></textarea>
               </div>
               <div class="form-group">
-                <label for="categoriaEdit">Categoria</label>
+                <label for="categoriaEdit">Categoria (Seccion que se encarga)</label>
                 <select name="categoria" id="categoriaEdit" class="form-control" required>
-                  <?php
-                  $res = $conexion->query("select * from categorias");
+                <?php
+                  $res = $conexion->query("SELECT categorias.id, categorias.nombre, seccion.descrip, categorias.id_seccion 
+            FROM categorias 
+            INNER JOIN seccion ON categorias.id_seccion = seccion.id");
                   while ($f = mysqli_fetch_array($res)) {
-                    echo '<option value="' . $f['id'] . '" >' . $f['nombre'] . '</option>';
+                    echo '<option value="' . $f['id'] . '" data-idseccion="' . $f['id_seccion'] . '">' . $f['nombre'] . ' - ' . $f['descrip'] . '</option>';
                   }
                   ?>
                 </select>
@@ -530,12 +532,14 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
                 <textarea name="editor" id="editorDetalles2" class="form-control editorEdit2" readonly></textarea>
               </div>
               <div class="form-group">
-                <label for="categoriaDetalles2">Categoria</label>
+                <label for="categoriaDetalles2">Categoria (Seccion que se encarga)</label>
                 <select name="categoria" id="categoriaDetalles2" class="form-control" required disabled>
-                  <?php
-                  $res = $conexion->query("select * from categorias");
+                <?php
+                  $res = $conexion->query("SELECT categorias.id, categorias.nombre, seccion.descrip, categorias.id_seccion 
+            FROM categorias 
+            INNER JOIN seccion ON categorias.id_seccion = seccion.id");
                   while ($f = mysqli_fetch_array($res)) {
-                    echo '<option value="' . $f['id'] . '" >' . $f['nombre'] . '</option>';
+                    echo '<option value="' . $f['id'] . '" data-idseccion="' . $f['id_seccion'] . '">' . $f['nombre'] . ' - ' . $f['descrip'] . '</option>';
                   }
                   ?>
                 </select>
