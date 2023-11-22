@@ -11,8 +11,8 @@ if (!isset($_SESSION['datos_login'])) {
 $arregloUsuario = $_SESSION['datos_login'];
 $idUsuario = $arregloUsuario['id_usuario'];
 $nivel = $arregloUsuario['nivel'];
-
-if ($arregloUsuario['permisos']['per_niveles'] != '1') {
+$id_estado = $arregloUsuario['id_estado'];
+if ($id_estado != 5 ||$arregloUsuario['permisos']['per_niveles'] != '1') {
   header("Location: ./perfil.php");
   exit(); // Asegúrate de que el script se detenga después de redirigir
 }

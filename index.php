@@ -12,11 +12,11 @@ $arregloUsuario = $_SESSION['datos_login'];
 $idUsuario = $arregloUsuario['id_usuario'];
 $nivel = $arregloUsuario['nivel'];
 $id_seccion = $arregloUsuario['id_seccion'];
-// Verifica si 'per_tickets' es igual a 'si'
-if ($arregloUsuario['permisos']['per_tickets'] != '1') {
-  // Si 'per_tickets' no es igual a 'si', puedes redirigir a otra página o mostrar un mensaje de error.
-  header("Location: ./perfil.php");
-  exit(); // Asegúrate de que el script se detenga después de redirigir
+$id_estado = $arregloUsuario['id_estado'];
+
+if ($id_estado != 5 || $arregloUsuario['permisos']['per_tickets'] != '1') {
+    header("Location: ./perfil.php");
+    exit();
 }
 
 $registrosPorPagina = 10;

@@ -12,9 +12,9 @@ $arregloUsuario = $_SESSION['datos_login'];
 $idUsuario = $arregloUsuario['id_usuario'];
 $nivel = $arregloUsuario['nivel'];
 $id_seccion = $arregloUsuario['id_seccion'];
-
+$id_estado = $arregloUsuario['id_estado'];
 // Verifica si 'per_tickets' es igual a 'si'
-if ($arregloUsuario['permisos']['per_mistickets'] != '1') {
+if ($id_estado != 5 || $arregloUsuario['permisos']['per_mistickets'] != '1') {
   // Si 'per_tickets' no es igual a 'si', puedes redirigir a otra página o mostrar un mensaje de error.
   header("Location: ./perfil.php");
   exit(); // Asegúrate de que el script se detenga después de redirigir

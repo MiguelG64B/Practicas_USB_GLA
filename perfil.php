@@ -5,7 +5,12 @@ if (!isset($_SESSION['datos_login'])) {
   header("Location: ./index.php");
 }
 $arregloUsuario = $_SESSION['datos_login'];
+$id_estado = $arregloUsuario['id_estado'];
 
+if ($id_estado != 5) {
+    header("Location: ./inactivo.php");
+    exit();
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">

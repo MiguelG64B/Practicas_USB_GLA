@@ -197,7 +197,7 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
                         <th>Editorial</th>
                         <th>Area</th>
                         <th>clase</th>
-                        <th>Paginas</th>
+                        <th>Disponibilidad</th>
                         <th></th>
                       </tr>
 
@@ -244,7 +244,21 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
                               }
                               ?>
                           </td>
-                          <td><?php echo $f['npag']; ?></td>
+                          <td>
+                            <?php
+                              switch ($f['existe']) {
+                                case 'si':
+                                  echo '<span class="badge badge-sm bg-gradient-success">Disponible</span>';
+                                  break;
+                                case 'no':
+                                  echo '<span class="badge badge-sm bg-gradient-danger">ocupado</span>';
+                                  break;
+                                default:
+                                  echo $f['existe'];
+                                  break;
+                              }
+                            ?>
+                          </td>
                           <td>
 
                             <button class="btn btn-primary btn-small btndetalles" title="Ver detalles"  data-id_libro="<?php echo $f['id_libro']; ?>" data-coddew="<?php echo $f['coddew']; ?>" data-titulo="<?php echo $f['titulo']; ?>" data-id_autor="<?php echo $f['id_autor']; ?>" data-edicion="<?php echo $f['edicion']; ?>" data-costo="<?php echo $f['costo']; ?>" data-fecha="<?php echo $f['fecha']; ?>" data-id_estado="<?php echo $f['id_estado']; ?>" data-id_origen="<?php echo $f['id_origen']; ?>" data-id_editorial="<?php echo $f['id_editorial']; ?>" data-id_area="<?php echo $f['id_area']; ?>" data-id_clase="<?php echo $f['id_clase']; ?>" data-observaciones="<?php echo $f['observaciones']; ?>" data-id_seccion="<?php echo $f['id_seccion']; ?>" data-temas="<?php echo $f['temas']; ?>" data-id_ciudad="<?php echo $f['id_ciudad']; ?>" data-codinv="<?php echo $f['codinv']; ?>" data-npag="<?php echo $f['npag']; ?>" data-fimpresion="<?php echo $f['fimpresion']; ?>" data-temas2="<?php echo $f['temas2']; ?>" data-entrainv="<?php echo $f['entrainv']; ?>" data-toggle="modal" data-target="#modalDetalles"><i class="fa fa-eye"></i></button>
