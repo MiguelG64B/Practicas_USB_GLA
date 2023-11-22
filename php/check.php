@@ -26,8 +26,8 @@ if (isset($_POST['email']) && isset($_POST['password'])) {
             'per_seccion' => $datos_usuario['per_seccion'],
             'per_con' => $datos_usuario['per_con'],
             'per_mistickets' => $datos_usuario['per_mistickets'],
-            'per_crear' => $datos_usuario['per_crear']
-           // 'per_mistickets' => $datos_usuario['per_mistickets']
+            'per_crear' => $datos_usuario['per_crear'],
+            'per_reserva' => $datos_usuario['per_reserva']
         );
 
         $_SESSION['datos_login'] = array(

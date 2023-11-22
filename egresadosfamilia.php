@@ -16,7 +16,7 @@ if ($id_estado != 5 || $arregloUsuario['permisos']['per_niveles'] != '1') {
   header("Location: ./perfil.php");
   exit(); // Asegúrate de que el script se detenga después de redirigir
 }
-$registrosPorPagina = 40;
+$registrosPorPagina = 20;
 
 // Página actual
 if (isset($_GET['page'])) {
@@ -32,11 +32,8 @@ $searchTerm = isset($_GET['search']) ? $_GET['search'] : '';
 $offset = ($paginaActual - 1) * $registrosPorPagina;
 
 // Consulta SQL con limit y offset
-if ($nivel == 1) {
+
   $sql = "SELECT * FROM usuarios WHERE id != $idUsuario AND (tipo_usuario = 8 OR tipo_usuario = 9) AND nom_persona LIKE '%$searchTerm%' LIMIT $offset, $registrosPorPagina;";
-} else {
-  $sql = "SELECT * FROM usuarios WHERE id_superior = $idUsuario AND nom_persona LIKE '%$searchTerm%' LIMIT $offset, $registrosPorPagina";
-}
 
 $estudiantes = mysqli_query($conexion, $sql);
 

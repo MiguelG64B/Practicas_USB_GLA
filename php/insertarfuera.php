@@ -17,8 +17,8 @@
             $pass=$_POST['pass'];
             $telefono=$_POST['telefono'];
             $tipo=$_POST['tipo'];
-                $conexion->query("insert into usuarios (usuario,nom_persona,id_estado,email,password,tipo_usuario,telefono,id_seccion,id_superior,per_tickets,per_categoria,per_niveles,per_seccion) 
-                    values('$documento','$name','5','$email','$pass','$tipo','$telefono','0','0','1','0','0','0')  ")or die($conexion->error);
+                $conexion->query("insert into usuarios  (usuario,nom_persona,id_estado,email,password,tipo_usuario,telefono,id_seccion,id_superior,per_tickets,per_categoria,per_niveles,per_seccion,per_con,per_mistickets,per_reserva) 
+                    values('$documento','$name','5','$email','$pass','$tipo','$telefono','0','0','0','0','0','0','0','1','0')  ")or die($conexion->error);
                     header("Location: ../egresadosfamilia.php");
         }else{
            

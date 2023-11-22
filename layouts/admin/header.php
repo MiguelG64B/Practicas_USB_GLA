@@ -9,7 +9,7 @@
   <div class="collapse navbar-collapse w-auto ps" id="sidenav-collapse-main">
     <ul class="navbar-nav">
       
-      <?php if ($arregloUsuario['permisos']['per_tickets'] == '1'|| $arregloUsuario['permisos']['per_mistickets'] == '1'|| $arregloUsuario['permisos']['per_crear'] == '1') { ?>
+      <?php if ($arregloUsuario['permisos']['per_tickets'] == '1'|| $arregloUsuario['permisos']['per_mistickets'] == '1') { ?>
         <li class="list-group mt-2">
           <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
@@ -21,7 +21,7 @@
             <?php if ($arregloUsuario['permisos']['per_tickets'] == '1') { ?>
               <a class="dropdown-item" href="index.php">Todas las Solicitudes</a>
             <?php } ?>
-            <?php if ($arregloUsuario['permisos']['per_mistickets'] == '1' || $arregloUsuario['permisos']['per_crear'] == '1') { ?>
+            <?php if ($arregloUsuario['permisos']['per_mistickets'] == '1') { ?>
               <a class="dropdown-item" href="mistickets.php">Mis solicitudes</a>
             <?php } ?>
           </div>
@@ -70,7 +70,7 @@
           </div>
         </li>
       <?php } ?>
-      <?php if ($arregloUsuario['permisos']['per_con'] == '1') { ?>
+      <?php if ($arregloUsuario['permisos']['per_con'] == '1' || $arregloUsuario['permisos']['per_reserva'] == '1') { ?>
       <li class="nav-item">
         <a class="nav-link" title="Libreria" href="panellibros.php">
           <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">

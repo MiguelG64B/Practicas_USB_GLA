@@ -182,7 +182,7 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
                           ?>
                         </td>
                         <td>
-                          <button class="btn btn-primary btn-small btnEditar" title="Editar permisos de usuario" data-id="<?php echo $f['id']; ?>" data-per_tickets="<?php echo $f['per_tickets']; ?>" data-per_categoria="<?php echo $f['per_categoria']; ?>" data-per_niveles="<?php echo $f['per_niveles']; ?>" data-per_seccion="<?php echo $f['per_seccion']; ?>" data-per_mistickets="<?php echo $f['per_mistickets']; ?>" data-per_con="<?php echo $f['per_con']; ?>" data-id_superior="<?php echo $f['id_superior']; ?>" data-id_seccion="<?php echo $f['id_seccion']; ?>"data-toggle="modal" data-target="#modalEditar">
+                          <button class="btn btn-primary btn-small btnEditar" title="Editar permisos de usuario" data-id="<?php echo $f['id']; ?>" data-per_tickets="<?php echo $f['per_tickets']; ?>" data-per_categoria="<?php echo $f['per_categoria']; ?>" data-per_niveles="<?php echo $f['per_niveles']; ?>" data-per_seccion="<?php echo $f['per_seccion']; ?>" data-per_mistickets="<?php echo $f['per_mistickets']; ?>" data-per_con="<?php echo $f['per_con']; ?>" data-id_superior="<?php echo $f['id_superior']; ?>" data-id_seccion="<?php echo $f['id_seccion']; ?>"data-per_reserva="<?php echo $f['per_reserva']; ?>" data-toggle="modal" data-target="#modalEditar">
                             <i class="fa fa-edit"></i>
                           </button>
                           <button class="btn btn-danger btn-small btnEliminar" title="Inactivar Trabajador" data-id="<?php echo $f['id']; ?>" data-toggle="modal" data-target="#modalEliminar">
@@ -344,6 +344,13 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
                   <option value="1">Si</option>
                 </select>
               </div>
+              <div class="form-group">
+                <label for="descripcionEdit">Puede reservar en la biblioteca</label>
+                <select class="form-control" name="per_reserva" id="per_reserva">
+                  <option value="0">no</option>
+                  <option value="1">Si</option>
+                </select>
+              </div>
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
@@ -432,6 +439,13 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
               <div class="form-group">
                 <label for="descripcionEdit">Insertar contenido a la biblioteca</label>
                 <select class="form-control" name="per_con" id="per_conEdit">
+                  <option value="0">no</option>
+                  <option value="1">Si</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="descripcionEdit">Puede reservar en la biblioteca</label>
+                <select class="form-control" name="per_reserva" id="per_reservaEdit">
                   <option value="0">no</option>
                   <option value="1">Si</option>
                 </select>
@@ -559,6 +573,7 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
         var id_superior = $(this).data('id_superior');
         var per_niveles = $(this).data('per_niveles');
         var per_tickets = $(this).data('per_tickets');
+        var per_reserva = $(this).data('per_reserva');
         var per_categoria = $(this).data('per_categoria');
         var per_con = $(this).data('per_con');
         var per_seccion = $(this).data('per_seccion');
@@ -569,6 +584,7 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
         $("#id_superiorEdit").val(id_superior);
         $("#per_nivelesEdit").val(per_niveles);
         $("#per_ticketsEdit").val(per_tickets);
+        $("#per_reservaEdit").val(per_reserva);
         $("#per_categoriaEdit").val(per_categoria);
         $("#per_seccionEdit").val(per_seccion);
         $("#per_misticketsEdit").val(per_mistickets);

@@ -1,7 +1,7 @@
 <?php
 include "conexion.php";
 
-if (isset($_POST['id']) && isset($_POST['id_superior'])&& isset($_POST['id_seccion']) && isset($_POST['per_niveles'])&& isset($_POST['per_categoria'])&& isset($_POST['per_tickets'])&& isset($_POST['per_con'] )&& isset($_POST['per_seccion'] )&& isset($_POST['per_mistickets'] )) {
+if (isset($_POST['id']) && isset($_POST['id_superior'])&& isset($_POST['id_seccion']) && isset($_POST['per_niveles'])&& isset($_POST['per_categoria'])&& isset($_POST['per_tickets'])&& isset($_POST['per_con'] )&& isset($_POST['per_seccion'] )&& isset($_POST['per_mistickets'] )&& isset($_POST['per_reserva'] )) {
     $conexion->query("update usuarios set 
     id_superior='".$_POST['id_superior']."',
     id_seccion='".$_POST['id_seccion']."',
@@ -11,6 +11,7 @@ if (isset($_POST['id']) && isset($_POST['id_superior'])&& isset($_POST['id_secci
     per_seccion='".$_POST['per_seccion']."',
     per_con='".$_POST['per_con']."',
     per_mistickets='".$_POST['per_mistickets']."'
+    per_reserva='".$_POST['per_reserva']."'
     where id=".$_POST['id']);
 
     echo "se actualizo";
