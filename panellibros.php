@@ -417,7 +417,7 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
                 <label for="id_seccion">Seccion</label>
                 <select name="id_seccion" id="id_seccion" class="form-control" required>
                   <?php
-                  $res = $conexion->query("select * from seccion");
+               $res = $conexion->query("select * from seccion where tipo = '1' ");
                   while ($f = mysqli_fetch_array($res)) {
                     echo '<option value="' . $f['id'] . '" >' . $f['descrip'] . '</option>';
                   }
@@ -577,7 +577,7 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
                 <label for="id_seccionEdit">Seccion</label>
                 <select name="id_seccion" id="id_seccionEdit" class="form-control" required>
                   <?php
-                  $res = $conexion->query("select * from seccion");
+               $res = $conexion->query("select * from seccion where tipo = '1' ");
                   while ($f = mysqli_fetch_array($res)) {
                     echo '<option value="' . $f['id'] . '" >' . $f['descrip'] . '</option>';
                   }

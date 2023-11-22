@@ -209,7 +209,7 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
                 <label for="id_seccionEdit">Seccion encargada</label>
                 <select name="id_seccion" id="id_seccionEdit" class="form-control" required>
                   <?php
-                  $res = $conexion->query("select * from seccion ");
+                 $res = $conexion->query("select * from seccion where tipo = '2' ");
                   while ($f = mysqli_fetch_array($res)) {
                     echo '<option value="' . $f['id'] . '" >' . $f['descrip'] . '</option>';
                   }
@@ -272,7 +272,7 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
                 <label for="id_seccionEdit">Area encargada</label>
                 <select name="id_seccion" id="id_seccionEdit" class="form-control" required>
                   <?php
-                  $res = $conexion->query("select * from seccion");
+                $res = $conexion->query("select * from seccion where tipo = '2' ");
                   while ($f = mysqli_fetch_array($res)) {
                     echo '<option value="' . $f['id'] . '" >' . $f['descrip'] . '</option>';
                   }

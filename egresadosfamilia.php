@@ -240,6 +240,13 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
                 <input type="number" name="telefono" placeholder="Telefono" id="telefono" class="form-control" required>
               </div>
               <div class="form-group">
+                <label for="tipo">Tipo de usuario</label>
+                <select name="tipo" id="tipo" class="form-control" required>
+                  <option value="9">Egresado</option>
+                  <option value="8">Familiar</option>
+                </select>
+              </div>
+              <div class="form-group">
                 <label for="password">Password</label>
                 <input type="password" class="form-control" placeholder="Password" name="pass" aria-label="Password" required>
               </div>

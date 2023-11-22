@@ -180,7 +180,7 @@ if (isset($_GET['id']) && isset($_GET['comentarios'])) {
 
                           <div class="col-md-6">
                             <label>Prueba</label>
-                            <img src="images/<?php echo $fila[12]; ?>" alt="<?php echo $fila[1]; ?>" class="img-fluid">
+                            <img src="images/<?php echo $fila[13]; ?>" alt="<?php echo $fila[1]; ?>" class="img-fluid">
                           </div>
                           <?php
                           $res = $conexion->query("SELECT coment_usuario FROM tickets WHERE id_ticket = " . $fila['0']);
