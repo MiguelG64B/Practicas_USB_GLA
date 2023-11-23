@@ -136,87 +136,105 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
 
                 <?php  } ?>
                 <div class="table-responsive">
-                <table class="table">
-                  <thead>
-                    <tr>
-                      <th>Rol</th>
-                      <th>Nombre</th>
-                      <th>Telefono</th>
-                      <th>Documento</th>
-                      <th>Correo</th>
-                      <th>Seccion</th>
-                      <th>Estado</th>
-                      <th></th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <?php
-                    while ($f = mysqli_fetch_array($estudiantes)) {
-                    ?>
+                  <table class="table">
+                    <thead>
                       <tr>
-                        <td>
-                          <?php
-                          $res2 = $conexion->query("SELECT descrip FROM tipo_usuario WHERE id = " . $f['tipo_usuario']);
-                          if ($seccion = mysqli_fetch_array($res2)) {
-                            echo $seccion['descrip'];
-                          }
-                          ?>
-                        </td>
-                        <td><?php echo $f['nom_persona']; ?></td>
-                        <td><?php echo $f['telefono']; ?></td>
-                        <td><?php echo $f['usuario']; ?></td>
-                        <td><?php echo $f['email']; ?></td>
-                        <td>
-                          <?php
-                          $res2 = $conexion->query("SELECT descrip FROM seccion WHERE id = " . $f['id_seccion']);
-                          if ($seccion = mysqli_fetch_array($res2)) {
-                            echo $seccion['descrip'];
-                          }
-                          ?>
-                        </td>
-                        <td>
-                          <?php
-                          $res2 = $conexion->query("SELECT descrip FROM estado WHERE id = " . $f['id_estado']);
-                          if ($seccion = mysqli_fetch_array($res2)) {
-                            echo $seccion['descrip'];
-                          }
-                          ?>
-                        </td>
-                        <td>
-                          <button class="btn btn-primary btn-small btnEditar" title="Editar permisos de usuario" data-id="<?php echo $f['id']; ?>" data-per_tickets="<?php echo $f['per_tickets']; ?>" data-per_categoria="<?php echo $f['per_categoria']; ?>" data-per_niveles="<?php echo $f['per_niveles']; ?>" data-per_seccion="<?php echo $f['per_seccion']; ?>" data-per_mistickets="<?php echo $f['per_mistickets']; ?>" data-per_con="<?php echo $f['per_con']; ?>" data-id_superior="<?php echo $f['id_superior']; ?>" data-id_seccion="<?php echo $f['id_seccion']; ?>"data-per_reserva="<?php echo $f['per_reserva']; ?>" data-toggle="modal" data-target="#modalEditar">
-                            <i class="fa fa-edit"></i>
-                          </button>
-                          <button class="btn btn-danger btn-small btnEliminar" title="Inactivar Trabajador" data-id="<?php echo $f['id']; ?>" data-toggle="modal" data-target="#modalEliminar">
-                            <i class="fa fa-low-vision"></i>
-                          </button>
-                          <button class="btn btn-info btn-small btnactivar" title="Activar Trabajador" data-id="<?php echo $f['id']; ?>" data-toggle="modal" data-target="#modalactivar">
-                            <i class="fa fa-eye"></i>
-                          </button>
-                        </td>
+                        <th>Rol</th>
+                        <th>Nombre</th>
+                        <th>Telefono</th>
+                        <th>Documento</th>
+                        <th>Correo</th>
+                        <th>Seccion</th>
+                        <th>Estado</th>
+                        <th></th>
                       </tr>
-                    <?php
-                    }
-                    ?>
-                  </tbody>
-                </table>
-                </div>
-                <div class="pagination">
-                  <?php if ($paginaActual > 1) : ?>
-                    <a href="?page=<?php echo $paginaActual - 1; ?>&search=" class="btn btn-primary">Anterior</a>
-                  <?php endif; ?>
-                  <?php
-                  $maxButtons = 4; // Número máximo de botones a mostrar
-                  $start = max(1, $paginaActual - floor($maxButtons / 2));
-                  $end = min($start + $maxButtons - 1, $totalBotones);
+                    </thead>
+                    <tbody>
+                      <?php
+                      while ($f = mysqli_fetch_array($estudiantes)) {
+                      ?>
+                        <tr>
+                          <td>
+                            <?php
+                            $res2 = $conexion->query("SELECT descrip FROM tipo_usuario WHERE id = " . $f['tipo_usuario']);
+                            if ($seccion = mysqli_fetch_array($res2)) {
+                              echo $seccion['descrip'];
+                            }
+                            ?>
+                          </td>
+                          <td><?php echo $f['nom_persona']; ?></td>
+                          <td><?php echo $f['telefono']; ?></td>
+                          <td><?php echo $f['usuario']; ?></td>
+                          <td><?php echo $f['email']; ?></td>
+                          <td>
+                            <?php
+                            $res2 = $conexion->query("SELECT descrip FROM seccion WHERE id = " . $f['id_seccion']);
+                            if ($seccion = mysqli_fetch_array($res2)) {
+                              echo $seccion['descrip'];
+                            }
+                            ?>
+                          </td>
+                          <td>
+                            <?php
+                            $res2 = $conexion->query("SELECT descrip FROM estado WHERE id = " . $f['id_estado']);
+                            if ($seccion = mysqli_fetch_array($res2)) {
+                              echo $seccion['descrip'];
+                            }
+                            ?>
+                          </td>
+                          <td>
+                            <button class="btn btn-primary btn-small btnEditar" title="Editar permisos de usuario" data-id="<?php echo $f['id']; ?>" data-per_tickets="<?php echo $f['per_tickets']; ?>" data-per_categoria="<?php echo $f['per_categoria']; ?>" data-per_niveles="<?php echo $f['per_niveles']; ?>" data-per_seccion="<?php echo $f['per_seccion']; ?>" data-per_mistickets="<?php echo $f['per_mistickets']; ?>" data-per_con="<?php echo $f['per_con']; ?>" data-id_superior="<?php echo $f['id_superior']; ?>" data-id_seccion="<?php echo $f['id_seccion']; ?>" data-per_reserva="<?php echo $f['per_reserva']; ?>" data-toggle="modal" data-target="#modalEditar">
+                              <i class="fa fa-edit"></i>
+                            </button>
+                            <button class="btn btn-danger btn-small btnEliminar" title="Inactivar Trabajador" data-id="<?php echo $f['id']; ?>" data-toggle="modal" data-target="#modalEliminar">
+                              <i class="fa fa-low-vision"></i>
+                            </button>
+                            <button class="btn btn-info btn-small btnactivar" title="Activar Trabajador" data-id="<?php echo $f['id']; ?>" data-toggle="modal" data-target="#modalactivar">
+                              <i class="fa fa-eye"></i>
+                            </button>
+                          </td>
+                        </tr>
+                      <?php
+                      }
+                      ?>
+                    </tbody>
+                  </table>
+                  <nav aria-label="Page navigation example">
+                  <ul class="pagination pagination-success">
+                    <?php if ($paginaActual > 1) : ?>
+                      <li class="page-item">
+                        <a href="?page=<?php echo $paginaActual - 1; ?>&search=" class="page-link" aria-label="Previous">
+                          <i class="fa fa-angle-left"></i>
+                          <span class="sr-only">Previous</span>
+                        </a>
+                      </li>
+                    <?php endif; ?>
 
-                  for ($i = $start; $i <= $end; $i++) :
-                  ?>
-                    <a href="?page=<?php echo $i; ?>&search=" class="btn btn-primary <?php if ($i == $paginaActual) echo 'active'; ?>"><?php echo $i; ?></a>
-                  <?php endfor; ?>
-                  <?php if ($paginaActual < $totalCategorias) : ?>
-                    <a href="?page=<?php echo $paginaActual + 1; ?>&search=" class="btn btn-primary">Siguiente</a>
-                  <?php endif; ?>
+                    <?php
+                    $maxButtons = 4; // Número máximo de botones a mostrar
+                    $start = max(1, $paginaActual - floor($maxButtons / 2));
+                    $end = min($start + $maxButtons - 1, $totalBotones);
+
+                    for ($i = $start; $i <= $end; $i++) :
+                    ?>
+                      <li class="page-item <?php if ($i == $paginaActual) echo 'active'; ?>">
+                        <a href="?page=<?php echo $i; ?>&search=" class="page-link"><?php echo $i; ?></a>
+                      </li>
+                    <?php endfor; ?>
+
+                    <?php if ($paginaActual < $totalCategorias) : ?>
+                      <li class="page-item">
+                        <a href="?page=<?php echo $paginaActual + 1; ?>&search=" class="page-link" aria-label="Next">
+                          <i class="fa fa-angle-right"></i>
+                          <span class="sr-only">Next</span>
+                        </a>
+                      </li>
+                    <?php endif; ?>
+                  </ul>
+                </nav>
                 </div>
+           
+
 
               </div>
             </section>

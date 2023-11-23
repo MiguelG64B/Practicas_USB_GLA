@@ -373,11 +373,17 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
                       ?>
                     </tbody>
                   </table>
-                  </div>
-                  <div class="pagination">
+                  <nav aria-label="Page navigation example">
+                  <ul class="pagination pagination-success">
                     <?php if ($paginaActual > 1) : ?>
-                      <a href="?page=<?php echo $paginaActual - 1; ?>&search=" class="btn btn-primary">Anterior</a>
+                      <li class="page-item">
+                        <a href="?page=<?php echo $paginaActual - 1; ?>&search=" class="page-link" aria-label="Previous">
+                          <i class="fa fa-angle-left"></i>
+                          <span class="sr-only">Previous</span>
+                        </a>
+                      </li>
                     <?php endif; ?>
+
                     <?php
                     $maxButtons = 4; // Número máximo de botones a mostrar
                     $start = max(1, $paginaActual - floor($maxButtons / 2));
@@ -385,11 +391,21 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
 
                     for ($i = $start; $i <= $end; $i++) :
                     ?>
-                      <a href="?page=<?php echo $i; ?>&search=" class="btn btn-primary <?php if ($i == $paginaActual) echo 'active'; ?>"><?php echo $i; ?></a>
+                      <li class="page-item <?php if ($i == $paginaActual) echo 'active'; ?>">
+                        <a href="?page=<?php echo $i; ?>&search=" class="page-link"><?php echo $i; ?></a>
+                      </li>
                     <?php endfor; ?>
+
                     <?php if ($paginaActual < $totalCategorias) : ?>
-                      <a href="?page=<?php echo $paginaActual + 1; ?>&search=" class="btn btn-primary">Siguiente</a>
+                      <li class="page-item">
+                        <a href="?page=<?php echo $paginaActual + 1; ?>&search=" class="page-link" aria-label="Next">
+                          <i class="fa fa-angle-right"></i>
+                          <span class="sr-only">Next</span>
+                        </a>
+                      </li>
                     <?php endif; ?>
+                  </ul>
+                </nav>
                   </div>
                 </div>
               </section>
