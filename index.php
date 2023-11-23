@@ -340,19 +340,16 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
                               $botonDetalles = '<button class="btn btn-primary btn-small btndetalles2" title="Ver detalles" data-imagen="' . $f['imagen'] . '" data-id="' . $f['id_ticket'] . '" data-categoria="' . $f['id_categoria'] . '" data-prioridad="' . $f['id_prioridad'] . '" data-encargado="' . $f['id_encargado'] . '" data-titulo="' . $f['titulo'] . '" data-editor="' . htmlspecialchars($f['resumen']) . '" data-toggle="modal" data-target="#modalDetalles2" data-coment_encargado="' . $f['coment_encargado'] . '" data-coment_usuario="' . $f['coment_usuario'] . '" data-estado="' . $f['id_estado'] . '"><i class="fa fa-eye"></i></button>';
                             }
                             if ($f['id_usuario'] == $idUsuario && $f['id_estado'] == 3 || $f['id_estado'] == 4) {
-                              // Mostrar el botón "detalles2" si el estado es 3 o 4
+                              
                               $ticket = $f['id_ticket'];
                               $comentarios = $f['coment_encargado'];
                               $satisfaccionURL = './satisfaccion.php?id=' . $ticket . '&comentarios=' . $comentarios;
-
-                              // Mostrar el botón "Satisfacción" que redirige a la URL
 
                               $botonDetalles = '<a class="btn btn-warning btn-small btnSatisfaccion" title="Satisfacción" href="' . $satisfaccionURL . '"><i class="fa fa-smile-o"></i></a>';
                             }
                             echo $botonDetalles;
 
                             if ($f['id_usuario'] == $idUsuario && ($f['id_estado'] != '3' && $f['id_estado'] != '4')) {
-                              // Mostrar el botón de editar solo si el id_usuario coincide con $idUsuario coment_usuario
                             ?>
                               <button class="btn btn-info btn-small btnEditar" title="Editar ticket" data-id="<?php echo $f['id_ticket']; ?>" data-categoria="<?php echo $f['id_categoria']; ?>" data-prioridad="<?php echo $f['id_prioridad']; ?>" data-titulo="<?php echo $f['titulo']; ?>" data-editor="<?php echo htmlspecialchars($f['resumen']); ?>" data-encargado="<?php echo $f['id_encargado']; ?>" data-toggle="modal" data-target="#modalEditar">
                                 <i class="fa fa-edit"></i>
@@ -362,7 +359,6 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
                             ?>
                             <?php
                             if ($f['id_encargado'] == $idUsuario && ($f['id_estado'] != '3' && $f['id_estado'] != '4')) {
-                              // Tu código aquí si ambas condiciones son verdaderas
                             ?>
                               <button class="btn btn-danger btn-small btncerrar" title="Cerrar ticket" data-id="<?php echo $f['id_ticket']; ?>" data-id_usuario="<?php echo $f['id_usuario']; ?>" data-estado="<?php echo $f['id_estado']; ?>" data-toggle="modal" data-target="#modalcerrar">
                                 <i class="fa fa-clipboard-check"></i>

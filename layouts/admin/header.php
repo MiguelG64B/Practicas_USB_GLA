@@ -71,14 +71,22 @@
         </li>
       <?php } ?>
       <?php if ($arregloUsuario['permisos']['per_con'] == '1' || $arregloUsuario['permisos']['per_reserva'] == '1') { ?>
-      <li class="nav-item">
-        <a class="nav-link" title="Libreria" href="panellibros.php">
-          <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
-            <i class="fa fa-caret-right text-warning text-sm opacity-10"></i>
+        <li class="list-group mt-2">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
+              <i class="fa fa-caret-right text-warning opacity-10"></i>
+            </div>
+            <span class="nav-link-text">Biblioteca</span>
+          </a>
+          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <?php if ($arregloUsuario['permisos']['per_categoria'] == '1'|| $arregloUsuario['permisos']['per_reserva'] == '1') { ?>
+              <a class="dropdown-item" href="panellibros.php">Libros</a>
+            <?php } ?>
+            <?php if ($arregloUsuario['permisos']['per_con'] == '1' || $arregloUsuario['permisos']['per_reserva'] == '1') { ?>
+              <a class="dropdown-item" href="reservas.php">Reservas</a>
+            <?php } ?>
           </div>
-          <span class="nav-link-text ms-1">Libreria</span>
-        </a>
-      </li>
+        </li>
       <?php } ?>
       <!-- Otros elementos de la lista si es necesario -->
     </ul>

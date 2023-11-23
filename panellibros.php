@@ -193,115 +193,114 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
 
                   <?php  } ?>
                   <div class="table-responsive">
-                  <table class="table">
-                    <thead>
-                      <tr>
-                        <th>Cod</th>
-                        <th>Titulo</th>
-                        <th>Autor</th>
-                        <th>Edicion</th>
-                        <th>Estado</th>
-                        <th>Editorial</th>
-                        <th>Area</th>
-                        <th>clase</th>
-                        <th>Disponibilidad</th>
-                        <th></th>
-                      </tr>
-
-                    </thead>
-                    <tbody>
-
-                      <?php while ($f = mysqli_fetch_array($resultado)) { ?>
+                    <table class="table">
+                      <thead>
                         <tr>
-                          <td><?php echo $f['coddew']; ?></td>
-                          <td><?php echo $f['titulo']; ?></td>
-                          <td><?php
-                              $res = $conexion->query("SELECT nom_persona FROM autor WHERE id = " . $f['id_autor']);
-                              if ($categoria = mysqli_fetch_array($res)) {
-                                echo $categoria['nom_persona'];
-                              }
-                              ?>
-                          </td>
-                          <td><?php echo $f['edicion']; ?></td>
-                          <td><?php
-                              $res = $conexion->query("SELECT descrip FROM estado WHERE id = " . $f['id_estado']);
-                              if ($categoria = mysqli_fetch_array($res)) {
-                                echo $categoria['descrip'];
-                              }
-                              ?>
-                          </td>
-                          <td><?php
-                              $res = $conexion->query("SELECT descrip FROM editorial WHERE id = " . $f['id_editorial']);
-                              if ($categoria = mysqli_fetch_array($res)) {
-                                echo $categoria['descrip'];
-                              }
-                              ?>
-                          </td>
-                          <td><?php
-                              $res = $conexion->query("SELECT descrip FROM areas WHERE id = " . $f['id_area']);
-                              if ($categoria = mysqli_fetch_array($res)) {
-                                echo $categoria['descrip'];
-                              }
-                              ?>
-                          </td>
-                          <td><?php
-                              $res = $conexion->query("SELECT descrip FROM clase WHERE id = " . $f['id_clase']);
-                              if ($categoria = mysqli_fetch_array($res)) {
-                                echo $categoria['descrip'];
-                              }
-                              ?>
-                          </td>
-                          <td>
-                            <?php
-                            switch ($f['existe']) {
-                              case 'si':
-                                echo '<span class="badge badge-sm bg-gradient-success">Disponible</span>';
-                                break;
-                              case 'no':
-                                echo '<span class="badge badge-sm bg-gradient-danger">ocupado</span>';
-                                break;
-                              default:
-                                echo $f['existe'];
-                                break;
-                            }
-                            ?>
-                          </td>
-                          <td>
-
-                            <button class="btn btn-primary btn-small btndetalles" title="Ver detalles" data-id_libro="<?php echo $f['id_libro']; ?>" data-coddew="<?php echo $f['coddew']; ?>" data-titulo="<?php echo $f['titulo']; ?>" data-id_autor="<?php echo $f['id_autor']; ?>" data-edicion="<?php echo $f['edicion']; ?>" data-costo="<?php echo $f['costo']; ?>" data-fecha="<?php echo $f['fecha']; ?>" data-id_estado="<?php echo $f['id_estado']; ?>" data-id_origen="<?php echo $f['id_origen']; ?>" data-id_editorial="<?php echo $f['id_editorial']; ?>" data-id_area="<?php echo $f['id_area']; ?>" data-id_clase="<?php echo $f['id_clase']; ?>" data-observaciones="<?php echo $f['observaciones']; ?>" data-id_seccion="<?php echo $f['id_seccion']; ?>" data-temas="<?php echo $f['temas']; ?>" data-id_ciudad="<?php echo $f['id_ciudad']; ?>" data-codinv="<?php echo $f['codinv']; ?>" data-npag="<?php echo $f['npag']; ?>" data-fimpresion="<?php echo $f['fimpresion']; ?>" data-temas2="<?php echo $f['temas2']; ?>" data-entrainv="<?php echo $f['entrainv']; ?>" data-toggle="modal" data-target="#modalDetalles"><i class="fa fa-eye"></i></button>
-
-
-                            <?php
-                            if ($arregloUsuario['permisos']['per_con'] == '1' || $arregloUsuario['permisos']['per_reserva'] == '1') {
-                              // Mostrar el botón de editar solo si el id_usuario coincide con $idUsuario coment_usuario
-                            ?>
-                              <button class="btn btn-info btn-small btnEditar" title="Editar libro" data-id_libro="<?php echo $f['id_libro']; ?>" data-coddew="<?php echo $f['coddew']; ?>" data-titulo="<?php echo $f['titulo']; ?>" data-id_autor="<?php echo $f['id_autor']; ?>" data-edicion="<?php echo $f['edicion']; ?>" data-costo="<?php echo $f['costo']; ?>" data-fecha="<?php echo $f['fecha']; ?>" data-id_estado="<?php echo $f['id_estado']; ?>" data-id_origen="<?php echo $f['id_origen']; ?>" data-id_editorial="<?php echo $f['id_editorial']; ?>" data-id_area="<?php echo $f['id_area']; ?>" data-id_clase="<?php echo $f['id_clase']; ?>" data-observaciones="<?php echo $f['observaciones']; ?>" data-id_seccion="<?php echo $f['id_seccion']; ?>" data-temas="<?php echo $f['temas']; ?>" data-id_ciudad="<?php echo $f['id_ciudad']; ?>" data-codinv="<?php echo $f['codinv']; ?>" data-npag="<?php echo $f['npag']; ?>" data-fimpresion="<?php echo $f['fimpresion']; ?>" data-temas2="<?php echo $f['temas2']; ?>" data-entrainv="<?php echo $f['entrainv']; ?>" data-toggle="modal" data-target="#modalEditar">
-                                <i class="fa fa-edit"></i>
-                              </button>
-                            <button class="btn btn-danger btn-small btncerrar" title="Eliminar libro" data-id_autor="<?php echo $f['id_autor']; ?>" data-edicion="<?php echo $f['edicion']; ?>" data-costo="<?php echo $f['costo']; ?>" data-id_libro="<?php echo $f['id_libro']; ?>" data-fecha="<?php echo $f['fecha']; ?>" data-id_estado="<?php echo $f['id_estado']; ?>" data-id_origen="<?php echo $f['id_origen']; ?>" data-id_editorial="<?php echo $f['id_editorial']; ?>" data-id_area="<?php echo $f['id_area']; ?>" data-id_clase="<?php echo $f['id_clase']; ?>" data-observaciones="<?php echo $f['observaciones']; ?>" data-id_seccion="<?php echo $f['id_seccion']; ?>" data-temas="<?php echo $f['temas']; ?>" data-id_ciudad="<?php echo $f['id_ciudad']; ?>" data-codinv="<?php echo $f['codinv']; ?>" data-npag="<?php echo $f['npag']; ?>" data-fimpresion="<?php echo $f['fimpresion']; ?>" data-temas2="<?php echo $f['temas2']; ?>" data-temas2="<?php echo $f['entrainv']; ?>" data-toggle="modal" data-target="#modalcerrar">
-                                <i class="fa fa-clipboard-check"></i>
-                              </button>
-                            <?php
-                            }
-                            ?>
-                                          <?php
-                            if ($f['existe']== 'no') {
-                              // Mostrar el botón de editar solo si el id_usuario coincide con $idUsuario coment_usuario
-                            ?>
-                              <button class="btn btn-info btn-small btnEditar" title="Notificar entrega libro" data-id_libro="<?php echo $f['id_libro']; ?>" data-coddew="<?php echo $f['coddew']; ?>" data-titulo="<?php echo $f['titulo']; ?>" data-id_autor="<?php echo $f['id_autor']; ?>" data-edicion="<?php echo $f['edicion']; ?>" data-costo="<?php echo $f['costo']; ?>" data-fecha="<?php echo $f['fecha']; ?>" data-id_estado="<?php echo $f['id_estado']; ?>" data-id_origen="<?php echo $f['id_origen']; ?>" data-id_editorial="<?php echo $f['id_editorial']; ?>" data-id_area="<?php echo $f['id_area']; ?>" data-id_clase="<?php echo $f['id_clase']; ?>" data-observaciones="<?php echo $f['observaciones']; ?>" data-id_seccion="<?php echo $f['id_seccion']; ?>" data-temas="<?php echo $f['temas']; ?>" data-id_ciudad="<?php echo $f['id_ciudad']; ?>" data-codinv="<?php echo $f['codinv']; ?>" data-npag="<?php echo $f['npag']; ?>" data-fimpresion="<?php echo $f['fimpresion']; ?>" data-temas2="<?php echo $f['temas2']; ?>" data-entrainv="<?php echo $f['entrainv']; ?>" data-toggle="modal" data-target="#modalEditar">
-                                <i class="fa fa-edit"></i>
-                              </button>
-                            <?php
-                            }
-                            ?>
-                     
-                          </td>
+                          <th>Cod</th>
+                          <th>Titulo</th>
+                          <th>Autor</th>
+                          <th>Edicion</th>
+                          <th>Estado</th>
+                          <th>Editorial</th>
+                          <th>Area</th>
+                          <th>clase</th>
+                          <th>Disponibilidad</th>
+                          <th></th>
                         </tr>
-                      <?php
-                      }
-                      ?>
-                    </tbody>
-                  </table>
+
+                      </thead>
+                      <tbody>
+
+                        <?php while ($f = mysqli_fetch_array($resultado)) { ?>
+                          <tr>
+                            <td><?php echo $f['coddew']; ?></td>
+                            <td><?php echo $f['titulo']; ?></td>
+                            <td><?php
+                                $res = $conexion->query("SELECT nom_persona FROM autor WHERE id = " . $f['id_autor']);
+                                if ($categoria = mysqli_fetch_array($res)) {
+                                  echo $categoria['nom_persona'];
+                                }
+                                ?>
+                            </td>
+                            <td><?php echo $f['edicion']; ?></td>
+                            <td><?php
+                                $res = $conexion->query("SELECT descrip FROM estado WHERE id = " . $f['id_estado']);
+                                if ($categoria = mysqli_fetch_array($res)) {
+                                  echo $categoria['descrip'];
+                                }
+                                ?>
+                            </td>
+                            <td><?php
+                                $res = $conexion->query("SELECT descrip FROM editorial WHERE id = " . $f['id_editorial']);
+                                if ($categoria = mysqli_fetch_array($res)) {
+                                  echo $categoria['descrip'];
+                                }
+                                ?>
+                            </td>
+                            <td><?php
+                                $res = $conexion->query("SELECT descrip FROM areas WHERE id = " . $f['id_area']);
+                                if ($categoria = mysqli_fetch_array($res)) {
+                                  echo $categoria['descrip'];
+                                }
+                                ?>
+                            </td>
+                            <td><?php
+                                $res = $conexion->query("SELECT descrip FROM clase WHERE id = " . $f['id_clase']);
+                                if ($categoria = mysqli_fetch_array($res)) {
+                                  echo $categoria['descrip'];
+                                }
+                                ?>
+                            </td>
+                            <td>
+                              <?php
+                              switch ($f['existe']) {
+                                case 'si':
+                                  echo '<span class="badge badge-sm bg-gradient-success">Disponible</span>';
+                                  break;
+                                case 'no':
+                                  echo '<span class="badge badge-sm bg-gradient-danger">ocupado</span>';
+                                  break;
+                                default:
+                                  echo $f['existe'];
+                                  break;
+                              }
+                              ?>
+                            </td>
+                            <td>
+
+                              <button class="btn btn-primary btn-small btndetalles" title="Ver detalles" data-id_libro="<?php echo $f['id_libro']; ?>" data-coddew="<?php echo $f['coddew']; ?>" data-titulo="<?php echo $f['titulo']; ?>" data-id_autor="<?php echo $f['id_autor']; ?>" data-edicion="<?php echo $f['edicion']; ?>" data-costo="<?php echo $f['costo']; ?>" data-fecha="<?php echo $f['fecha']; ?>" data-id_estado="<?php echo $f['id_estado']; ?>" data-id_origen="<?php echo $f['id_origen']; ?>" data-id_editorial="<?php echo $f['id_editorial']; ?>" data-id_area="<?php echo $f['id_area']; ?>" data-id_clase="<?php echo $f['id_clase']; ?>" data-observaciones="<?php echo $f['observaciones']; ?>" data-id_seccion="<?php echo $f['id_seccion']; ?>" data-temas="<?php echo $f['temas']; ?>" data-id_ciudad="<?php echo $f['id_ciudad']; ?>" data-codinv="<?php echo $f['codinv']; ?>" data-npag="<?php echo $f['npag']; ?>" data-fimpresion="<?php echo $f['fimpresion']; ?>" data-temas2="<?php echo $f['temas2']; ?>" data-entrainv="<?php echo $f['entrainv']; ?>" data-toggle="modal" data-target="#modalDetalles"><i class="fa fa-eye"></i></button>
+
+
+                              <?php
+                              if ($arregloUsuario['permisos']['per_con'] == '1') {
+                                // Mostrar el botón de editar solo si el id_usuario coincide con $idUsuario coment_usuario
+                              ?>
+                                <button class="btn btn-info btn-small btnEditar" title="Editar libro" data-id_libro="<?php echo $f['id_libro']; ?>" data-coddew="<?php echo $f['coddew']; ?>" data-titulo="<?php echo $f['titulo']; ?>" data-id_autor="<?php echo $f['id_autor']; ?>" data-edicion="<?php echo $f['edicion']; ?>" data-costo="<?php echo $f['costo']; ?>" data-fecha="<?php echo $f['fecha']; ?>" data-id_estado="<?php echo $f['id_estado']; ?>" data-id_origen="<?php echo $f['id_origen']; ?>" data-id_editorial="<?php echo $f['id_editorial']; ?>" data-id_area="<?php echo $f['id_area']; ?>" data-id_clase="<?php echo $f['id_clase']; ?>" data-observaciones="<?php echo $f['observaciones']; ?>" data-id_seccion="<?php echo $f['id_seccion']; ?>" data-temas="<?php echo $f['temas']; ?>" data-id_ciudad="<?php echo $f['id_ciudad']; ?>" data-codinv="<?php echo $f['codinv']; ?>" data-npag="<?php echo $f['npag']; ?>" data-fimpresion="<?php echo $f['fimpresion']; ?>" data-temas2="<?php echo $f['temas2']; ?>" data-entrainv="<?php echo $f['entrainv']; ?>" data-toggle="modal" data-target="#modalEditar">
+                                  <i class="fa fa-edit"></i>
+                                </button>
+                                <button class="btn btn-danger btn-small btnEliminar" title="Eliminar Libro" data-id_libro="<?php echo $f['id_libro']; ?>" data-toggle="modal" data-target="#modalEliminar">
+                                  <i class="fa fa-trash"></i>
+                                </button>
+                              <?php
+                              }
+                              ?>
+                              <?php
+                              if ($f['existe'] == 'si' || $arregloUsuario['permisos']['per_reserva'] == '1') {
+                              ?>
+                                <button class="btn btn-default btn-small btnReservar" title="Reservar libro" data-id_libro="<?php echo $f['id_libro']; ?>" data-toggle="modal" data-target="#modalReserva">
+                                  <i class="fa fa-calendar-check-o"></i>
+                                </button>
+                              <?php
+                              }
+                              ?>
+
+                            </td>
+                          </tr>
+                        <?php
+                        }
+                        ?>
+                      </tbody>
+                    </table>
                   </div>
                   <div class="pagination">
                     <?php if ($paginaActual > 1) : ?>
@@ -325,162 +324,184 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
         </div>
       </div>
       <!-- agregar libros -->
-    
+
     </div>
-    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-          <div class="modal-content">
-            <form action="./php/insertarlibro.php" method="POST" enctype="multipart/form-data">
-              <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Insertar libro</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                  <span aria-hidden="true">&times;</span>
-                </button>
-              </div>
-              <div class="modal-body">
-                <div class="form-group">
-                  <label for="coddew">codigo</label>
-                  <input type="text" name="coddew" placeholder="Codigo" id="coddew" class="form-control" required>
-                </div>
-                <div class="form-group">
-                  <label for="titulo">Titulo</label>
-                  <input type="text" name="titulo" placeholder="Titulo" id="titulo" class="form-control" required>
-                </div>
-                <div class="form-group">
-                  <label for="id_autor">Autor</label>
-                  <select name="id_autor" id="id_autor" class="form-control" required>
-                    <?php
-                    $res = $conexion->query("select * from autor");
-                    while ($f = mysqli_fetch_array($res)) {
-                      echo '<option value="' . $f['id'] . '" >' . $f['nom_persona'] . '</option>';
-                    }
-                    ?>
-                  </select>
-                </div>
-                <div class="form-group">
-                  <label for="edicion">Edicion</label>
-                  <input type="text" name="edicion" placeholder="Edicion" id="edicion" class="form-control" required>
-                </div>
-                <div class="form-group">
-                  <label for="costo">Costo</label>
-                  <input type="number" name="costo" placeholder="Costo" id="costo" class="form-control" required>
-                </div>
-                <div class="form-group">
-                  <label for="fecha">Fecha</label>
-                  <input type="date" name="fecha" placeholder="Fecha" id="fecha" class="form-control" required>
-                </div>
-                <div class="form-group">
-                  <label for="id_estado">Estado</label>
-                  <select name="id_estado" id="id_estado" class="form-control" required>
-                    <option value="1">NUEVO</option>
-                    <option value="2">BUENO</option>
-                    <option value="3">REGULAR</option>
-                    <option value="4">MALO</option>
-                  </select>
-                </div>
-                <div class="form-group">
-                  <label for="observaciones">Observaciones</label>
-                  <textarea name="observaciones" id="observaciones" class="form-control" required></textarea>
-                </div>
-                <div class="form-group">
-                  <label for="id_origen">Origen</label>
-                  <select name="id_origen" id="id_origen" class="form-control" required>
-                    <?php
-                    $res = $conexion->query("select * from origen");
-                    while ($f = mysqli_fetch_array($res)) {
-                      echo '<option value="' . $f['id'] . '" >' . $f['descrip'] . '</option>';
-                    }
-                    ?>
-                  </select>
-                </div>
-                <div class="form-group">
-                  <label for="id_editorial">Editorial</label>
-                  <select name="id_editorial" id="id_editorial" class="form-control" required>
-                    <?php
-                    $res = $conexion->query("select * from editorial");
-                    while ($f = mysqli_fetch_array($res)) {
-                      echo '<option value="' . $f['id'] . '" >' . $f['descrip'] . '</option>';
-                    }
-                    ?>
-                  </select>
-                </div>
-                <div class="form-group">
-                  <label for="id_area">Area</label>
-                  <select name="id_area" id="id_area" class="form-control" required>
-                    <?php
-                    $res = $conexion->query("select * from areas");
-                    while ($f = mysqli_fetch_array($res)) {
-                      echo '<option value="' . $f['id'] . '" >' . $f['descrip'] . '</option>';
-                    }
-                    ?>
-                  </select>
-                </div>
-                <div class="form-group">
-                  <label for="id_clase">Clase</label>
-                  <select name="id_clase" id="id_clase" class="form-control" required>
-                    <?php
-                    $res = $conexion->query("select * from clase");
-                    while ($f = mysqli_fetch_array($res)) {
-                      echo '<option value="' . $f['id'] . '" >' . $f['descrip'] . '</option>';
-                    }
-                    ?>
-                  </select>
-                </div>
-                <div class="form-group">
-                  <label for="temas">Temas</label>
-                  <input type="text" name="temas" placeholder="Temas" id="temas" class="form-control" required>
-                </div>
-                <div class="form-group">
-                  <label for="id_ciudad">Ciudad</label>
-                  <select name="id_ciudad" id="id_ciudad" class="form-control" required>
-                    <?php
-                    $res = $conexion->query("select * from ciudad");
-                    while ($f = mysqli_fetch_array($res)) {
-                      echo '<option value="' . $f['id'] . '" >' . $f['descrip'] . '</option>';
-                    }
-                    ?>
-                  </select>
-                </div>
-                <div class="form-group">
-                  <label for="id_seccion">Seccion</label>
-                  <select name="id_seccion" id="id_seccion" class="form-control" required>
-                    <?php
-                    $res = $conexion->query("select * from seccion where tipo = '1' ");
-                    while ($f = mysqli_fetch_array($res)) {
-                      echo '<option value="' . $f['id'] . '" >' . $f['descrip'] . '</option>';
-                    }
-                    ?>
-                  </select>
-                </div>
-                <div class="form-group">
-                  <label for="codinv">Codigo invitado</label>
-                  <input type="text" name="codinv" placeholder="Codigo invitado" id="codinv" class="form-control" required>
-                </div>
-                <div class="form-group">
-                  <label for="npag">Numero de paginas</label>
-                  <input type="number" name="npag" placeholder="Numero de paginas" id="npag" class="form-control" required>
-                </div>
-                <div class="form-group">
-                  <label for="fimpresion">Fecha de impresion</label>
-                  <input type="date" name="fimpresion" placeholder="Fecha de impresion" id="fimpresion" class="form-control" required>
-                </div>
-                <div class="form-group">
-                  <label for="temas2">Temas 2</label>
-                  <input type="text" name="temas2" placeholder="Temas 2" id="temas2" class="form-control" required>
-                </div>
-                <div class="form-group">
-                  <label for="entrainv">entrainv</label>
-                  <input type="text" name="entrainv" placeholder="entrainv" id="entrainv" class="form-control" required>
-                </div>
-                <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                  <button type="submit" class="btn btn-primary editar">Guardar</button>
-                </div>
-              </div>
+    <!-- eliminar libros -->
+    <div class="modal fade" id="modalEliminar" tabindex="-1" role="dialog" aria-labelledby="modalEliminarLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+
+          <div class="modal-header">
+            <h5 class="modal-title" id="modalEliminarLabel">Eliminar libro</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
           </div>
-          </form>
+          <div class="modal-body">
+            ¿Desea eliminar este libro?
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+            <button type="submit" class="btn btn-danger eliminar" data-dismiss="modal">Eliminar</button>
+          </div>
         </div>
       </div>
+    </div>
+    <!-- eliminar libros -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <form action="./php/insertarlibro.php" method="POST" enctype="multipart/form-data">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">Insertar libro</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <div class="form-group">
+                <label for="coddew">codigo</label>
+                <input type="text" name="coddew" placeholder="Codigo" id="coddew" class="form-control" required>
+              </div>
+              <div class="form-group">
+                <label for="titulo">Titulo</label>
+                <input type="text" name="titulo" placeholder="Titulo" id="titulo" class="form-control" required>
+              </div>
+              <div class="form-group">
+                <label for="id_autor">Autor</label>
+                <select name="id_autor" id="id_autor" class="form-control" required>
+                  <?php
+                  $res = $conexion->query("select * from autor");
+                  while ($f = mysqli_fetch_array($res)) {
+                    echo '<option value="' . $f['id'] . '" >' . $f['nom_persona'] . '</option>';
+                  }
+                  ?>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="edicion">Edicion</label>
+                <input type="text" name="edicion" placeholder="Edicion" id="edicion" class="form-control" required>
+              </div>
+              <div class="form-group">
+                <label for="costo">Costo</label>
+                <input type="number" name="costo" placeholder="Costo" id="costo" class="form-control" required>
+              </div>
+              <div class="form-group">
+                <label for="fecha">Fecha</label>
+                <input type="date" name="fecha" placeholder="Fecha" id="fecha" class="form-control" required>
+              </div>
+              <div class="form-group">
+                <label for="id_estado">Estado</label>
+                <select name="id_estado" id="id_estado" class="form-control" required>
+                  <option value="1">NUEVO</option>
+                  <option value="2">BUENO</option>
+                  <option value="3">REGULAR</option>
+                  <option value="4">MALO</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="observaciones">Observaciones</label>
+                <textarea name="observaciones" id="observaciones" class="form-control" required></textarea>
+              </div>
+              <div class="form-group">
+                <label for="id_origen">Origen</label>
+                <select name="id_origen" id="id_origen" class="form-control" required>
+                  <?php
+                  $res = $conexion->query("select * from origen");
+                  while ($f = mysqli_fetch_array($res)) {
+                    echo '<option value="' . $f['id'] . '" >' . $f['descrip'] . '</option>';
+                  }
+                  ?>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="id_editorial">Editorial</label>
+                <select name="id_editorial" id="id_editorial" class="form-control" required>
+                  <?php
+                  $res = $conexion->query("select * from editorial");
+                  while ($f = mysqli_fetch_array($res)) {
+                    echo '<option value="' . $f['id'] . '" >' . $f['descrip'] . '</option>';
+                  }
+                  ?>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="id_area">Area</label>
+                <select name="id_area" id="id_area" class="form-control" required>
+                  <?php
+                  $res = $conexion->query("select * from areas");
+                  while ($f = mysqli_fetch_array($res)) {
+                    echo '<option value="' . $f['id'] . '" >' . $f['descrip'] . '</option>';
+                  }
+                  ?>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="id_clase">Clase</label>
+                <select name="id_clase" id="id_clase" class="form-control" required>
+                  <?php
+                  $res = $conexion->query("select * from clase");
+                  while ($f = mysqli_fetch_array($res)) {
+                    echo '<option value="' . $f['id'] . '" >' . $f['descrip'] . '</option>';
+                  }
+                  ?>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="temas">Temas</label>
+                <input type="text" name="temas" placeholder="Temas" id="temas" class="form-control" required>
+              </div>
+              <div class="form-group">
+                <label for="id_ciudad">Ciudad</label>
+                <select name="id_ciudad" id="id_ciudad" class="form-control" required>
+                  <?php
+                  $res = $conexion->query("select * from ciudad");
+                  while ($f = mysqli_fetch_array($res)) {
+                    echo '<option value="' . $f['id'] . '" >' . $f['descrip'] . '</option>';
+                  }
+                  ?>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="id_seccion">Seccion</label>
+                <select name="id_seccion" id="id_seccion" class="form-control" required>
+                  <?php
+                  $res = $conexion->query("select * from seccion where tipo = '1' ");
+                  while ($f = mysqli_fetch_array($res)) {
+                    echo '<option value="' . $f['id'] . '" >' . $f['descrip'] . '</option>';
+                  }
+                  ?>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="codinv">Codigo invitado</label>
+                <input type="text" name="codinv" placeholder="Codigo invitado" id="codinv" class="form-control" required>
+              </div>
+              <div class="form-group">
+                <label for="npag">Numero de paginas</label>
+                <input type="number" name="npag" placeholder="Numero de paginas" id="npag" class="form-control" required>
+              </div>
+              <div class="form-group">
+                <label for="fimpresion">Fecha de impresion</label>
+                <input type="date" name="fimpresion" placeholder="Fecha de impresion" id="fimpresion" class="form-control" required>
+              </div>
+              <div class="form-group">
+                <label for="temas2">Temas 2</label>
+                <input type="text" name="temas2" placeholder="Temas 2" id="temas2" class="form-control" required>
+              </div>
+              <div class="form-group">
+                <label for="entrainv">entrainv</label>
+                <input type="text" name="entrainv" placeholder="entrainv" id="entrainv" class="form-control" required>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                <button type="submit" class="btn btn-primary editar">Guardar</button>
+              </div>
+            </div>
+        </div>
+        </form>
+      </div>
+    </div>
     <!-- agregar libros -->
 
     <!-- Modal Editar -->
@@ -643,7 +664,42 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
       </div>
     </div>
     <!-- Modal Editar -->
+    <!-- reserva -->
+    <div class="modal fade" id="modalReserva" tabindex="-1" role="dialog" aria-labelledby="modalReserva" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <form action="./php/reserva.php" method="POST" enctype="multipart/form-data">
+            <div class="modal-header">
+              <h5 class="modal-title" id="modalReserva">Reservar Libro</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <input type="hidden" id="id_libroReserva" name="id_libro">
+              <input type="hidden" id="id_usuario" name="id_usuario" value="<?php echo $arregloUsuario['id_usuario']; ?>" class="form-control" required>
+              <div class="modal-body">
+                <div class="form-group">
+                  <label for="">Fecha de recogida</label>
+                  <input type="date" name="fecha_reserva" placeholder="Fecha de recogida" class="form-control" required min="<?php echo date('Y-m-d'); ?>">
+                </div>
+                <div class="form-group">
+                  <label for="">Fecha de entrega límite</label>
+                  <!-- Establece la fecha mínima como la fecha actual y la fecha máxima como 15 días después -->
+                  <input type="date" name="fecha_limite" placeholder="Fecha de entrega" class="form-control" required min="<?php echo date('Y-m-d'); ?>" max="<?php echo date('Y-m-d', strtotime('+15 days')); ?>">
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                  <button type="submit" class="btn btn-primary editar">Guardar</button>
+                </div>
+              </div>
+            </div>
+          </form>
 
+        </div>
+      </div>
+    </div>
+    <!-- reserva -->
     <!-- Modal ver sin editar-->
     <div class="modal fade" id="modalDetalles" tabindex="-1" role="dialog" aria-labelledby="modalEditar" aria-hidden="true">
       <div class="modal-dialog" role="document">
@@ -803,49 +859,7 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
     <!-- Modal ver sin editar-->
 
     <!-- Modal eliminar -->
-    <div class="modal cerrar" id="modalcerrar" tabindex="-1" role="dialog" aria-labelledby="modalcerrar" aria-hidden="true">
-      <div class="modal-dialog" role="document">
-        <div class="modal-content">
-          <form action="./php/cerrarticket.php" method="POST" enctype="multipart/form-data">
-            <div class="modal-header">
-              <h5 class="modal-title" id="modalcerrar">Cerrar ticket</h5>
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-              </button>
-            </div>
-            <div class="modal-body">
-              <input type="hidden" id="idcerrar" name="id">
-              <input type="hidden" id="id_usuariocerrar" name="id_usuario">
-              <div class="form-group">
-                <label for="editorcerrar">Comentario</label>
-                <textarea name="editor" id="editorcerrar" class="form-control" required></textarea>
-              </div>
-              <div class="form-group">
-                <label for="estadocerrar">Estado</label>
-                <select name="estado" id="estadoEdit" class="form-control" required>
-                  <?php
-                  $res = $conexion->query("SELECT * FROM estadoticket
-                  WHERE nombre NOT IN ('Activo', 'Asignado');
-                  ");
-                  while ($f = mysqli_fetch_array($res)) {
-                    echo '<option value="' . $f['id'] . '" >' . $f['nombre'] . '</option>';
-                  }
-                  ?>
-                </select>
-              </div>
-              <div class="form-group">
-                <label for="imagen">Prueba</label>
-                <input type="file" name="imagen" id="imagen" class="form-control" required>
-              </div>
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-              <button type="submit" class="btn btn-primary editar">Guardar</button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
+
     <!-- Modal eliminar -->
 
     <?php include("./layouts/footer.php"); ?>
@@ -910,12 +924,12 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
       var idEditar = -1;
       var fila;
       $(".btnEliminar").click(function() {
-        idEliminar = $(this).data('id');
+        idEliminar = $(this).data('id_libro');
         fila = $(this).parent('td').parent('tr');
       });
       $(".eliminar").click(function() {
         $.ajax({
-          url: './php/eliminarblog.php',
+          url: './php/eliminarlibro.php',
           method: 'POST',
           data: {
             id: idEliminar
@@ -1024,15 +1038,9 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
         $("#entrainvEdit2").val(entrainv);
       });
 
-      $(".btncerrar").click(function() {
-        idcerrar = $(this).data('id');
-        id_usuariocerrar = $(this).data('id_usuario');
-        var estado = $(this).data('estado');
-        var imagen = $(this).data('imagen');
-        $("#estadoEdit").val(estado);
-        $("#imagen").val(imagen);
-        $("#id_usuariocerrar").val(id_usuariocerrar);
-        $("#idcerrar").val(idcerrar);
+      $(".btnReservar").click(function() {
+        id_libroReserva = $(this).data('id_libro');
+        $("#id_libroReserva").val(id_libroReserva);
       });
     });
   </script>
