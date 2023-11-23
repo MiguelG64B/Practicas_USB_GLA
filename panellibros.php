@@ -14,7 +14,7 @@ $nivel = $arregloUsuario['nivel'];
 $id_seccion = $arregloUsuario['id_seccion'];
 
 // Verifica si 'per_tickets' es igual a 'si'
-if ($arregloUsuario['permisos']['per_con'] != '1'|| $arregloUsuario['permisos']['per_reserva'] != '1') {
+if ($arregloUsuario['permisos']['per_con'] != '1' || $arregloUsuario['permisos']['per_reserva'] != '1') {
   // Si 'per_tickets' no es igual a 'si', puedes redirigir a otra página o mostrar un mensaje de error.
   header("Location: ./perfil.php");
   exit(); // Asegúrate de que el script se detenga después de redirigir
@@ -125,23 +125,29 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
         <div class="col-12">
           <div class="card mb-4">
             <div class="card-header pb-0">
-              <h6>Insertar libros</h6>
+              <h6>Biblioteca</h6>
             </div>
             <div class="content-wrapper">
               <div class="content-header">
                 <div class="container-fluid">
                   <div class="row mb-2">
                     <div class="col-sm-6 text-right">
-                      <button type="button" title="Insertar libro" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
-                        <i class="fa fa-plus"></i> Insertar libro
-                      </button>
+                      <?php
+                      if ($arregloUsuario['permisos']['per_con'] == '1') {
+                      ?>
+                        <button type="button" title="Insertar libro" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+                          <i class="fa fa-plus"></i> Insertar libro
+                        </button>
+                      <?php
+                      }
+                      ?>
                       <td>
 
                         <div class="container">
                           <form action="" method="GET" class="form-inline">
                             <div class="row">
-         
-                   
+
+
                               <div class="">
                                 <form method="GET" action="">
                                   <div class="input-group mb-3">
@@ -186,6 +192,7 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
                     </div>
 
                   <?php  } ?>
+                  <div class="table-responsive">
                   <table class="table">
                     <thead>
                       <tr>
@@ -246,22 +253,22 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
                           </td>
                           <td>
                             <?php
-                              switch ($f['existe']) {
-                                case 'si':
-                                  echo '<span class="badge badge-sm bg-gradient-success">Disponible</span>';
-                                  break;
-                                case 'no':
-                                  echo '<span class="badge badge-sm bg-gradient-danger">ocupado</span>';
-                                  break;
-                                default:
-                                  echo $f['existe'];
-                                  break;
-                              }
+                            switch ($f['existe']) {
+                              case 'si':
+                                echo '<span class="badge badge-sm bg-gradient-success">Disponible</span>';
+                                break;
+                              case 'no':
+                                echo '<span class="badge badge-sm bg-gradient-danger">ocupado</span>';
+                                break;
+                              default:
+                                echo $f['existe'];
+                                break;
+                            }
                             ?>
                           </td>
                           <td>
 
-                            <button class="btn btn-primary btn-small btndetalles" title="Ver detalles"  data-id_libro="<?php echo $f['id_libro']; ?>" data-coddew="<?php echo $f['coddew']; ?>" data-titulo="<?php echo $f['titulo']; ?>" data-id_autor="<?php echo $f['id_autor']; ?>" data-edicion="<?php echo $f['edicion']; ?>" data-costo="<?php echo $f['costo']; ?>" data-fecha="<?php echo $f['fecha']; ?>" data-id_estado="<?php echo $f['id_estado']; ?>" data-id_origen="<?php echo $f['id_origen']; ?>" data-id_editorial="<?php echo $f['id_editorial']; ?>" data-id_area="<?php echo $f['id_area']; ?>" data-id_clase="<?php echo $f['id_clase']; ?>" data-observaciones="<?php echo $f['observaciones']; ?>" data-id_seccion="<?php echo $f['id_seccion']; ?>" data-temas="<?php echo $f['temas']; ?>" data-id_ciudad="<?php echo $f['id_ciudad']; ?>" data-codinv="<?php echo $f['codinv']; ?>" data-npag="<?php echo $f['npag']; ?>" data-fimpresion="<?php echo $f['fimpresion']; ?>" data-temas2="<?php echo $f['temas2']; ?>" data-entrainv="<?php echo $f['entrainv']; ?>" data-toggle="modal" data-target="#modalDetalles"><i class="fa fa-eye"></i></button>
+                            <button class="btn btn-primary btn-small btndetalles" title="Ver detalles" data-id_libro="<?php echo $f['id_libro']; ?>" data-coddew="<?php echo $f['coddew']; ?>" data-titulo="<?php echo $f['titulo']; ?>" data-id_autor="<?php echo $f['id_autor']; ?>" data-edicion="<?php echo $f['edicion']; ?>" data-costo="<?php echo $f['costo']; ?>" data-fecha="<?php echo $f['fecha']; ?>" data-id_estado="<?php echo $f['id_estado']; ?>" data-id_origen="<?php echo $f['id_origen']; ?>" data-id_editorial="<?php echo $f['id_editorial']; ?>" data-id_area="<?php echo $f['id_area']; ?>" data-id_clase="<?php echo $f['id_clase']; ?>" data-observaciones="<?php echo $f['observaciones']; ?>" data-id_seccion="<?php echo $f['id_seccion']; ?>" data-temas="<?php echo $f['temas']; ?>" data-id_ciudad="<?php echo $f['id_ciudad']; ?>" data-codinv="<?php echo $f['codinv']; ?>" data-npag="<?php echo $f['npag']; ?>" data-fimpresion="<?php echo $f['fimpresion']; ?>" data-temas2="<?php echo $f['temas2']; ?>" data-entrainv="<?php echo $f['entrainv']; ?>" data-toggle="modal" data-target="#modalDetalles"><i class="fa fa-eye"></i></button>
 
 
                             <?php
@@ -271,19 +278,23 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
                               <button class="btn btn-info btn-small btnEditar" title="Editar libro" data-id_libro="<?php echo $f['id_libro']; ?>" data-coddew="<?php echo $f['coddew']; ?>" data-titulo="<?php echo $f['titulo']; ?>" data-id_autor="<?php echo $f['id_autor']; ?>" data-edicion="<?php echo $f['edicion']; ?>" data-costo="<?php echo $f['costo']; ?>" data-fecha="<?php echo $f['fecha']; ?>" data-id_estado="<?php echo $f['id_estado']; ?>" data-id_origen="<?php echo $f['id_origen']; ?>" data-id_editorial="<?php echo $f['id_editorial']; ?>" data-id_area="<?php echo $f['id_area']; ?>" data-id_clase="<?php echo $f['id_clase']; ?>" data-observaciones="<?php echo $f['observaciones']; ?>" data-id_seccion="<?php echo $f['id_seccion']; ?>" data-temas="<?php echo $f['temas']; ?>" data-id_ciudad="<?php echo $f['id_ciudad']; ?>" data-codinv="<?php echo $f['codinv']; ?>" data-npag="<?php echo $f['npag']; ?>" data-fimpresion="<?php echo $f['fimpresion']; ?>" data-temas2="<?php echo $f['temas2']; ?>" data-entrainv="<?php echo $f['entrainv']; ?>" data-toggle="modal" data-target="#modalEditar">
                                 <i class="fa fa-edit"></i>
                               </button>
-                            <?php
-                            }
-                            ?>
-                            <?php
-                            if ($arregloUsuario['permisos']['per_con'] == '1') {
-                              // Tu código aquí si ambas condiciones son verdaderas
-                            ?>
-                            <!-- <button class="btn btn-danger btn-small btncerrar" title="Eliminar libro" data-id_autor="<?php echo $f['id_autor']; ?>" data-edicion="<?php echo $f['edicion']; ?>" data-costo="<?php echo $f['costo']; ?>" data-id_libro="<?php echo $f['id_libro']; ?>" data-fecha="<?php echo $f['fecha']; ?>" data-id_estado="<?php echo $f['id_estado']; ?>" data-id_origen="<?php echo $f['id_origen']; ?>" data-id_editorial="<?php echo $f['id_editorial']; ?>" data-id_area="<?php echo $f['id_area']; ?>" data-id_clase="<?php echo $f['id_clase']; ?>" data-observaciones="<?php echo $f['observaciones']; ?>" data-id_seccion="<?php echo $f['id_seccion']; ?>" data-temas="<?php echo $f['temas']; ?>" data-id_ciudad="<?php echo $f['id_ciudad']; ?>" data-codinv="<?php echo $f['codinv']; ?>" data-npag="<?php echo $f['npag']; ?>" data-fimpresion="<?php echo $f['fimpresion']; ?>" data-temas2="<?php echo $f['temas2']; ?>" data-temas2="<?php echo $f['entrainv']; ?>" data-toggle="modal" data-target="#modalcerrar">
+                            <button class="btn btn-danger btn-small btncerrar" title="Eliminar libro" data-id_autor="<?php echo $f['id_autor']; ?>" data-edicion="<?php echo $f['edicion']; ?>" data-costo="<?php echo $f['costo']; ?>" data-id_libro="<?php echo $f['id_libro']; ?>" data-fecha="<?php echo $f['fecha']; ?>" data-id_estado="<?php echo $f['id_estado']; ?>" data-id_origen="<?php echo $f['id_origen']; ?>" data-id_editorial="<?php echo $f['id_editorial']; ?>" data-id_area="<?php echo $f['id_area']; ?>" data-id_clase="<?php echo $f['id_clase']; ?>" data-observaciones="<?php echo $f['observaciones']; ?>" data-id_seccion="<?php echo $f['id_seccion']; ?>" data-temas="<?php echo $f['temas']; ?>" data-id_ciudad="<?php echo $f['id_ciudad']; ?>" data-codinv="<?php echo $f['codinv']; ?>" data-npag="<?php echo $f['npag']; ?>" data-fimpresion="<?php echo $f['fimpresion']; ?>" data-temas2="<?php echo $f['temas2']; ?>" data-temas2="<?php echo $f['entrainv']; ?>" data-toggle="modal" data-target="#modalcerrar">
                                 <i class="fa fa-clipboard-check"></i>
-                              </button>-->
+                              </button>
                             <?php
                             }
                             ?>
+                                          <?php
+                            if ($f['existe']== 'no') {
+                              // Mostrar el botón de editar solo si el id_usuario coincide con $idUsuario coment_usuario
+                            ?>
+                              <button class="btn btn-info btn-small btnEditar" title="Notificar entrega libro" data-id_libro="<?php echo $f['id_libro']; ?>" data-coddew="<?php echo $f['coddew']; ?>" data-titulo="<?php echo $f['titulo']; ?>" data-id_autor="<?php echo $f['id_autor']; ?>" data-edicion="<?php echo $f['edicion']; ?>" data-costo="<?php echo $f['costo']; ?>" data-fecha="<?php echo $f['fecha']; ?>" data-id_estado="<?php echo $f['id_estado']; ?>" data-id_origen="<?php echo $f['id_origen']; ?>" data-id_editorial="<?php echo $f['id_editorial']; ?>" data-id_area="<?php echo $f['id_area']; ?>" data-id_clase="<?php echo $f['id_clase']; ?>" data-observaciones="<?php echo $f['observaciones']; ?>" data-id_seccion="<?php echo $f['id_seccion']; ?>" data-temas="<?php echo $f['temas']; ?>" data-id_ciudad="<?php echo $f['id_ciudad']; ?>" data-codinv="<?php echo $f['codinv']; ?>" data-npag="<?php echo $f['npag']; ?>" data-fimpresion="<?php echo $f['fimpresion']; ?>" data-temas2="<?php echo $f['temas2']; ?>" data-entrainv="<?php echo $f['entrainv']; ?>" data-toggle="modal" data-target="#modalEditar">
+                                <i class="fa fa-edit"></i>
+                              </button>
+                            <?php
+                            }
+                            ?>
+                     
                           </td>
                         </tr>
                       <?php
@@ -291,6 +302,7 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
                       ?>
                     </tbody>
                   </table>
+                  </div>
                   <div class="pagination">
                     <?php if ($paginaActual > 1) : ?>
                       <a href="?page=<?php echo $paginaActual - 1; ?>&search=" class="btn btn-primary">Anterior</a>
@@ -312,162 +324,163 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
           </div>
         </div>
       </div>
-    <!-- agregar libros -->
+      <!-- agregar libros -->
+    
+    </div>
     <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-      <div class="modal-dialog" role="document">
-        <div class="modal-content">
-          <form action="./php/insertarlibro.php" method="POST" enctype="multipart/form-data">
-            <div class="modal-header">
-              <h5 class="modal-title" id="exampleModalLabel">Insertar libro</h5>
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-              </button>
-            </div>
-            <div class="modal-body">
-              <div class="form-group">
-                <label for="coddew">codigo</label>
-                <input type="text" name="coddew" placeholder="Codigo" id="coddew" class="form-control" required>
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <form action="./php/insertarlibro.php" method="POST" enctype="multipart/form-data">
+              <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Insertar libro</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
               </div>
-              <div class="form-group">
-                <label for="titulo">Titulo</label>
-                <input type="text" name="titulo" placeholder="Titulo" id="titulo" class="form-control" required>
+              <div class="modal-body">
+                <div class="form-group">
+                  <label for="coddew">codigo</label>
+                  <input type="text" name="coddew" placeholder="Codigo" id="coddew" class="form-control" required>
+                </div>
+                <div class="form-group">
+                  <label for="titulo">Titulo</label>
+                  <input type="text" name="titulo" placeholder="Titulo" id="titulo" class="form-control" required>
+                </div>
+                <div class="form-group">
+                  <label for="id_autor">Autor</label>
+                  <select name="id_autor" id="id_autor" class="form-control" required>
+                    <?php
+                    $res = $conexion->query("select * from autor");
+                    while ($f = mysqli_fetch_array($res)) {
+                      echo '<option value="' . $f['id'] . '" >' . $f['nom_persona'] . '</option>';
+                    }
+                    ?>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="edicion">Edicion</label>
+                  <input type="text" name="edicion" placeholder="Edicion" id="edicion" class="form-control" required>
+                </div>
+                <div class="form-group">
+                  <label for="costo">Costo</label>
+                  <input type="number" name="costo" placeholder="Costo" id="costo" class="form-control" required>
+                </div>
+                <div class="form-group">
+                  <label for="fecha">Fecha</label>
+                  <input type="date" name="fecha" placeholder="Fecha" id="fecha" class="form-control" required>
+                </div>
+                <div class="form-group">
+                  <label for="id_estado">Estado</label>
+                  <select name="id_estado" id="id_estado" class="form-control" required>
+                    <option value="1">NUEVO</option>
+                    <option value="2">BUENO</option>
+                    <option value="3">REGULAR</option>
+                    <option value="4">MALO</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="observaciones">Observaciones</label>
+                  <textarea name="observaciones" id="observaciones" class="form-control" required></textarea>
+                </div>
+                <div class="form-group">
+                  <label for="id_origen">Origen</label>
+                  <select name="id_origen" id="id_origen" class="form-control" required>
+                    <?php
+                    $res = $conexion->query("select * from origen");
+                    while ($f = mysqli_fetch_array($res)) {
+                      echo '<option value="' . $f['id'] . '" >' . $f['descrip'] . '</option>';
+                    }
+                    ?>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="id_editorial">Editorial</label>
+                  <select name="id_editorial" id="id_editorial" class="form-control" required>
+                    <?php
+                    $res = $conexion->query("select * from editorial");
+                    while ($f = mysqli_fetch_array($res)) {
+                      echo '<option value="' . $f['id'] . '" >' . $f['descrip'] . '</option>';
+                    }
+                    ?>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="id_area">Area</label>
+                  <select name="id_area" id="id_area" class="form-control" required>
+                    <?php
+                    $res = $conexion->query("select * from areas");
+                    while ($f = mysqli_fetch_array($res)) {
+                      echo '<option value="' . $f['id'] . '" >' . $f['descrip'] . '</option>';
+                    }
+                    ?>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="id_clase">Clase</label>
+                  <select name="id_clase" id="id_clase" class="form-control" required>
+                    <?php
+                    $res = $conexion->query("select * from clase");
+                    while ($f = mysqli_fetch_array($res)) {
+                      echo '<option value="' . $f['id'] . '" >' . $f['descrip'] . '</option>';
+                    }
+                    ?>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="temas">Temas</label>
+                  <input type="text" name="temas" placeholder="Temas" id="temas" class="form-control" required>
+                </div>
+                <div class="form-group">
+                  <label for="id_ciudad">Ciudad</label>
+                  <select name="id_ciudad" id="id_ciudad" class="form-control" required>
+                    <?php
+                    $res = $conexion->query("select * from ciudad");
+                    while ($f = mysqli_fetch_array($res)) {
+                      echo '<option value="' . $f['id'] . '" >' . $f['descrip'] . '</option>';
+                    }
+                    ?>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="id_seccion">Seccion</label>
+                  <select name="id_seccion" id="id_seccion" class="form-control" required>
+                    <?php
+                    $res = $conexion->query("select * from seccion where tipo = '1' ");
+                    while ($f = mysqli_fetch_array($res)) {
+                      echo '<option value="' . $f['id'] . '" >' . $f['descrip'] . '</option>';
+                    }
+                    ?>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="codinv">Codigo invitado</label>
+                  <input type="text" name="codinv" placeholder="Codigo invitado" id="codinv" class="form-control" required>
+                </div>
+                <div class="form-group">
+                  <label for="npag">Numero de paginas</label>
+                  <input type="number" name="npag" placeholder="Numero de paginas" id="npag" class="form-control" required>
+                </div>
+                <div class="form-group">
+                  <label for="fimpresion">Fecha de impresion</label>
+                  <input type="date" name="fimpresion" placeholder="Fecha de impresion" id="fimpresion" class="form-control" required>
+                </div>
+                <div class="form-group">
+                  <label for="temas2">Temas 2</label>
+                  <input type="text" name="temas2" placeholder="Temas 2" id="temas2" class="form-control" required>
+                </div>
+                <div class="form-group">
+                  <label for="entrainv">entrainv</label>
+                  <input type="text" name="entrainv" placeholder="entrainv" id="entrainv" class="form-control" required>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                  <button type="submit" class="btn btn-primary editar">Guardar</button>
+                </div>
               </div>
-              <div class="form-group">
-                <label for="id_autor">Autor</label>
-                <select name="id_autor" id="id_autor" class="form-control" required>
-                  <?php
-                  $res = $conexion->query("select * from autor");
-                  while ($f = mysqli_fetch_array($res)) {
-                    echo '<option value="' . $f['id'] . '" >' . $f['nom_persona'] . '</option>';
-                  }
-                  ?>
-                </select>
-              </div>
-              <div class="form-group">
-                <label for="edicion">Edicion</label>
-                <input type="text" name="edicion" placeholder="Edicion" id="edicion" class="form-control" required>
-              </div>
-              <div class="form-group">
-                <label for="costo">Costo</label>
-                <input type="number" name="costo" placeholder="Costo" id="costo" class="form-control" required>
-              </div>
-              <div class="form-group">
-                <label for="fecha">Fecha</label>
-                <input type="date" name="fecha" placeholder="Fecha" id="fecha" class="form-control" required>
-              </div>
-              <div class="form-group">
-                <label for="id_estado">Estado</label>
-                <select name="id_estado" id="id_estado" class="form-control" required>
-                  <option value="1">NUEVO</option>
-                  <option value="2">BUENO</option>
-                  <option value="3">REGULAR</option>
-                  <option value="4">MALO</option>
-                </select>
-              </div>
-              <div class="form-group">
-                <label for="observaciones">Observaciones</label>
-                <textarea name="observaciones" id="observaciones" class="form-control" required></textarea>
-              </div>
-              <div class="form-group">
-                <label for="id_origen">Origen</label>
-                <select name="id_origen" id="id_origen" class="form-control" required>
-                  <?php
-                  $res = $conexion->query("select * from origen");
-                  while ($f = mysqli_fetch_array($res)) {
-                    echo '<option value="' . $f['id'] . '" >' . $f['descrip'] . '</option>';
-                  }
-                  ?>
-                </select>
-              </div>
-              <div class="form-group">
-                <label for="id_editorial">Editorial</label>
-                <select name="id_editorial" id="id_editorial" class="form-control" required>
-                  <?php
-                  $res = $conexion->query("select * from editorial");
-                  while ($f = mysqli_fetch_array($res)) {
-                    echo '<option value="' . $f['id'] . '" >' . $f['descrip'] . '</option>';
-                  }
-                  ?>
-                </select>
-              </div>
-              <div class="form-group">
-                <label for="id_area">Area</label>
-                <select name="id_area" id="id_area" class="form-control" required>
-                  <?php
-                  $res = $conexion->query("select * from areas");
-                  while ($f = mysqli_fetch_array($res)) {
-                    echo '<option value="' . $f['id'] . '" >' . $f['descrip'] . '</option>';
-                  }
-                  ?>
-                </select>
-              </div>
-              <div class="form-group">
-                <label for="id_clase">Clase</label>
-                <select name="id_clase" id="id_clase" class="form-control" required>
-                  <?php
-                  $res = $conexion->query("select * from clase");
-                  while ($f = mysqli_fetch_array($res)) {
-                    echo '<option value="' . $f['id'] . '" >' . $f['descrip'] . '</option>';
-                  }
-                  ?>
-                </select>
-              </div>
-              <div class="form-group">
-                <label for="temas">Temas</label>
-                <input type="text" name="temas" placeholder="Temas" id="temas" class="form-control" required>
-              </div>
-              <div class="form-group">
-                <label for="id_ciudad">Ciudad</label>
-                <select name="id_ciudad" id="id_ciudad" class="form-control" required>
-                  <?php
-                  $res = $conexion->query("select * from ciudad");
-                  while ($f = mysqli_fetch_array($res)) {
-                    echo '<option value="' . $f['id'] . '" >' . $f['descrip'] . '</option>';
-                  }
-                  ?>
-                </select>
-              </div>
-              <div class="form-group">
-                <label for="id_seccion">Seccion</label>
-                <select name="id_seccion" id="id_seccion" class="form-control" required>
-                  <?php
-               $res = $conexion->query("select * from seccion where tipo = '1' ");
-                  while ($f = mysqli_fetch_array($res)) {
-                    echo '<option value="' . $f['id'] . '" >' . $f['descrip'] . '</option>';
-                  }
-                  ?>
-                </select>
-              </div>
-              <div class="form-group">
-                <label for="codinv">Codigo invitado</label>
-                <input type="text" name="codinv" placeholder="Codigo invitado" id="codinv" class="form-control" required>
-              </div>
-              <div class="form-group">
-                <label for="npag">Numero de paginas</label>
-                <input type="number" name="npag" placeholder="Numero de paginas" id="npag" class="form-control" required>
-              </div>
-              <div class="form-group">
-                <label for="fimpresion">Fecha de impresion</label>
-                <input type="date" name="fimpresion" placeholder="Fecha de impresion" id="fimpresion" class="form-control" required>
-              </div>
-              <div class="form-group">
-                <label for="temas2">Temas 2</label>
-                <input type="text" name="temas2" placeholder="Temas 2" id="temas2" class="form-control" required>
-              </div>
-              <div class="form-group">
-                <label for="entrainv">entrainv</label>
-                <input type="text" name="entrainv" placeholder="entrainv" id="entrainv" class="form-control" required>
-              </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-              <button type="submit" class="btn btn-primary editar">Guardar</button>
-              </div>
-            </div>
-            </div>
+          </div>
           </form>
         </div>
       </div>
-    </div>
     <!-- agregar libros -->
 
     <!-- Modal Editar -->
@@ -484,146 +497,146 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
             <div class="modal-body">
               <input type="hidden" id="id_libroEdit" name="id_libro">
               <div class="modal-body">
-              <div class="form-group">
-                <label for="coddewEdit">codigo</label>
-                <input type="text" name="coddew" placeholder="Codigo" id="coddewEdit" class="form-control" required>
+                <div class="form-group">
+                  <label for="coddewEdit">codigo</label>
+                  <input type="text" name="coddew" placeholder="Codigo" id="coddewEdit" class="form-control" required>
+                </div>
+                <div class="form-group">
+                  <label for="tituloEdit">Titulo</label>
+                  <input type="text" name="titulo" placeholder="Titulo" id="tituloEdit" class="form-control" required>
+                </div>
+                <div class="form-group">
+                  <label for="id_autorEdit">Autor</label>
+                  <select name="id_autor" id="id_autorEdit" class="form-control" required>
+                    <?php
+                    $res = $conexion->query("select * from autor");
+                    while ($f = mysqli_fetch_array($res)) {
+                      echo '<option value="' . $f['id'] . '" >' . $f['nom_persona'] . '</option>';
+                    }
+                    ?>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="edicionEdit">Edicion</label>
+                  <input type="text" name="edicion" placeholder="Edicion" id="edicionEdit" class="form-control" required>
+                </div>
+                <div class="form-group">
+                  <label for="costoEdit">Costo</label>
+                  <input type="number" name="costo" placeholder="Costo" id="costoEdit" class="form-control" required>
+                </div>
+                <div class="form-group">
+                  <label for="fechaEdit">Fecha</label>
+                  <input type="date" name="fecha" placeholder="Fecha" id="fechaEdit" class="form-control" required>
+                </div>
+                <div class="form-group">
+                  <label for="id_estadoEdit">Estado</label>
+                  <select name="id_estado" id="id_estadoEdit" class="form-control" required>
+                    <option value="1">NUEVO</option>
+                    <option value="2">BUENO</option>
+                    <option value="3">REGULAR</option>
+                    <option value="4">MALO</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="observacionesEdit">Observaciones</label>
+                  <textarea name="observaciones" id="observacionesEdit" class="form-control" required></textarea>
+                </div>
+                <div class="form-group">
+                  <label for="id_origenEdit">Origen</label>
+                  <select name="id_origen" id="id_origenEdit" class="form-control" required>
+                    <?php
+                    $res = $conexion->query("select * from origen");
+                    while ($f = mysqli_fetch_array($res)) {
+                      echo '<option value="' . $f['id'] . '" >' . $f['descrip'] . '</option>';
+                    }
+                    ?>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="id_editorialEdit">Editorial</label>
+                  <select name="id_editorial" id="id_editorialEdit" class="form-control" required>
+                    <?php
+                    $res = $conexion->query("select * from editorial");
+                    while ($f = mysqli_fetch_array($res)) {
+                      echo '<option value="' . $f['id'] . '" >' . $f['descrip'] . '</option>';
+                    }
+                    ?>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="id_areaEdit">Area</label>
+                  <select name="id_area" id="id_areaEdit" class="form-control" required>
+                    <?php
+                    $res = $conexion->query("select * from areas");
+                    while ($f = mysqli_fetch_array($res)) {
+                      echo '<option value="' . $f['id'] . '" >' . $f['descrip'] . '</option>';
+                    }
+                    ?>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="id_claseEdit">Clase</label>
+                  <select name="id_clase" id="id_claseEdit" class="form-control" required>
+                    <?php
+                    $res = $conexion->query("select * from clase");
+                    while ($f = mysqli_fetch_array($res)) {
+                      echo '<option value="' . $f['id'] . '" >' . $f['descrip'] . '</option>';
+                    }
+                    ?>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="temasEdit">Temas</label>
+                  <input type="text" name="temas" placeholder="Temas" id="temasEdit" class="form-control" required>
+                </div>
+                <div class="form-group">
+                  <label for="id_ciudadEdit">Ciudad</label>
+                  <select name="id_ciudad" id="id_ciudadEdit" class="form-control" required>
+                    <?php
+                    $res = $conexion->query("select * from ciudad");
+                    while ($f = mysqli_fetch_array($res)) {
+                      echo '<option value="' . $f['id'] . '" >' . $f['descrip'] . '</option>';
+                    }
+                    ?>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="id_seccionEdit">Seccion</label>
+                  <select name="id_seccion" id="id_seccionEdit" class="form-control" required>
+                    <?php
+                    $res = $conexion->query("select * from seccion where tipo = '1' ");
+                    while ($f = mysqli_fetch_array($res)) {
+                      echo '<option value="' . $f['id'] . '" >' . $f['descrip'] . '</option>';
+                    }
+                    ?>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="codinvEdit">Codigo invitado</label>
+                  <input type="text" name="codinv" placeholder="Codigo invitado" id="codinvEdit" class="form-control" required>
+                </div>
+                <div class="form-group">
+                  <label for="npagEdit">Numero de paginas</label>
+                  <input type="number" name="npag" placeholder="Numero de paginas" id="npagEdit" class="form-control" required>
+                </div>
+                <div class="form-group">
+                  <label for="fimpresionEdit">Fecha de impresion</label>
+                  <input type="date" name="fimpresion" placeholder="Fecha de impresion" id="fimpresionEdit" class="form-control" required>
+                </div>
+                <div class="form-group">
+                  <label for="temas2Edit">Temas 2</label>
+                  <input type="text" name="temas2" placeholder="Temas 2" id="temas2Edit" class="form-control" required>
+                </div>
+                <div class="form-group">
+                  <label for="entrainvEdit">entrainv</label>
+                  <input type="text" name="entrainv" placeholder="entrainv" id="entrainvEdit" class="form-control" required>
+                </div>
+
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                  <button type="submit" class="btn btn-primary editar">Guardar</button>
+                </div>
               </div>
-              <div class="form-group">
-                <label for="tituloEdit">Titulo</label>
-                <input type="text" name="titulo" placeholder="Titulo" id="tituloEdit" class="form-control" required>
-              </div>
-              <div class="form-group">
-                <label for="id_autorEdit">Autor</label>
-                <select name="id_autor" id="id_autorEdit" class="form-control" required>
-                  <?php
-                  $res = $conexion->query("select * from autor");
-                  while ($f = mysqli_fetch_array($res)) {
-                    echo '<option value="' . $f['id'] . '" >' . $f['nom_persona'] . '</option>';
-                  }
-                  ?>
-                </select>
-              </div>
-              <div class="form-group">
-                <label for="edicionEdit">Edicion</label>
-                <input type="text" name="edicion" placeholder="Edicion" id="edicionEdit" class="form-control" required>
-              </div>
-              <div class="form-group">
-                <label for="costoEdit">Costo</label>
-                <input type="number" name="costo" placeholder="Costo" id="costoEdit" class="form-control" required>
-              </div>
-              <div class="form-group">
-                <label for="fechaEdit">Fecha</label>
-                <input type="date" name="fecha" placeholder="Fecha" id="fechaEdit" class="form-control" required>
-              </div>
-              <div class="form-group">
-                <label for="id_estadoEdit">Estado</label>
-                <select name="id_estado" id="id_estadoEdit" class="form-control" required>
-                  <option value="1">NUEVO</option>
-                  <option value="2">BUENO</option>
-                  <option value="3">REGULAR</option>
-                  <option value="4">MALO</option>
-                </select>
-              </div>
-              <div class="form-group">
-                <label for="observacionesEdit">Observaciones</label>
-                <textarea name="observaciones" id="observacionesEdit" class="form-control" required></textarea>
-              </div>
-              <div class="form-group">
-                <label for="id_origenEdit">Origen</label>
-                <select name="id_origen" id="id_origenEdit" class="form-control" required>
-                  <?php
-                  $res = $conexion->query("select * from origen");
-                  while ($f = mysqli_fetch_array($res)) {
-                    echo '<option value="' . $f['id'] . '" >' . $f['descrip'] . '</option>';
-                  }
-                  ?>
-                </select>
-              </div>
-              <div class="form-group">
-                <label for="id_editorialEdit">Editorial</label>
-                <select name="id_editorial" id="id_editorialEdit" class="form-control" required>
-                  <?php
-                  $res = $conexion->query("select * from editorial");
-                  while ($f = mysqli_fetch_array($res)) {
-                    echo '<option value="' . $f['id'] . '" >' . $f['descrip'] . '</option>';
-                  }
-                  ?>
-                </select>
-              </div>
-              <div class="form-group">
-                <label for="id_areaEdit">Area</label>
-                <select name="id_area" id="id_areaEdit" class="form-control" required>
-                  <?php
-                  $res = $conexion->query("select * from areas");
-                  while ($f = mysqli_fetch_array($res)) {
-                    echo '<option value="' . $f['id'] . '" >' . $f['descrip'] . '</option>';
-                  }
-                  ?>
-                </select>
-              </div>
-              <div class="form-group">
-                <label for="id_claseEdit">Clase</label>
-                <select name="id_clase" id="id_claseEdit" class="form-control" required>
-                  <?php
-                  $res = $conexion->query("select * from clase");
-                  while ($f = mysqli_fetch_array($res)) {
-                    echo '<option value="' . $f['id'] . '" >' . $f['descrip'] . '</option>';
-                  }
-                  ?>
-                </select>
-              </div>
-              <div class="form-group">
-                <label for="temasEdit">Temas</label>
-                <input type="text" name="temas" placeholder="Temas" id="temasEdit" class="form-control" required>
-              </div>
-              <div class="form-group">
-                <label for="id_ciudadEdit">Ciudad</label>
-                <select name="id_ciudad" id="id_ciudadEdit" class="form-control" required>
-                  <?php
-                  $res = $conexion->query("select * from ciudad");
-                  while ($f = mysqli_fetch_array($res)) {
-                    echo '<option value="' . $f['id'] . '" >' . $f['descrip'] . '</option>';
-                  }
-                  ?>
-                </select>
-              </div>
-              <div class="form-group">
-                <label for="id_seccionEdit">Seccion</label>
-                <select name="id_seccion" id="id_seccionEdit" class="form-control" required>
-                  <?php
-               $res = $conexion->query("select * from seccion where tipo = '1' ");
-                  while ($f = mysqli_fetch_array($res)) {
-                    echo '<option value="' . $f['id'] . '" >' . $f['descrip'] . '</option>';
-                  }
-                  ?>
-                </select>
-              </div>
-              <div class="form-group">
-                <label for="codinvEdit">Codigo invitado</label>
-                <input type="text" name="codinv" placeholder="Codigo invitado" id="codinvEdit" class="form-control" required>
-              </div>
-              <div class="form-group">
-                <label for="npagEdit">Numero de paginas</label>
-                <input type="number" name="npag" placeholder="Numero de paginas" id="npagEdit" class="form-control" required>
-              </div>
-              <div class="form-group">
-                <label for="fimpresionEdit">Fecha de impresion</label>
-                <input type="date" name="fimpresion" placeholder="Fecha de impresion" id="fimpresionEdit" class="form-control" required>
-              </div>
-              <div class="form-group">
-                <label for="temas2Edit">Temas 2</label>
-                <input type="text" name="temas2" placeholder="Temas 2" id="temas2Edit" class="form-control" required>
-              </div>
-              <div class="form-group">
-                <label for="entrainvEdit">entrainv</label>
-                <input type="text" name="entrainv" placeholder="entrainv" id="entrainvEdit" class="form-control" required>
-              </div>
-     
-              <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-              <button type="submit" class="btn btn-primary editar">Guardar</button>
-              </div>
-            </div>
             </div>
           </form>
         </div>
@@ -645,148 +658,148 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
             <div class="modal-body">
               <input type="hidden" id="id_libroEdit2" name="id_libro">
               <div class="modal-body">
-              <div class="form-group">
-                <label for="coddewEdit2">codigo</label>
-                <input type="text" name="coddew" placeholder="Codigo" id="coddewEdit2" class="form-control" required readonly>
-              </div>
-              <div class="form-group">
-                <label for="tituloEdit2">Titulo</label>
-                <input type="text" name="titulo" placeholder="Titulo" id="tituloEdit2" class="form-control" required readonly>
-              </div>
-              <div class="form-group">
-                <label for="id_autorEdit2">Autor</label>
-                <select name="id_autor" id="id_autorEdit2" class="form-control" required readonly>
-                  <?php
-                  $res = $conexion->query("select * from autor");
-                  while ($f = mysqli_fetch_array($res)) {
-                    echo '<option value="' . $f['id'] . '" >' . $f['nom_persona'] . '</option>';
-                  }
-                  ?>
-                </select>
-              </div>
-              <div class="form-group">
-                <label for="edicionEdit2">Edicion</label>
-                <input type="text" name="edicion" placeholder="Edicion" id="edicionEdit2" class="form-control" required readonly>
-              </div>
-              <div class="form-group">
-                <label for="costoEdit2">Costo</label>
-                <input type="number" name="costo" placeholder="Costo" id="costoEdit2" class="form-control" required readonly>
-              </div>
-              <div class="form-group">
-                <label for="fechaEdit2">Fecha</label>
-                <input type="date" name="fecha" placeholder="Fecha" id="fechaEdit2" class="form-control" required readonly>
-              </div>
-              <div class="form-group">
-                <label for="id_estadoEdit2">Estado</label>
-                <select name="id_estado" id="id_estadoEdit2" class="form-control" required readonly>
-                  <option value="1">NUEVO</option>
-                  <option value="2">BUENO</option>
-                  <option value="3">REGULAR</option>
-                  <option value="4">MALO</option>
-                </select>
-              </div>
-              <div class="form-group">
-                <label for="observacionesEdit2">Observaciones</label>
-                <textarea name="observaciones" id="observacionesEdit2" class="form-control" required readonly></textarea>
-              </div>
-              <div class="form-group">
-                <label for="id_origenEdit2">Origen</label>
-                <select name="id_origen" id="id_origenEdit2" class="form-control" required readonly>
-                  <?php
-                  $res = $conexion->query("select * from origen");
-                  while ($f = mysqli_fetch_array($res)) {
-                    echo '<option value="' . $f['id'] . '" >' . $f['descrip'] . '</option>';
-                  }
-                  ?>
-                </select>
-              </div>
-              <div class="form-group">
-                <label for="id_editorialEdit2">Editorial</label>
-                <select name="id_editorial" id="id_editorialEdit2" class="form-control" required readonly>
-                  <?php
-                  $res = $conexion->query("select * from editorial");
-                  while ($f = mysqli_fetch_array($res)) {
-                    echo '<option value="' . $f['id'] . '" >' . $f['descrip'] . '</option>';
-                  }
-                  ?>
-                </select>
-              </div>
-              <div class="form-group">
-                <label for="id_areaEdit2">Area</label>
-                <select name="id_area" id="id_areaEdit2" class="form-control" required readonly>
-                  <?php
-                  $res = $conexion->query("select * from areas");
-                  while ($f = mysqli_fetch_array($res)) {
-                    echo '<option value="' . $f['id'] . '" >' . $f['descrip'] . '</option>';
-                  }
-                  ?>
-                </select>
-              </div>
-              <div class="form-group">
-                <label for="id_claseEdit2">Clase</label>
-                <select name="id_clase" id="id_claseEdit2" class="form-control" required readonly>
-                  <?php
-                  $res = $conexion->query("select * from clase");
-                  while ($f = mysqli_fetch_array($res)) {
-                    echo '<option value="' . $f['id'] . '" >' . $f['descrip'] . '</option>';
-                  }
-                  ?>
-                </select>
-              </div>
-              <div class="form-group">
-                <label for="temasEdit2">Temas</label>
-                <input type="text" name="temas" placeholder="Temas" id="temasEdit2" class="form-control" required readonly>
-              </div>
-              <div class="form-group">
-                <label for="id_ciudadEdit2">Ciudad</label>
-                <select name="id_ciudad" id="id_ciudadEdit2" class="form-control" required readonly>
-                  <?php
-                  $res = $conexion->query("select * from ciudad");
-                  while ($f = mysqli_fetch_array($res)) {
-                    echo '<option value="' . $f['id'] . '" >' . $f['descrip'] . '</option>';
-                  }
-                  ?>
-                </select>
-              </div>
-              <div class="form-group">
-                <label for="id_seccionEdit2">Seccion</label>
-                <select name="id_seccion" id="id_seccionEdit2" class="form-control" required readonly>
-                  <?php
-                  $res = $conexion->query("select * from seccion");
-                  while ($f = mysqli_fetch_array($res)) {
-                    echo '<option value="' . $f['id'] . '" >' . $f['descrip'] . '</option>';
-                  }
-                  ?>
-                </select>
-              </div>
-              <div class="form-group">
-                <label for="codinvEdit2">Codigo invitado</label>
-                <input type="text" name="codinv" placeholder="Codigo invitado" id="codinvEdit2" class="form-control" required readonly>
-              </div>
-              <div class="form-group">
-                <label for="npagEdit2">Numero de paginas</label>
-                <input type="number" name="npag" placeholder="Numero de paginas" id="npagEdit2" class="form-control" required readonly>
-              </div>
-              <div class="form-group">
-                <label for="fimpresionEdit2">Fecha de impresion</label>
-                <input type="date" name="fimpresion" placeholder="Fecha de impresion" id="fimpresionEdit2" class="form-control" required readonly>
-              </div>
-              <div class="form-group">
-                <label for="temas2Edit2">Temas 2</label>
-                <input type="text" name="temas2" placeholder="Temas 2" id="temas2Edit2" class="form-control" required readonly>
-              </div>
-              <div class="form-group">
-                <label for="entrainvEdit2">entrainv</label>
-                <input type="text" name="entrainv" placeholder="entrainv" id="entrainvEdit2" class="form-control" required readonly>
-              </div>
-              <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-            </div>
+                <div class="form-group">
+                  <label for="coddewEdit2">codigo</label>
+                  <input type="text" name="coddew" placeholder="Codigo" id="coddewEdit2" class="form-control" required readonly>
+                </div>
+                <div class="form-group">
+                  <label for="tituloEdit2">Titulo</label>
+                  <input type="text" name="titulo" placeholder="Titulo" id="tituloEdit2" class="form-control" required readonly>
+                </div>
+                <div class="form-group">
+                  <label for="id_autorEdit2">Autor</label>
+                  <select name="id_autor" id="id_autorEdit2" class="form-control" required readonly>
+                    <?php
+                    $res = $conexion->query("select * from autor");
+                    while ($f = mysqli_fetch_array($res)) {
+                      echo '<option value="' . $f['id'] . '" >' . $f['nom_persona'] . '</option>';
+                    }
+                    ?>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="edicionEdit2">Edicion</label>
+                  <input type="text" name="edicion" placeholder="Edicion" id="edicionEdit2" class="form-control" required readonly>
+                </div>
+                <div class="form-group">
+                  <label for="costoEdit2">Costo</label>
+                  <input type="number" name="costo" placeholder="Costo" id="costoEdit2" class="form-control" required readonly>
+                </div>
+                <div class="form-group">
+                  <label for="fechaEdit2">Fecha</label>
+                  <input type="date" name="fecha" placeholder="Fecha" id="fechaEdit2" class="form-control" required readonly>
+                </div>
+                <div class="form-group">
+                  <label for="id_estadoEdit2">Estado</label>
+                  <select name="id_estado" id="id_estadoEdit2" class="form-control" required readonly>
+                    <option value="1">NUEVO</option>
+                    <option value="2">BUENO</option>
+                    <option value="3">REGULAR</option>
+                    <option value="4">MALO</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="observacionesEdit2">Observaciones</label>
+                  <textarea name="observaciones" id="observacionesEdit2" class="form-control" required readonly></textarea>
+                </div>
+                <div class="form-group">
+                  <label for="id_origenEdit2">Origen</label>
+                  <select name="id_origen" id="id_origenEdit2" class="form-control" required readonly>
+                    <?php
+                    $res = $conexion->query("select * from origen");
+                    while ($f = mysqli_fetch_array($res)) {
+                      echo '<option value="' . $f['id'] . '" >' . $f['descrip'] . '</option>';
+                    }
+                    ?>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="id_editorialEdit2">Editorial</label>
+                  <select name="id_editorial" id="id_editorialEdit2" class="form-control" required readonly>
+                    <?php
+                    $res = $conexion->query("select * from editorial");
+                    while ($f = mysqli_fetch_array($res)) {
+                      echo '<option value="' . $f['id'] . '" >' . $f['descrip'] . '</option>';
+                    }
+                    ?>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="id_areaEdit2">Area</label>
+                  <select name="id_area" id="id_areaEdit2" class="form-control" required readonly>
+                    <?php
+                    $res = $conexion->query("select * from areas");
+                    while ($f = mysqli_fetch_array($res)) {
+                      echo '<option value="' . $f['id'] . '" >' . $f['descrip'] . '</option>';
+                    }
+                    ?>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="id_claseEdit2">Clase</label>
+                  <select name="id_clase" id="id_claseEdit2" class="form-control" required readonly>
+                    <?php
+                    $res = $conexion->query("select * from clase");
+                    while ($f = mysqli_fetch_array($res)) {
+                      echo '<option value="' . $f['id'] . '" >' . $f['descrip'] . '</option>';
+                    }
+                    ?>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="temasEdit2">Temas</label>
+                  <input type="text" name="temas" placeholder="Temas" id="temasEdit2" class="form-control" required readonly>
+                </div>
+                <div class="form-group">
+                  <label for="id_ciudadEdit2">Ciudad</label>
+                  <select name="id_ciudad" id="id_ciudadEdit2" class="form-control" required readonly>
+                    <?php
+                    $res = $conexion->query("select * from ciudad");
+                    while ($f = mysqli_fetch_array($res)) {
+                      echo '<option value="' . $f['id'] . '" >' . $f['descrip'] . '</option>';
+                    }
+                    ?>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="id_seccionEdit2">Seccion</label>
+                  <select name="id_seccion" id="id_seccionEdit2" class="form-control" required readonly>
+                    <?php
+                    $res = $conexion->query("select * from seccion");
+                    while ($f = mysqli_fetch_array($res)) {
+                      echo '<option value="' . $f['id'] . '" >' . $f['descrip'] . '</option>';
+                    }
+                    ?>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="codinvEdit2">Codigo invitado</label>
+                  <input type="text" name="codinv" placeholder="Codigo invitado" id="codinvEdit2" class="form-control" required readonly>
+                </div>
+                <div class="form-group">
+                  <label for="npagEdit2">Numero de paginas</label>
+                  <input type="number" name="npag" placeholder="Numero de paginas" id="npagEdit2" class="form-control" required readonly>
+                </div>
+                <div class="form-group">
+                  <label for="fimpresionEdit2">Fecha de impresion</label>
+                  <input type="date" name="fimpresion" placeholder="Fecha de impresion" id="fimpresionEdit2" class="form-control" required readonly>
+                </div>
+                <div class="form-group">
+                  <label for="temas2Edit2">Temas 2</label>
+                  <input type="text" name="temas2" placeholder="Temas 2" id="temas2Edit2" class="form-control" required readonly>
+                </div>
+                <div class="form-group">
+                  <label for="entrainvEdit2">entrainv</label>
+                  <input type="text" name="entrainv" placeholder="entrainv" id="entrainvEdit2" class="form-control" required readonly>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                </div>
           </form>
         </div>
       </div>
     </div>
-  
+
     <!-- Modal ver sin editar-->
 
     <!-- Modal eliminar -->

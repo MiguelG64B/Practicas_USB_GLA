@@ -186,6 +186,7 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
                     </div>
 
                   <?php  } ?>
+                  <div class="table-responsive">
                   <table class="table">
                     <thead>
                       <tr>
@@ -291,6 +292,7 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
                       ?>
                     </tbody>
                   </table>
+                  </div>
                   <div class="pagination">
                     <?php if ($paginaActual > 1) : ?>
                       <a href="?page=<?php echo $paginaActual - 1; ?>&search=" class="btn btn-primary">Anterior</a>
