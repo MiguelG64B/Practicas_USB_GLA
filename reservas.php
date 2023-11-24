@@ -14,11 +14,10 @@ $nivel = $arregloUsuario['nivel'];
 $id_seccion = $arregloUsuario['id_seccion'];
 
 // Verifica si 'per_tickets' es igual a 'si'
-if ($arregloUsuario['permisos']['per_con'] != '1' || $arregloUsuario['permisos']['per_reserva'] != '1') {
-  // Si 'per_tickets' no es igual a 'si', puedes redirigir a otra página o mostrar un mensaje de error.
-  header("Location: ./perfil.php");
-  exit(); // Asegúrate de que el script se detenga después de redirigir
-}
+// if ($arregloUsuario['permisos']['per_con'] != '1' || $arregloUsuario['permisos']['per_reserva'] != '1') {
+// header("Location: ./perfil.php");
+// exit();
+// }
 $registrosPorPagina = 50;
 
 // Página actual
@@ -99,7 +98,7 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
 
     <div class="container-fluid py-4">
       <?php
-      $sql = "SELECT reservas.*, libros.titulo, libros.coddew, libros.id_libro
+      $sql = "SELECT reservas.*, libros.titulo, libros.coddew, libros.id_libro, libros.edicion
           FROM reservas 
           INNER JOIN libros ON reservas.id_libro = libros.id_libro";
 
@@ -240,7 +239,7 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
                               if ($arregloUsuario['permisos']['per_con'] == '1') {
                                 // Mostrar el botón de editar solo si el id_usuario coincide con $idUsuario coment_usuario
                               ?>
-                                <button class="btn btn-default btn-small btnReservar" title="Notificar entrega de libro" data-id_libro="<?php echo $f['id_libro']; ?>" data-id_reserva="<?php echo $f['id_reserva']; ?>" data-id_usuario="<?php echo $f['id_usuario']; ?>" data-toggle="modal" data-target="#modalReserva">
+                                <button class="btn btn-default btn-small btnReservar" title="Notificar entrega de libro" data-id_libro="<?php echo $f['id_libro']; ?>" data-edicion="<?php echo $f['edicion']; ?>"data-id_reserva="<?php echo $f['id_reserva']; ?>" data-id_usuario="<?php echo $f['id_usuario']; ?>" data-toggle="modal" data-target="#modalReserva">
                                   <i class="fa fa-calendar-check-o"></i>
                                 </button>
                               <?php
@@ -332,6 +331,7 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
             <div class="modal-body">
               <input type="hidden" id="id_libroReserva" name="id_libro">
               <input type="hidden" id="id_Reserva" name="id_reserva">
+              <input type="hidden" id="edicionReserva" name="edicion">
               <input type="hidden" id="id_usuarioReserva" name="id_usuario" required>
               <div class="modal-body">
                 <div class="form-group">
@@ -439,8 +439,10 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
         id_libroReserva = $(this).data('id_libro');
         id_reserva = $(this).data('id_reserva');
         id_usuario = $(this).data('id_usuario');
+        edicion = $(this).data('edicion');
         $("#id_libroReserva").val(id_libroReserva);
         $("#id_usuarioReserva").val(id_usuario);
+        $("#edicionReserva").val(edicion);
         $("#id_Reserva").val(id_reserva);
       });
     });

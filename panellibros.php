@@ -13,12 +13,12 @@ $idUsuario = $arregloUsuario['id_usuario'];
 $nivel = $arregloUsuario['nivel'];
 $id_seccion = $arregloUsuario['id_seccion'];
 
-// Verifica si 'per_tickets' es igual a 'si'
-if ($arregloUsuario['permisos']['per_con'] != '1' || $arregloUsuario['permisos']['per_reserva'] != '1') {
-  // Si 'per_tickets' no es igual a 'si', puedes redirigir a otra página o mostrar un mensaje de error.
-  header("Location: ./perfil.php");
-  exit(); // Asegúrate de que el script se detenga después de redirigir
-}
+
+// if ($arregloUsuario['permisos']['per_con'] != '1' || $arregloUsuario['permisos']['per_reserva'] != '1') {
+//  header("Location: ./perfil.php");
+//  exit(); 
+// }
+
 $registrosPorPagina = 50;
 
 // Página actual
@@ -199,7 +199,7 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
                           <th>Cod</th>
                           <th>Titulo</th>
                           <th>Autor</th>
-                          <th>Edicion</th>
+                          <th>Inventario</th>
                           <th>Estado</th>
                           <th>Editorial</th>
                           <th>Area</th>
@@ -258,7 +258,7 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
                                   echo '<span class="badge badge-sm bg-gradient-success">Disponible</span>';
                                   break;
                                 case 'no':
-                                  echo '<span class="badge badge-sm bg-gradient-danger">ocupado</span>';
+                                  echo '<span class="badge badge-sm bg-gradient-danger">No hay unidades</span>';
                                   break;
                                 default:
                                   echo $f['existe'];
@@ -285,9 +285,9 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
                               }
                               ?>
                               <?php
-                              if ($f['existe'] == 'si' || $arregloUsuario['permisos']['per_reserva'] == '1') {
+                              if (($f['existe'] == 'si' || $arregloUsuario['permisos']['per_reserva'] == '1') && $f['edicion'] >= 1) {
                               ?>
-                                <button class="btn btn-default btn-small btnReservar" title="Reservar libro" data-id_libro="<?php echo $f['id_libro']; ?>" data-toggle="modal" data-target="#modalReserva">
+                                <button class="btn btn-default btn-small btnReservar" title="Reservar libro" data-id_libro="<?php echo $f['id_libro']; ?>" data-edicion="<?php echo $f['edicion']; ?>" data-toggle="modal" data-target="#modalReserva">
                                   <i class="fa fa-calendar-check-o"></i>
                                 </button>
                               <?php
@@ -302,38 +302,38 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
                       </tbody>
                     </table>
                     <nav aria-label="Page navigation example">
-                  <ul class="pagination pagination-success">
-                    <?php if ($paginaActual > 1) : ?>
-                      <li class="page-item">
-                        <a href="?page=<?php echo $paginaActual - 1; ?>&search=" class="page-link" aria-label="Previous">
-                          <i class="fa fa-angle-left"></i>
-                          <span class="sr-only">Previous</span>
-                        </a>
-                      </li>
-                    <?php endif; ?>
+                      <ul class="pagination pagination-success">
+                        <?php if ($paginaActual > 1) : ?>
+                          <li class="page-item">
+                            <a href="?page=<?php echo $paginaActual - 1; ?>&search=" class="page-link" aria-label="Previous">
+                              <i class="fa fa-angle-left"></i>
+                              <span class="sr-only">Previous</span>
+                            </a>
+                          </li>
+                        <?php endif; ?>
 
-                    <?php
-                    $maxButtons = 4; // Número máximo de botones a mostrar
-                    $start = max(1, $paginaActual - floor($maxButtons / 2));
-                    $end = min($start + $maxButtons - 1, $totalBotones);
+                        <?php
+                        $maxButtons = 4; // Número máximo de botones a mostrar
+                        $start = max(1, $paginaActual - floor($maxButtons / 2));
+                        $end = min($start + $maxButtons - 1, $totalBotones);
 
-                    for ($i = $start; $i <= $end; $i++) :
-                    ?>
-                      <li class="page-item <?php if ($i == $paginaActual) echo 'active'; ?>">
-                        <a href="?page=<?php echo $i; ?>&search=" class="page-link"><?php echo $i; ?></a>
-                      </li>
-                    <?php endfor; ?>
+                        for ($i = $start; $i <= $end; $i++) :
+                        ?>
+                          <li class="page-item <?php if ($i == $paginaActual) echo 'active'; ?>">
+                            <a href="?page=<?php echo $i; ?>&search=" class="page-link"><?php echo $i; ?></a>
+                          </li>
+                        <?php endfor; ?>
 
-                    <?php if ($paginaActual < $totalCategorias) : ?>
-                      <li class="page-item">
-                        <a href="?page=<?php echo $paginaActual + 1; ?>&search=" class="page-link" aria-label="Next">
-                          <i class="fa fa-angle-right"></i>
-                          <span class="sr-only">Next</span>
-                        </a>
-                      </li>
-                    <?php endif; ?>
-                  </ul>
-                </nav>
+                        <?php if ($paginaActual < $totalCategorias) : ?>
+                          <li class="page-item">
+                            <a href="?page=<?php echo $paginaActual + 1; ?>&search=" class="page-link" aria-label="Next">
+                              <i class="fa fa-angle-right"></i>
+                              <span class="sr-only">Next</span>
+                            </a>
+                          </li>
+                        <?php endif; ?>
+                      </ul>
+                    </nav>
                   </div>
                 </div>
               </section>
@@ -366,6 +366,7 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
       </div>
     </div>
     <!-- eliminar libros -->
+    <!-- agregar libros -->
     <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -397,8 +398,8 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
                 </select>
               </div>
               <div class="form-group">
-                <label for="edicion">Edicion</label>
-                <input type="text" name="edicion" placeholder="Edicion" id="edicion" class="form-control" required>
+                <label for="edicion">Inventario</label>
+                <input type="number" name="edicion" placeholder="Inventario" id="edicion" class="form-control" required>
               </div>
               <div class="form-group">
                 <label for="costo">Costo</label>
@@ -556,8 +557,8 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
                   </select>
                 </div>
                 <div class="form-group">
-                  <label for="edicionEdit">Edicion</label>
-                  <input type="text" name="edicion" placeholder="Edicion" id="edicionEdit" class="form-control" required>
+                  <label for="edicionEdit">Inventario</label>
+                  <input type="number" name="edicion" placeholder="Inventario" id="edicionEdit" class="form-control" required>
                 </div>
                 <div class="form-group">
                   <label for="costoEdit">Costo</label>
@@ -695,17 +696,39 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
             </div>
             <div class="modal-body">
               <input type="hidden" id="id_libroReserva" name="id_libro">
+              <input type="hidden" id="edicionReserva" name="edicion">
               <input type="hidden" id="id_usuario" name="id_usuario" value="<?php echo $arregloUsuario['id_usuario']; ?>" class="form-control" required>
               <div class="modal-body">
                 <div class="form-group">
                   <label for="">Fecha de recogida</label>
-                  <input type="date" name="fecha_reserva" placeholder="Fecha de recogida" class="form-control" required min="<?php echo date('Y-m-d'); ?>">
+                  <input type="date" name="fecha_reserva" id="fecha_recogida" placeholder="Fecha de recogida" class="form-control" required min="<?php echo date('Y-m-d'); ?>">
                 </div>
+
                 <div class="form-group">
                   <label for="">Fecha de entrega límite</label>
-                  <!-- Establece la fecha mínima como la fecha actual y la fecha máxima como 15 días después -->
-                  <input type="date" name="fecha_limite" placeholder="Fecha de entrega" class="form-control" required min="<?php echo date('Y-m-d'); ?>" max="<?php echo date('Y-m-d', strtotime('+15 days')); ?>">
+                  <input type="date" name="fecha_limite" id="fecha_limite" placeholder="Fecha de entrega" class="form-control" required>
                 </div>
+
+                <script>
+                  // Obtén referencias a los elementos de fecha
+                  var fechaRecogida = document.getElementById('fecha_recogida');
+                  var fechaLimite = document.getElementById('fecha_limite');
+
+                  // Establece el evento de cambio en el campo de fecha de recogida
+                  fechaRecogida.addEventListener('change', function() {
+                    // Actualiza la propiedad 'min' del campo de fecha de entrega límite
+                    fechaLimite.min = fechaRecogida.value;
+
+                    // Calcula la fecha máxima permitida (15 días después de la fecha de recogida)
+                    var fechaMaxima = new Date(fechaRecogida.value);
+                    fechaMaxima.setDate(fechaMaxima.getDate() + 15);
+
+                    // Formatea la fecha máxima como 'YYYY-MM-DD' para establecerla como el valor máximo del campo de fecha de entrega límite
+                    var maxDateFormatted = fechaMaxima.toISOString().split('T')[0];
+                    fechaLimite.max = maxDateFormatted;
+                  });
+                </script>
+
                 <div class="modal-footer">
                   <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
                   <button type="submit" class="btn btn-primary editar">Guardar</button>
@@ -752,8 +775,8 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
                   </select>
                 </div>
                 <div class="form-group">
-                  <label for="edicionEdit2">Edicion</label>
-                  <input type="text" name="edicion" placeholder="Edicion" id="edicionEdit2" class="form-control" required readonly>
+                  <label for="edicionEdit2">Inventario</label>
+                  <input type="text" name="edicion" placeholder="Inventario" id="edicionEdit2" class="form-control" required readonly>
                 </div>
                 <div class="form-group">
                   <label for="costoEdit2">Costo</label>
@@ -1058,7 +1081,9 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
 
       $(".btnReservar").click(function() {
         id_libroReserva = $(this).data('id_libro');
+        edicionReserva = $(this).data('edicion');
         $("#id_libroReserva").val(id_libroReserva);
+        $("#edicionReserva").val(edicionReserva);
       });
     });
   </script>
