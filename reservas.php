@@ -99,20 +99,26 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
     <div class="container-fluid py-4">
       <?php
       $sql = "SELECT reservas.*, libros.titulo, libros.coddew, libros.id_libro, libros.edicion
-          FROM reservas 
-          INNER JOIN libros ON reservas.id_libro = libros.id_libro";
+    FROM reservas 
+    INNER JOIN libros ON reservas.id_libro = libros.id_libro";
 
       if (!empty($searchTerm)) {
         $sql .= " WHERE libros.titulo LIKE '%$searchTerm%'";
       }
 
-      if ($arregloUsuario['permisos']['per_reserva'] == '1') {
-        $sql .= " AND reservas.id_usuario = '$idUsuario' AND reservas.entregado = 'no'";
+      if ($arregloUsuario['permisos']['per_reserva'] == '1' && $arregloUsuario['permisos']['per_con'] == '1') {
+        // Si el usuario tiene ambos permisos, no se aplican condiciones adicionales
+      } elseif ($arregloUsuario['permisos']['per_reserva'] == '1') {
+        $sql .= " AND (reservas.entregado = 'no' OR reservas.entregado = 'pendi') ";
+        $sql .= " AND reservas.id_usuario = '$idUsuario' ";
+      } else {
+        $sql .= " AND (reservas.entregado = 'no' OR reservas.entregado = 'pendi') ";
       }
 
       $sql .= " ORDER BY reservas.fecha_reserva DESC ";
       $resultado = $conexion->query($sql) or die($conexion->error);
       ?>
+
 
 
 
@@ -179,11 +185,14 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
                         <tr>
                           <th>Cod de libro</th>
                           <th>Titulo</th>
+                          <th>Estado del libro</th>
                           <th>Responsable</th>
+                          <th>Correo</th>
                           <th>Fecha de reserva</th>
                           <th>Fecha limite de entrega</th>
                           <th>Tiempo restante</th>
                           <th>Estado</th>
+                          <th></th>
                         </tr>
 
                       </thead>
@@ -194,9 +203,22 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
                             <td><?php echo $f['coddew']; ?></td>
                             <td><?php echo $f['titulo']; ?></td>
                             <td><?php
+                                $res = $conexion->query("SELECT descrip FROM estado WHERE id = " . $f['id_estado']);
+                                if ($categoria = mysqli_fetch_array($res)) {
+                                  echo $categoria['descrip'];
+                                }
+                                ?></td>
+                            <td><?php
                                 $res = $conexion->query("SELECT nom_persona FROM usuarios WHERE id = " . $f['id_usuario']);
                                 if ($categoria = mysqli_fetch_array($res)) {
                                   echo $categoria['nom_persona'];
+                                }
+                                ?>
+                            </td>
+                            <td><?php
+                                $res = $conexion->query("SELECT email FROM usuarios WHERE id = " . $f['id_usuario']);
+                                if ($categoria = mysqli_fetch_array($res)) {
+                                  echo $categoria['email'];
                                 }
                                 ?>
                             </td>
@@ -206,19 +228,25 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
                               <?php
                               $fecha_limite_timestamp = strtotime($f['fecha_limite']);
                               $fecha_actual_timestamp = time(); // Current timestamp
+                              $entrega = $f['entregado'];
 
-                              if ($fecha_actual_timestamp <= $fecha_limite_timestamp) {
-                                // The current date is before or equal to the deadline
-                                $dias_restantes = ceil(($fecha_limite_timestamp - $fecha_actual_timestamp) / (60 * 60 * 24)); // Calcula los días restantes
-
-                                echo '<span class="badge badge-sm bg-gradient-success">A tiempo</span>';
-                                echo "<br>";
-                                echo "Días restantes: " . $dias_restantes;
+                              if ($entrega == 'si') {
+                                echo '<span class="badge badge-sm bg-gradient-secondary">No aplica</span>';
                               } else {
-                                // The current date is after the deadline
-                                echo '<span class="badge badge-sm bg-gradient-danger">Atrasado</span>';
+                                if ($fecha_actual_timestamp <= $fecha_limite_timestamp) {
+                                  // The current date is before or equal to the deadline
+                                  $dias_restantes = ceil(($fecha_limite_timestamp - $fecha_actual_timestamp) / (60 * 60 * 24)); // Calcula los días restantes
+
+                                  echo '<span class="badge badge-sm bg-gradient-success">A tiempo</span>';
+                                  echo "<br>";
+                                  echo "Días restantes: " . $dias_restantes;
+                                } else {
+                                  // The current date is after the deadline
+                                  echo '<span class="badge badge-sm bg-gradient-danger">Atrasado</span>';
+                                }
                               }
                               ?>
+
 
                             </td>
                             <td> <?php
@@ -229,6 +257,9 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
                                     case 'no':
                                       echo '<span class="badge badge-sm bg-gradient-danger">Pendiente</span>';
                                       break;
+                                    case 'pendi':
+                                      echo '<span class="badge badge-sm btn bg-gradient-warning">Solicita entrega</span>';
+                                      break;
                                     default:
                                       echo $f['existe'];
                                       break;
@@ -236,16 +267,32 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
                                   ?></td>
                             <td>
                               <?php
-                              if ($arregloUsuario['permisos']['per_con'] == '1') {
-                                // Mostrar el botón de editar solo si el id_usuario coincide con $idUsuario coment_usuario
+                              if ($entrega != 'si') {
+                                // Mostrar los botones solo si $entrega no es igual a 'si'
+                                if ($arregloUsuario['permisos']['per_con'] == '1') {
+                                  // Mostrar el botón de editar solo si el id_usuario coincide con $idUsuario coment_usuario
                               ?>
-                                <button class="btn btn-default btn-small btnReservar" title="Notificar entrega de libro" data-id_libro="<?php echo $f['id_libro']; ?>" data-edicion="<?php echo $f['edicion']; ?>"data-id_reserva="<?php echo $f['id_reserva']; ?>" data-id_usuario="<?php echo $f['id_usuario']; ?>" data-toggle="modal" data-target="#modalReserva">
-                                  <i class="fa fa-calendar-check-o"></i>
-                                </button>
+                                  <button class="btn btn-default btn-small btnReservar" title="Notificar entrega de libro" data-id_libro="<?php echo $f['id_libro']; ?>" data-edicion="<?php echo $f['edicion']; ?>" data-id_reserva="<?php echo $f['id_reserva']; ?>" data-id_usuario="<?php echo $f['id_usuario']; ?>" data-toggle="modal" data-target="#modalReserva">
+                                    <i class="fa fa-calendar-check-o"></i>
+                                  </button>
+                                  <button class="btn btn-info btn-small btnrecordatorio" title="Enviar recordatorio" data-id_libro="<?php echo $f['id_libro']; ?>" data-titulo="<?php echo $f['titulo']; ?>" data-id_reserva="<?php echo $f['id_reserva']; ?>" data-id_usuario="<?php echo $f['id_usuario']; ?>" data-toggle="modal" data-target="#modalrecordatorio">
+                                    <i class="fa fa-envelope-o"></i>
+                                  </button>
+                                <?php
+                                }
+
+                                if ($arregloUsuario['permisos']['per_reserva'] == '1' && $f['entregado'] != 'pendi') {
+                                  // Mostrar el botón de editar solo si el id_usuario coincide con $idUsuario coment_usuario
+                                ?>
+                                  <button class="btn btn-default btn-small btnReservar2" title="Solicitar entrega de libro" data-id_libro2="<?php echo $f['id_libro']; ?>" data-edicion2="<?php echo $f['edicion']; ?>" data-id_reserva2="<?php echo $f['id_reserva']; ?>" data-id_usuario2="<?php echo $f['id_usuario']; ?>" data-toggle="modal" data-target="#modalReserva2">
+                                    <i class="fa fa-calendar-check-o"></i>
+                                  </button>
                               <?php
+                                }
                               }
                               ?>
                             </td>
+
                           </tr>
                         <?php
                         }
@@ -253,38 +300,38 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
                       </tbody>
                     </table>
                     <nav aria-label="Page navigation example">
-                  <ul class="pagination pagination-success">
-                    <?php if ($paginaActual > 1) : ?>
-                      <li class="page-item">
-                        <a href="?page=<?php echo $paginaActual - 1; ?>&search=" class="page-link" aria-label="Previous">
-                          <i class="fa fa-angle-left"></i>
-                          <span class="sr-only">Previous</span>
-                        </a>
-                      </li>
-                    <?php endif; ?>
+                      <ul class="pagination pagination-success">
+                        <?php if ($paginaActual > 1) : ?>
+                          <li class="page-item">
+                            <a href="?page=<?php echo $paginaActual - 1; ?>&search=" class="page-link" aria-label="Previous">
+                              <i class="fa fa-angle-left"></i>
+                              <span class="sr-only">Previous</span>
+                            </a>
+                          </li>
+                        <?php endif; ?>
 
-                    <?php
-                    $maxButtons = 4; // Número máximo de botones a mostrar
-                    $start = max(1, $paginaActual - floor($maxButtons / 2));
-                    $end = min($start + $maxButtons - 1, $totalBotones);
+                        <?php
+                        $maxButtons = 4; // Número máximo de botones a mostrar
+                        $start = max(1, $paginaActual - floor($maxButtons / 2));
+                        $end = min($start + $maxButtons - 1, $totalBotones);
 
-                    for ($i = $start; $i <= $end; $i++) :
-                    ?>
-                      <li class="page-item <?php if ($i == $paginaActual) echo 'active'; ?>">
-                        <a href="?page=<?php echo $i; ?>&search=" class="page-link"><?php echo $i; ?></a>
-                      </li>
-                    <?php endfor; ?>
+                        for ($i = $start; $i <= $end; $i++) :
+                        ?>
+                          <li class="page-item <?php if ($i == $paginaActual) echo 'active'; ?>">
+                            <a href="?page=<?php echo $i; ?>&search=" class="page-link"><?php echo $i; ?></a>
+                          </li>
+                        <?php endfor; ?>
 
-                    <?php if ($paginaActual < $totalCategorias) : ?>
-                      <li class="page-item">
-                        <a href="?page=<?php echo $paginaActual + 1; ?>&search=" class="page-link" aria-label="Next">
-                          <i class="fa fa-angle-right"></i>
-                          <span class="sr-only">Next</span>
-                        </a>
-                      </li>
-                    <?php endif; ?>
-                  </ul>
-                </nav>
+                        <?php if ($paginaActual < $totalCategorias) : ?>
+                          <li class="page-item">
+                            <a href="?page=<?php echo $paginaActual + 1; ?>&search=" class="page-link" aria-label="Next">
+                              <i class="fa fa-angle-right"></i>
+                              <span class="sr-only">Next</span>
+                            </a>
+                          </li>
+                        <?php endif; ?>
+                      </ul>
+                    </nav>
                   </div>
                 </div>
               </section>
@@ -335,12 +382,17 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
               <input type="hidden" id="id_usuarioReserva" name="id_usuario" required>
               <div class="modal-body">
                 <div class="form-group">
-                  <label for="">Comentarios de biblioteca</label>
-                  <textarea name="comentarios" id="comentarios" class="form-control" required></textarea>
+                  <label for="id_estado">Confirma el estado en el que el libro fue recibido</label>
+                  <select name="id_estado" id="id_estado" class="form-control" required>
+                    <option value="1">NUEVO</option>
+                    <option value="2">BUENO</option>
+                    <option value="3">REGULAR</option>
+                    <option value="4">MALO</option>
+                  </select>
                 </div>
                 <div class="modal-footer">
                   <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                  <button type="submit" class="btn btn-primary editar">Guardar</button>
+                  <button type="submit" class="btn btn-primary editar">Entregar libro</button>
                 </div>
               </div>
             </div>
@@ -351,6 +403,71 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
     </div>
     <!-- reserva -->
 
+    <!-- solicitud de reserva -->
+    <div class="modal fade" id="modalReserva2" tabindex="-1" role="dialog" aria-labelledby="modalReserva2" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <form action="./php/solicitarentrega.php" method="POST" enctype="multipart/form-data">
+            <div class="modal-header">
+              <h5 class="modal-title" id="modalReserva">Solicitar entrega de Libro</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <input type="hidden" id="id_libroReserva2" name="id_libro">
+              <input type="hidden" id="id_Reserva2" name="id_reserva">
+              <input type="hidden" id="edicionReserva2" name="edicion">
+              <input type="hidden" id="id_usuarioReserva2" name="id_usuario" required>
+              <div class="modal-body">
+                <div class="modal-body">
+                  ¿Desea solicitar una entrega de libro?
+                </div>
+                <p>- Acercate a una Biblioteca para entregar el libro</p>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                  <button type="submit" class="btn btn-primary editar">Entregar libro</button>
+                </div>
+              </div>
+            </div>
+          </form>
+
+        </div>
+      </div>
+    </div>
+    <!-- solicitud de reserva-->
+    <!-- recordatorio -->
+    <div class="modal fade" id="modalrecordatorio" tabindex="-1" role="dialog" aria-labelledby="modalrecordatorio" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <form action="./php/recordatorio.php" method="POST" enctype="multipart/form-data">
+            <div class="modal-header">
+              <h5 class="modal-title" id="modalrecordatorio">Enviar recordatorio via correo</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <input type="hidden" id="id_librorecordatorio" name="id_libro">
+              <input type="hidden" id="id_recordatorio" name="id_reserva">
+              <input type="hidden" id="titulorecordatorio" name="titulo">
+              <input type="hidden" id="id_usuariorecordatorio" name="id_usuario" required>
+              <div class="modal-body">
+                <div class="modal-body">
+                  ¿Desea enviar recordatorio de libro?
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                  <button type="submit" class="btn btn-primary editar">Enviar recordatorio</button>
+                </div>
+              </div>
+            </div>
+          </form>
+
+        </div>
+      </div>
+    </div>
+    <!-- recordatorio -->
 
     <!-- Modal eliminar -->
 
@@ -445,6 +562,27 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
         $("#edicionReserva").val(edicion);
         $("#id_Reserva").val(id_reserva);
       });
+      $(".btnrecordatorio").click(function() {
+        id_libroReserva = $(this).data('id_libro');
+        id_reserva = $(this).data('id_reserva');
+        id_usuario = $(this).data('id_usuario');
+        titulo = $(this).data('titulo');
+        $("#id_librorecordatorio").val(id_libroReserva);
+        $("#id_usuariorecordatorio").val(id_usuario);
+        $("#titulorecordatorio").val(titulo);
+        $("#id_recordatorio").val(id_reserva);
+      });
+      $(".btnReservar2").click(function() {
+        id_libroReserva2 = $(this).data('id_libro2');
+        id_reserva2 = $(this).data('id_reserva2');
+        id_usuario2 = $(this).data('id_usuario2');
+        edicion2 = $(this).data('edicion2');
+        $("#id_libroReserva2").val(id_libroReserva2);
+        $("#id_usuarioReserva2").val(id_usuario2);
+        $("#edicionReserva2").val(edicion2);
+        $("#id_Reserva2").val(id_reserva2);
+      });
+
     });
   </script>
   <!-- Code injected by live-server -->

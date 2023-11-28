@@ -12,7 +12,7 @@ $arregloUsuario = $_SESSION['datos_login'];
 $idUsuario = $arregloUsuario['id_usuario'];
 $nivel = $arregloUsuario['nivel'];
 $id_estado = $arregloUsuario['id_estado'];
-if ($id_estado != 5 ||$arregloUsuario['permisos']['per_niveles'] != '1') {
+if ($id_estado != 5 || $arregloUsuario['permisos']['per_niveles'] != '1') {
   header("Location: ./perfil.php");
   exit(); // Asegúrate de que el script se detenga después de redirigir
 }
@@ -131,92 +131,92 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
 
                 <?php  } ?>
                 <div class="table-responsive">
-                <table class="table">
-                  <thead>
-                    <tr>
-                      <th>Id</th>
-                      <th>Rol</th>
-                      <th>Nombre</th>
-                      <th>Telefono</th>
-                      <th>Documento</th>
-                      <th>Correo</th>
-                      <th>Estado</th>
-                      <th></th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <?php
-                    while ($f = mysqli_fetch_array($estudiantes)) {
-                    ?>
+                  <table class="table">
+                    <thead>
                       <tr>
-                        <td><?php echo $f['id']; ?></td>
-                        <td>
-                          <?php
-                          $res2 = $conexion->query("SELECT descrip FROM tipo_usuario WHERE id = " . $f['tipo_usuario']);
-                          if ($seccion = mysqli_fetch_array($res2)) {
-                            echo $seccion['descrip'];
-                          }
-                          ?>
-                        </td>
-                        <td><?php echo $f['nom_persona']; ?></td>
-                        <td><?php echo $f['telefono']; ?></td>
-                        <td><?php echo $f['usuario']; ?></td>
-                        <td><?php echo $f['email']; ?></td>
-                        <td>
-                          <?php
-                          $res2 = $conexion->query("SELECT descrip FROM estado WHERE id = " . $f['id_estado']);
-                          if ($seccion = mysqli_fetch_array($res2)) {
-                            echo $seccion['descrip'];
-                          }
-                          ?>
-                        </td>
-                        <td>
-                          <button class="btn btn-danger btn-small btnEliminar" title="Inactivar estudiante" data-id="<?php echo $f['id']; ?>" data-toggle="modal" data-target="#modalEliminar">
-                            <i class="fa fa-low-vision"></i>
-                          </button>
-                          <button class="btn btn-info btn-small btnactivar" title="Activar estudiante" data-id="<?php echo $f['id']; ?>" data-toggle="modal" data-target="#modalactivar">
-                            <i class="fa fa-eye"></i>
-                          </button>
-                        </td>
+                        <th>Id</th>
+                        <th>Rol</th>
+                        <th>Nombre</th>
+                        <th>Telefono</th>
+                        <th>Documento</th>
+                        <th>Correo</th>
+                        <th>Estado</th>
+                        <th></th>
                       </tr>
-                    <?php
-                    }
-                    ?>
-                  </tbody>
-                </table>
-                <nav aria-label="Page navigation example">
-                  <ul class="pagination pagination-success">
-                    <?php if ($paginaActual > 1) : ?>
-                      <li class="page-item">
-                        <a href="?page=<?php echo $paginaActual - 1; ?>&search=" class="page-link" aria-label="Previous">
-                          <i class="fa fa-angle-left"></i>
-                          <span class="sr-only">Previous</span>
-                        </a>
-                      </li>
-                    <?php endif; ?>
+                    </thead>
+                    <tbody>
+                      <?php
+                      while ($f = mysqli_fetch_array($estudiantes)) {
+                      ?>
+                        <tr>
+                          <td><?php echo $f['id']; ?></td>
+                          <td>
+                            <?php
+                            $res2 = $conexion->query("SELECT descrip FROM tipo_usuario WHERE id = " . $f['tipo_usuario']);
+                            if ($seccion = mysqli_fetch_array($res2)) {
+                              echo $seccion['descrip'];
+                            }
+                            ?>
+                          </td>
+                          <td><?php echo $f['nom_persona']; ?></td>
+                          <td><?php echo $f['telefono']; ?></td>
+                          <td><?php echo $f['usuario']; ?></td>
+                          <td><?php echo $f['email']; ?></td>
+                          <td>
+                            <?php
+                            $res2 = $conexion->query("SELECT descrip FROM estado WHERE id = " . $f['id_estado']);
+                            if ($seccion = mysqli_fetch_array($res2)) {
+                              echo $seccion['descrip'];
+                            }
+                            ?>
+                          </td>
+                          <td>
+                            <button class="btn btn-danger btn-small btnEliminar" title="Inactivar estudiante" data-id="<?php echo $f['id']; ?>" data-toggle="modal" data-target="#modalEliminar">
+                              <i class="fa fa-low-vision"></i>
+                            </button>
+                            <button class="btn btn-info btn-small btnactivar" title="Activar estudiante" data-id="<?php echo $f['id']; ?>" data-toggle="modal" data-target="#modalactivar">
+                              <i class="fa fa-eye"></i>
+                            </button>
+                          </td>
+                        </tr>
+                      <?php
+                      }
+                      ?>
+                    </tbody>
+                  </table>
+                  <nav aria-label="Page navigation example">
+                    <ul class="pagination pagination-success">
+                      <?php if ($paginaActual > 1) : ?>
+                        <li class="page-item">
+                          <a href="?page=<?php echo $paginaActual - 1; ?>&search=" class="page-link" aria-label="Previous">
+                            <i class="fa fa-angle-left"></i>
+                            <span class="sr-only">Previous</span>
+                          </a>
+                        </li>
+                      <?php endif; ?>
 
-                    <?php
-                    $maxButtons = 4; // Número máximo de botones a mostrar
-                    $start = max(1, $paginaActual - floor($maxButtons / 2));
-                    $end = min($start + $maxButtons - 1, $totalBotones);
+                      <?php
+                      $maxButtons = 4; // Número máximo de botones a mostrar
+                      $start = max(1, $paginaActual - floor($maxButtons / 2));
+                      $end = min($start + $maxButtons - 1, $totalBotones);
 
-                    for ($i = $start; $i <= $end; $i++) :
-                    ?>
-                      <li class="page-item <?php if ($i == $paginaActual) echo 'active'; ?>">
-                        <a href="?page=<?php echo $i; ?>&search=" class="page-link"><?php echo $i; ?></a>
-                      </li>
-                    <?php endfor; ?>
+                      for ($i = $start; $i <= $end; $i++) :
+                      ?>
+                        <li class="page-item <?php if ($i == $paginaActual) echo 'active'; ?>">
+                          <a href="?page=<?php echo $i; ?>&search=" class="page-link"><?php echo $i; ?></a>
+                        </li>
+                      <?php endfor; ?>
 
-                    <?php if ($paginaActual < $totalCategorias) : ?>
-                      <li class="page-item">
-                        <a href="?page=<?php echo $paginaActual + 1; ?>&search=" class="page-link" aria-label="Next">
-                          <i class="fa fa-angle-right"></i>
-                          <span class="sr-only">Next</span>
-                        </a>
-                      </li>
-                    <?php endif; ?>
-                  </ul>
-                </nav>
+                      <?php if ($paginaActual < $totalCategorias) : ?>
+                        <li class="page-item">
+                          <a href="?page=<?php echo $paginaActual + 1; ?>&search=" class="page-link" aria-label="Next">
+                            <i class="fa fa-angle-right"></i>
+                            <span class="sr-only">Next</span>
+                          </a>
+                        </li>
+                      <?php endif; ?>
+                    </ul>
+                  </nav>
                 </div>
               </div>
             </section>
@@ -252,15 +252,16 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
               </div>
               <div class="form-group">
                 <label for="telefono">Telefono</label>
-                <input type="number" name="telefono" placeholder="Telefono" id="telefono" class="form-control" required>
+                <input type="number" name="telefono" placeholder="Telefono" id="telefono" class="form-control" pattern="[0-9]{10}" required>
               </div>
+
               <div class="form-group">
                 <label for="password">Password</label>
-                <input type="password" class="form-control" placeholder="Password" name="pass" aria-label="Password" required>
+                <input type="password" class="form-control" placeholder="Password" name="pass" aria-label="Password" pattern=".{3,10}" required>
               </div>
               <div class="form-group">
                 <label for="password">Confirmar Password</label>
-                <input type="password" class="form-control" placeholder="Confirmar Password" name="pass2" aria-label="Password" required>
+                <input type="password" class="form-control" placeholder="Confirmar Password" name="pass2" aria-label="Password" pattern=".{3,10}" required>
               </div>
             </div>
             <div class="modal-footer">

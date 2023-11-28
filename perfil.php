@@ -68,7 +68,7 @@ if ($id_estado != 5) {
                 if (isset($_GET['success'])) {
                 ?>
                   <div class="alert alert-success" role="alert">
-                    Se ha insertado correctamente.
+                   Cambios realizados
                   </div>
                 <?php  } ?>
               </div>
@@ -89,7 +89,7 @@ if ($id_estado != 5) {
                     </div>
                     <div class="col-md-6 mb-3">
                       <label for="telefono">Telefono</label>
-                      <input type="text" name="telefono" value="<?php echo $arregloUsuario['telefono']; ?>" id="telefono" id="cambiarPassForm" class="form-control" required>
+                      <input type="text" name="telefono" value="<?php echo $arregloUsuario['telefono']; ?>" id="telefono" id="cambiarPassForm" class="form-control" pattern="[0-9]{10}" required>
                       <div class="valid-feedback">Ya es válido</div>
                       <div class="invalid-feedback">Complete los campos</div>
                     </div>
@@ -105,13 +105,13 @@ if ($id_estado != 5) {
                   <div class="row">
                     <div class="col-md-6 mb-3">
                       <label for="pass1">Contraseña</label>
-                      <input type="password" name="p1" value="" id="p1" class="form-control" required>
+                      <input type="password" name="p1" value="" id="p1" class="form-control" pattern=".{3,10}" required>
                       <div class="valid-feedback">Ya es válido</div>
                       <div class="invalid-feedback">Complete los campos</div>
                     </div>
                     <div class="col-md-6 mb-3">
                       <label for="pass2">Validar Contraseña</label>
-                      <input type="password" name="p2" value="" id="p2" class="form-control" required>
+                      <input type="password" name="p2" value="" id="p2" class="form-control" pattern=".{3,10}"required>
                       <div class="valid-feedback">Ya es válido</div>
                       <div class="invalid-feedback">Complete los campos</div>
                     </div>

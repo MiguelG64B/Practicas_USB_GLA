@@ -15,8 +15,8 @@ $id_seccion = $arregloUsuario['id_seccion'];
 $id_estado = $arregloUsuario['id_estado'];
 
 if ($id_estado != 5 || $arregloUsuario['permisos']['per_tickets'] != '1') {
-    header("Location: ./perfil.php");
-    exit();
+  header("Location: ./perfil.php");
+  exit();
 }
 
 $registrosPorPagina = 10;
@@ -259,153 +259,169 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
 
                   <?php  } ?>
                   <div class="table-responsive">
-                  <table class="table">
-                    <thead>
-                      <tr>
-                        <th>Id</th>
-                        <th>Categoria</th>
-                        <th>Seccion</th>
-                        <th>Titulo</th>
-                        <th>Fecha</th>
-                        <th>Priorirad</th>
-                        <th>Estado</th>
-                        <th>Acciones</th>
-                      </tr>
-
-                    </thead>
-                    <tbody>
-
-                      <?php while ($f = mysqli_fetch_array($resultado)) { ?>
+                    <table class="table">
+                      <thead>
                         <tr>
-                          <td><?php echo $f['id_ticket']; ?></td>
-                          <td> <?php
-                                $res = $conexion->query("SELECT nombre FROM categorias WHERE id = " . $f['id_categoria']);
-                                if ($categoria = mysqli_fetch_array($res)) {
-                                  echo $categoria['nombre'];
-                                }
-                                ?>
-                          </td>
-                          <td> <?php
-                                $res = $conexion->query("SELECT s.descrip FROM seccion s, categorias c WHERE c.id_seccion = s.id AND c.id = " . $f['id_categoria']);
-                                if ($seccion = mysqli_fetch_array($res)) {
-                                  echo $seccion['descrip'];
-                                }
-                                ?>
-                          </td>
-                          <td>
-                            <?php echo $f['titulo']; ?>
-                          </td>
-
-                          <td><?php echo $f['fecha']; ?></td>
-
-                          <td> <?php
-                                $res = $conexion->query("SELECT nombre FROM prioridad WHERE id = " . $f['id_prioridad']);
-                                if ($categoria = mysqli_fetch_array($res)) {
-                                  echo $categoria['nombre'];
-                                }
-                                ?>
-                          </td>
-
-                          <td>
-                            <?php
-                            $res = $conexion->query("SELECT nombre FROM estadoticket WHERE id = " . $f['id_estado']);
-                            if ($estado = mysqli_fetch_array($res)) {
-                              switch ($estado['nombre']) {
-                                case 'Activo':
-                                  echo '<span class="badge badge-sm bg-gradient-success">'  . $estado['nombre'] . '</span>';
-                                  break;
-                                case 'Denegado':
-                                  echo '<span class="badge badge-sm bg-gradient-danger">'  . $estado['nombre'] . '</span>';
-                                  break;
-                                case 'Finalizado':
-                                  echo '<span class="badge badge-sm bg-gradient-secondary">'  . $estado['nombre'] . '</span>';
-                                  break;
-                                case 'Asignado':
-                                  echo '<span class="badge badge-sm bg-gradient-info">'  . $estado['nombre'] . '</span>';
-                                  break;
-                                default:
-                                  echo $estado['nombre'];
-                                  break;
-                              }
-                            }
-                            ?>
-                          </td>
-
-                          <td>
-                            <?php
-                            $botonDetalles = '<button class="btn btn-primary btn-small btndetalles" title="Ver detalles" data-id="' . $f['id_ticket'] . '" data-categoria="' . $f['id_categoria'] . '"data-id_usuario="' . $f['id_usuario'] . '" data-prioridad="' . $f['id_prioridad'] . '" data-encargado="' . $f['id_encargado'] . '" data-titulo="' . $f['titulo'] . '" data-editor="' . htmlspecialchars($f['resumen']) . '" data-toggle="modal" data-target="#modalDetalles"><i class="fa fa-eye"></i></button>';
-
-                            if ($f['id_estado'] == 3 || $f['id_estado'] == 4) {
-                              // Mostrar el botón "detalles2" si el estado es 3 o 4
-                              $botonDetalles = '<button class="btn btn-primary btn-small btndetalles2" title="Ver detalles" data-imagen="' . $f['imagen'] . '" data-id="' . $f['id_ticket'] . '" data-categoria="' . $f['id_categoria'] . '" data-prioridad="' . $f['id_prioridad'] . '" data-encargado="' . $f['id_encargado'] . '" data-titulo="' . $f['titulo'] . '" data-editor="' . htmlspecialchars($f['resumen']) . '" data-toggle="modal" data-target="#modalDetalles2" data-coment_encargado="' . $f['coment_encargado'] . '" data-coment_usuario="' . $f['coment_usuario'] . '" data-estado="' . $f['id_estado'] . '"><i class="fa fa-eye"></i></button>';
-                            }
-                            if ($f['id_usuario'] == $idUsuario && $f['id_estado'] == 3 || $f['id_estado'] == 4) {
-                              
-                              $ticket = $f['id_ticket'];
-                              $comentarios = $f['coment_encargado'];
-                              $satisfaccionURL = './satisfaccion.php?id=' . $ticket . '&comentarios=' . $comentarios;
-
-                              $botonDetalles = '<a class="btn btn-warning btn-small btnSatisfaccion" title="Satisfacción" href="' . $satisfaccionURL . '"><i class="fa fa-smile-o"></i></a>';
-                            }
-                            echo $botonDetalles;
-
-                            if ($f['id_usuario'] == $idUsuario && ($f['id_estado'] != '3' && $f['id_estado'] != '4')) {
-                            ?>
-                              <button class="btn btn-info btn-small btnEditar" title="Editar ticket" data-id="<?php echo $f['id_ticket']; ?>" data-categoria="<?php echo $f['id_categoria']; ?>" data-prioridad="<?php echo $f['id_prioridad']; ?>" data-titulo="<?php echo $f['titulo']; ?>" data-editor="<?php echo htmlspecialchars($f['resumen']); ?>" data-encargado="<?php echo $f['id_encargado']; ?>" data-toggle="modal" data-target="#modalEditar">
-                                <i class="fa fa-edit"></i>
-                              </button>
-                            <?php
-                            }
-                            ?>
-                            <?php
-                            if ($f['id_encargado'] == $idUsuario && ($f['id_estado'] != '3' && $f['id_estado'] != '4')) {
-                            ?>
-                              <button class="btn btn-danger btn-small btncerrar" title="Cerrar ticket" data-id="<?php echo $f['id_ticket']; ?>" data-id_usuario="<?php echo $f['id_usuario']; ?>" data-estado="<?php echo $f['id_estado']; ?>" data-toggle="modal" data-target="#modalcerrar">
-                                <i class="fa fa-clipboard-check"></i>
-                              </button>
-                            <?php
-                            }
-                            ?>
-                          </td>
+                          <th>Id</th>
+                          <th>Creador</th>
+                          <th>Categoria</th>
+                          <th>Seccion</th>
+                          <th>Titulo</th>
+                          <th>Fecha</th>
+                          <th>Priorirad</th>
+                          <th>Encargado</th>
+                          <th>Estado</th>
+                          <th>Acciones</th>
                         </tr>
-                      <?php
-                      }
-                      ?>
-                    </tbody>
-                  </table>
-                  <nav aria-label="Page navigation example">
-                  <ul class="pagination pagination-success">
-                    <?php if ($paginaActual > 1) : ?>
-                      <li class="page-item">
-                        <a href="?page=<?php echo $paginaActual - 1; ?>&search=" class="page-link" aria-label="Previous">
-                          <i class="fa fa-angle-left"></i>
-                          <span class="sr-only">Previous</span>
-                        </a>
-                      </li>
-                    <?php endif; ?>
 
-                    <?php
-                    $maxButtons = 4; // Número máximo de botones a mostrar
-                    $start = max(1, $paginaActual - floor($maxButtons / 2));
-                    $end = min($start + $maxButtons - 1, $totalBotones);
+                      </thead>
+                      <tbody>
 
-                    for ($i = $start; $i <= $end; $i++) :
-                    ?>
-                      <li class="page-item <?php if ($i == $paginaActual) echo 'active'; ?>">
-                        <a href="?page=<?php echo $i; ?>&search=" class="page-link"><?php echo $i; ?></a>
-                      </li>
-                    <?php endfor; ?>
+                        <?php while ($f = mysqli_fetch_array($resultado)) { ?>
+                          <tr>
+                            <td><?php echo $f['id_ticket']; ?></td>
+                            <td>
+                              <?php
+                              $res = $conexion->query("SELECT nom_persona FROM usuarios WHERE id = " . $f['id_usuario']);
+                              if ($categoria = mysqli_fetch_array($res)) {
+                                echo $categoria['nom_persona'];
+                              }
+                              ?>
+                            </td>
+                            <td> <?php
+                                  $res = $conexion->query("SELECT nombre FROM categorias WHERE id = " . $f['id_categoria']);
+                                  if ($categoria = mysqli_fetch_array($res)) {
+                                    echo $categoria['nombre'];
+                                  }
+                                  ?>
+                            </td>
+                            <td> <?php
+                                  $res = $conexion->query("SELECT s.descrip FROM seccion s, categorias c WHERE c.id_seccion = s.id AND c.id = " . $f['id_categoria']);
+                                  if ($seccion = mysqli_fetch_array($res)) {
+                                    echo $seccion['descrip'];
+                                  }
+                                  ?>
+                            </td>
+                            <td>
+                              <?php echo $f['titulo']; ?>
+                            </td>
 
-                    <?php if ($paginaActual < $totalCategorias) : ?>
-                      <li class="page-item">
-                        <a href="?page=<?php echo $paginaActual + 1; ?>&search=" class="page-link" aria-label="Next">
-                          <i class="fa fa-angle-right"></i>
-                          <span class="sr-only">Next</span>
-                        </a>
-                      </li>
-                    <?php endif; ?>
-                  </ul>
-                </nav>
+                            <td><?php echo $f['fecha']; ?></td>
+
+                            <td> <?php
+                                  $res = $conexion->query("SELECT nombre FROM prioridad WHERE id = " . $f['id_prioridad']);
+                                  if ($categoria = mysqli_fetch_array($res)) {
+                                    echo $categoria['nombre'];
+                                  }
+                                  ?>
+                            </td>
+                            <td><?php
+                                $res = $conexion->query("SELECT nom_persona FROM usuarios WHERE id = " . $f['id_encargado']);
+                                if ($categoria = mysqli_fetch_array($res)) {
+                                  echo $categoria['nom_persona'];
+                                }
+                                ?>
+                            </td>
+                            <td>
+                              <?php
+                              $res = $conexion->query("SELECT nombre FROM estadoticket WHERE id = " . $f['id_estado']);
+                              if ($estado = mysqli_fetch_array($res)) {
+                                switch ($estado['nombre']) {
+                                  case 'Activo':
+                                    echo '<span class="badge badge-sm bg-gradient-success">'  . $estado['nombre'] . '</span>';
+                                    break;
+                                  case 'Denegado':
+                                    echo '<span class="badge badge-sm bg-gradient-danger">'  . $estado['nombre'] . '</span>';
+                                    break;
+                                  case 'Finalizado':
+                                    echo '<span class="badge badge-sm bg-gradient-secondary">'  . $estado['nombre'] . '</span>';
+                                    break;
+                                  case 'Asignado':
+                                    echo '<span class="badge badge-sm bg-gradient-info">'  . $estado['nombre'] . '</span>';
+                                    break;
+                                  default:
+                                    echo $estado['nombre'];
+                                    break;
+                                }
+                              }
+                              ?>
+                            </td>
+
+                            <td>
+                              <?php
+                              $botonDetalles = '<button class="btn btn-primary btn-small btndetalles" title="Ver detalles" data-id="' . $f['id_ticket'] . '"data-id_usuario="' . $f['id_usuario'] . '" data-fecha="' . $f['fecha'] . '"data-categoria="' . $f['id_categoria'] . '"data-id_usuario="' . $f['id_usuario'] . '" data-prioridad="' . $f['id_prioridad'] . '" data-encargado="' . $f['id_encargado'] . '" data-titulo="' . $f['titulo'] . '" data-editor="' . htmlspecialchars($f['resumen']) . '" data-toggle="modal" data-target="#modalDetalles"><i class="fa fa-eye"></i></button>';
+
+                              if ($f['id_estado'] == 3 || $f['id_estado'] == 4) {
+                                // Mostrar el botón "detalles2" si el estado es 3 o 4
+                                $botonDetalles = '<button class="btn btn-primary btn-small btndetalles2" title="Ver detalles" data-imagen="' . $f['imagen'] . '"data-id_usuario="' . $f['id_usuario'] . '"  data-fecha="' . $f['fecha'] . '"data-id="' . $f['id_ticket'] . '" data-categoria="' . $f['id_categoria'] . '" data-prioridad="' . $f['id_prioridad'] . '" data-encargado="' . $f['id_encargado'] . '" data-titulo="' . $f['titulo'] . '" data-editor="' . htmlspecialchars($f['resumen']) . '" data-toggle="modal" data-target="#modalDetalles2" data-coment_encargado="' . $f['coment_encargado'] . '" data-coment_usuario="' . $f['coment_usuario'] . '" data-estado="' . $f['id_estado'] . '"><i class="fa fa-eye"></i></button>';
+                              }
+                              if ($f['id_usuario'] == $idUsuario && $f['id_estado'] == 3 || $f['id_estado'] == 4) {
+
+                                $ticket = $f['id_ticket'];
+                                $comentarios = $f['coment_encargado'];
+                                $satisfaccionURL = './satisfaccion.php?id=' . $ticket . '&comentarios=' . $comentarios;
+
+                                $botonDetalles = '<a class="btn btn-warning btn-small btnSatisfaccion" title="Satisfacción" href="' . $satisfaccionURL . '"><i class="fa fa-smile-o"></i></a>';
+                              }
+                              echo $botonDetalles;
+
+                              if ($f['id_usuario'] == $idUsuario && ($f['id_estado'] != '3' && $f['id_estado'] != '4')) {
+                              ?>
+                                <button class="btn btn-info btn-small btnEditar" title="Editar ticket" data-id="<?php echo $f['id_ticket']; ?>" data-fecha="<?php echo $f['fecha']; ?>" data-categoria="<?php echo $f['id_categoria']; ?>" data-prioridad="<?php echo $f['id_prioridad']; ?>" data-titulo="<?php echo $f['titulo']; ?>" data-editor="<?php echo htmlspecialchars($f['resumen']); ?>" data-encargado="<?php echo $f['id_encargado']; ?>" data-toggle="modal" data-target="#modalEditar">
+                                  <i class="fa fa-edit"></i>
+                                </button>
+                              <?php
+                              }
+                              ?>
+                              <?php
+                              if ($f['id_encargado'] == $idUsuario && ($f['id_estado'] != '3' && $f['id_estado'] != '4')) {
+                              ?>
+                                <button class="btn btn-danger btn-small btncerrar" title="Cerrar ticket" data-id="<?php echo $f['id_ticket']; ?>" data-id_usuario="<?php echo $f['id_usuario']; ?>" data-estado="<?php echo $f['id_estado']; ?>" data-toggle="modal" data-target="#modalcerrar">
+                                  <i class="fa fa-clipboard-check"></i>
+                                </button>
+                              <?php
+                              }
+                              ?>
+                            </td>
+                          </tr>
+                        <?php
+                        }
+                        ?>
+                      </tbody>
+                    </table>
+                    <nav aria-label="Page navigation example">
+                      <ul class="pagination pagination-success">
+                        <?php if ($paginaActual > 1) : ?>
+                          <li class="page-item">
+                            <a href="?page=<?php echo $paginaActual - 1; ?>&search=" class="page-link" aria-label="Previous">
+                              <i class="fa fa-angle-left"></i>
+                              <span class="sr-only">Previous</span>
+                            </a>
+                          </li>
+                        <?php endif; ?>
+
+                        <?php
+                        $maxButtons = 4; // Número máximo de botones a mostrar
+                        $start = max(1, $paginaActual - floor($maxButtons / 2));
+                        $end = min($start + $maxButtons - 1, $totalBotones);
+
+                        for ($i = $start; $i <= $end; $i++) :
+                        ?>
+                          <li class="page-item <?php if ($i == $paginaActual) echo 'active'; ?>">
+                            <a href="?page=<?php echo $i; ?>&search=" class="page-link"><?php echo $i; ?></a>
+                          </li>
+                        <?php endfor; ?>
+
+                        <?php if ($paginaActual < $totalCategorias) : ?>
+                          <li class="page-item">
+                            <a href="?page=<?php echo $paginaActual + 1; ?>&search=" class="page-link" aria-label="Next">
+                              <i class="fa fa-angle-right"></i>
+                              <span class="sr-only">Next</span>
+                            </a>
+                          </li>
+                        <?php endif; ?>
+                      </ul>
+                    </nav>
                   </div>
                 </div>
               </section>
@@ -484,7 +500,7 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
               </button>
             </div>
             <div class="modal-body">
-            <input type="hidden" id="idEdit" name="id">
+              <input type="hidden" id="idEdit" name="id">
               <div class="form-group">
                 <label for="tituloEdit">Titulo</label>
                 <input type="text" name="titulo" placeholder="Titulo" id="tituloEdit" class="form-control" required>
@@ -492,7 +508,7 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
               <div class="form-group">
                 <label for="categoriaEdit">Categoria (Seccion que se encarga)</label>
                 <select name="categoria" id="categoriaEdit" class="form-control" required>
-                <?php
+                  <?php
                   $res = $conexion->query("SELECT categorias.id, categorias.nombre, seccion.descrip, categorias.id_seccion 
             FROM categorias 
             INNER JOIN seccion ON categorias.id_seccion = seccion.id");
@@ -551,9 +567,13 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
                 <textarea name="editor" id="editorDetalles" class="form-control editorEdit2" readonly></textarea>
               </div>
               <div class="form-group">
+                <label for="">Fecha de creacion</label>
+                <input type="date" name="fecha" placeholder="titulo" id="fechaDetalles" class="form-control" required readonly>
+              </div>
+              <div class="form-group">
                 <label for="categoriaDetalles">Categoria (Seccion que se encarga)</label>
                 <select name="categoria" id="categoriaDetalles" class="form-control" required disabled>
-                <?php
+                  <?php
                   $res = $conexion->query("SELECT categorias.id, categorias.nombre, seccion.descrip, categorias.id_seccion 
             FROM categorias 
             INNER JOIN seccion ON categorias.id_seccion = seccion.id");
@@ -574,30 +594,32 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
                   ?>
                 </select>
               </div>
-
               <div class="form-group">
-                <label for="encargadoDetalles">Encargado</label>
-                <select name="encargado" id="encargadoDetalles" class="form-control" required>
-                  <?php
-                  if ($nivel == 1) {
-                    $res = $conexion->query("SELECT u.id, u.nom_persona, t.descrip 
+    <label for="encargadoDetalles">Encargado</label>
+    <select name="encargado" id="encargadoDetalles" class="form-control" required>
+        <?php
+        if ($nivel == 1) {
+            $res = $conexion->query("SELECT u.id, u.nom_persona, t.descrip 
                 FROM usuarios u
                 LEFT JOIN seccion t ON u.id_seccion = t.id
-                WHERE u.id_seccion != 0");
-                  } else {
-                    $res = $conexion->query("SELECT u.id, u.nom_persona, t.descrip 
+                WHERE u.id_seccion != 0 OR u.id = $idUsuario");
+        } else {
+            $res = $conexion->query("SELECT u.id, u.nom_persona, t.descrip 
                 FROM usuarios u
                 LEFT JOIN seccion t ON u.id_seccion = t.id
                 WHERE u.id_seccion != 0
-                AND u.id_superior = $idUsuario");
-                  }
+                AND u.id_superior = $idUsuario OR u.id = $idUsuario");
+        }
 
-                  while ($f = mysqli_fetch_array($res)) {
-                    echo '<option value="' . $f['id'] . '">' . $f['nom_persona'] . ' - ' . $f['descrip'] . '</option>';
-                  }
-                  ?>
-                </select>
-              </div>
+        while ($f = mysqli_fetch_array($res)) {
+            echo '<option value="' . $f['id'] . '">' . $f['nom_persona'] . ' - ' . $f['descrip'] . '</option>';
+        }
+        ?>
+    </select>
+</div>
+
+
+
 
 
             </div>
@@ -634,9 +656,13 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
                 <textarea name="editor" id="editorDetalles2" class="form-control editorEdit2" readonly></textarea>
               </div>
               <div class="form-group">
+                <label for="">Fecha de creacion</label>
+                <input type="date" name="fecha" placeholder="titulo" id="fechaDetalles2" class="form-control" required readonly>
+              </div>
+              <div class="form-group">
                 <label for="categoriaDetalles2">Categoria (Seccion que se encarga)</label>
                 <select name="categoria" id="categoriaDetalles2" class="form-control" required disabled>
-                <?php
+                  <?php
                   $res = $conexion->query("SELECT categorias.id, categorias.nombre, seccion.descrip, categorias.id_seccion 
             FROM categorias 
             INNER JOIN seccion ON categorias.id_seccion = seccion.id");
@@ -828,22 +854,27 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
       });
       $(".btndetalles").click(function() {
         idDetalles = $(this).data('id');
+        id_usuario = $(this).data('id_usuario');
         id_usuarioDetalles = $(this).data('id_usuario');
         var titulo = $(this).data('titulo');
         var editor = $(this).data('editor');
         var categoria = $(this).data('categoria');
         var prioridad = $(this).data('prioridad');
         var encargado = $(this).data('encargado');
+        fecha = $(this).data('fecha');
         $("#tituloDetalles").val(titulo);
         $("#editorDetalles").val(editor);
         $("#categoriaDetalles").val(categoria);
         $("#prioridadDetalles").val(prioridad);
         $("#encargadoDetalles").val(encargado);
         $("#id_usuarioDetalles").val(id_usuarioDetalles);
+        $("#fechaDetalles").val(fecha);
+        $("#id_usuarioDetalles").val(id_usuario);
         $("#idDetalles").val(idDetalles);
       });
       $(".btndetalles2").click(function() {
         idDetalles2 = $(this).data('id');
+        id_usuario = $(this).data('id_usuario');
         var titulo = $(this).data('titulo');
         var editor = $(this).data('editor');
         var categoria = $(this).data('categoria');
@@ -853,6 +884,7 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
         var imagen = $(this).data('imagen');
         var coment_usuario = $(this).data('coment_usuario');
         var coment_encargado = $(this).data('coment_encargado');
+        fecha = $(this).data('fecha');
         $("#tituloDetalles2").val(titulo);
         $("#editorDetalles2").val(editor);
         $("#categoriaDetalles2").val(categoria);
@@ -862,6 +894,8 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
         $("#imagenDetalles2").val(imagen);
         $("#coment_usuarioDetalles2").val(coment_usuario);
         $("#coment_encargadoDetalles2").val(coment_encargado);
+        $("#fechaDetalles2").val(fecha);
+        $("#id_usuarioDetalles2").val(id_usuario);
         $("#idDetalles2").val(idDetalles2);
       });
       $(".btncerrar").click(function() {

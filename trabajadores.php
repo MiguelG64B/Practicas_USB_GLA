@@ -270,15 +270,15 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
               </div>
               <div class="form-group">
                 <label for="telefono">Telefono</label>
-                <input type="number" name="telefono" placeholder="Telefono" id="telefono" class="form-control" required>
+                <input type="number" name="telefono" placeholder="Telefono" id="telefono" class="form-control" pattern="[0-9]{10}" required >
               </div>
               <div class="form-group">
                 <label for="password">Password</label>
-                <input type="password" class="form-control" placeholder="Password" name="pass" aria-label="Password" required>
+                <input type="password" class="form-control" placeholder="Password" name="pass" aria-label="Password" pattern=".{3,10}"required>
               </div>
               <div class="form-group">
                 <label for="password">Confirmar Password</label>
-                <input type="password" class="form-control" placeholder="Confirmar Password" name="pass2" aria-label="Password" required>
+                <input type="password" class="form-control" placeholder="Confirmar Password" name="pass2" aria-label="Password" pattern=".{3,10}"required>
               </div>
               <div class="form-group">
                 <label for="id_seccion">Seccion que pertenece</label>

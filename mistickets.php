@@ -262,11 +262,13 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
                     <thead>
                       <tr>
                         <th>Id</th>
+                        <th>Creador</th>
                         <th>Categoria</th>
                         <th>Seccion</th>
                         <th>Titulo</th>
                         <th>Fecha</th>
                         <th>Priorirad</th>
+                        <th>Encargado</th>
                         <th>Estado</th>
                         <th>Acciones</th>
                       </tr>
@@ -277,6 +279,14 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
                       <?php while ($f = mysqli_fetch_array($resultado)) { ?>
                         <tr>
                           <td><?php echo $f['id_ticket']; ?></td>
+                          <td>
+                          <?php
+                                $res = $conexion->query("SELECT nom_persona FROM usuarios WHERE id = " . $f['id_usuario']);
+                                if ($categoria = mysqli_fetch_array($res)) {
+                                  echo $categoria['nom_persona'];
+                                }
+                                ?>
+                          </td>
                           <td> <?php
                                 $res = $conexion->query("SELECT nombre FROM categorias WHERE id = " . $f['id_categoria']);
                                 if ($categoria = mysqli_fetch_array($res)) {
@@ -304,7 +314,13 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
                                 }
                                 ?>
                           </td>
-
+                          <td><?php
+                                $res = $conexion->query("SELECT nom_persona FROM usuarios WHERE id = " . $f['id_encargado']);
+                                if ($categoria = mysqli_fetch_array($res)) {
+                                  echo $categoria['nom_persona'];
+                                }
+                                ?>
+                            </td>
                           <td>
                             <?php
                             $res = $conexion->query("SELECT nombre FROM estadoticket WHERE id = " . $f['id_estado']);
@@ -332,31 +348,32 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
 
                           <td>
                             <?php
-                            $botonDetalles = '<button class="btn btn-primary btn-small btndetalles2" title="Ver detalles" data-imagen="' . $f['imagen'] . '" data-id="' . $f['id_ticket'] . '" data-categoria="' . $f['id_categoria'] . '" data-prioridad="' . $f['id_prioridad'] . '" data-encargado="' . $f['id_encargado'] . '" data-titulo="' . $f['titulo'] . '" data-editor="' . htmlspecialchars($f['resumen']) . '" data-toggle="modal" data-target="#modalDetalles2" data-coment_encargado="' . $f['coment_encargado'] . '" data-coment_usuario="' . $f['coment_usuario'] . '" data-estado="' . $f['id_estado'] . '"><i class="fa fa-eye"></i></button>';
+                            $botonDetalles = '<button class="btn btn-primary btn-small btndetalles2" title="Ver detalles" data-id="' . $f['id_ticket'] . '"data-fecha="' . $f['fecha'] . '"data-id_usuario="' . $f['id_usuario'] . '" data-fecha="' . $f['fecha'] . '"data-categoria="' . $f['id_categoria'] . '"data-id_usuario="' . $f['id_usuario'] . '" data-prioridad="' . $f['id_prioridad'] . '" data-encargado="' . $f['id_encargado'] . '" data-titulo="' . $f['titulo'] . '" data-editor="' . htmlspecialchars($f['resumen']) . '" data-toggle="modal" data-target="#modalDetalles2"><i class="fa fa-eye"></i></button>';
 
-                            if ($f['id_usuario'] == $idUsuario && $f['id_estado'] == 3 || $f['id_estado'] == 4) {
+                            if ($f['id_estado'] == 3 || $f['id_estado'] == 4) {
                               // Mostrar el botón "detalles2" si el estado es 3 o 4
+                              $botonDetalles = '<button class="btn btn-primary btn-small btndetalles2" title="Ver detalles" data-imagen="' . $f['imagen'] . '"data-fecha="' . $f['fecha'] . '"data-id_usuario="' . $f['id_usuario'] . '"  data-fecha="' . $f['fecha'] . '"data-id="' . $f['id_ticket'] . '" data-categoria="' . $f['id_categoria'] . '" data-prioridad="' . $f['id_prioridad'] . '" data-encargado="' . $f['id_encargado'] . '" data-titulo="' . $f['titulo'] . '" data-editor="' . htmlspecialchars($f['resumen']) . '" data-toggle="modal" data-target="#modalDetalles2" data-coment_encargado="' . $f['coment_encargado'] . '" data-coment_usuario="' . $f['coment_usuario'] . '" data-estado="' . $f['id_estado'] . '"><i class="fa fa-eye"></i></button>';
+                            }
+                            if ($f['id_usuario'] == $idUsuario && $f['id_estado'] == 3 || $f['id_estado'] == 4) {
+                              
                               $ticket = $f['id_ticket'];
                               $comentarios = $f['coment_encargado'];
                               $satisfaccionURL = './satisfaccion.php?id=' . $ticket . '&comentarios=' . $comentarios;
-
-                              // Mostrar el botón "Satisfacción" que redirige a la URL
 
                               $botonDetalles = '<a class="btn btn-warning btn-small btnSatisfaccion" title="Satisfacción" href="' . $satisfaccionURL . '"><i class="fa fa-smile-o"></i></a>';
                             }
                             echo $botonDetalles;
 
-                            if (($f['id_usuario'] == $idUsuario) && ($f['id_estado'] != '3' && $f['id_estado'] != '4') && $arregloUsuario['permisos']['per_mistickets'] == '1') {
-                              // Mostrar el botón de editar si el id_usuario coincide con $idUsuario o tiene permisos de crear y permisos permiten
+                            if ($f['id_usuario'] == $idUsuario && ($f['id_estado'] != '3' && $f['id_estado'] != '4')) {
                             ?>
-                              <button class="btn btn-info btn-small btnEditar" title="Editar ticket" data-id="<?php echo $f['id_ticket']; ?>" data-categoria="<?php echo $f['id_categoria']; ?>" data-prioridad="<?php echo $f['id_prioridad']; ?>" data-titulo="<?php echo $f['titulo']; ?>" data-editor="<?php echo htmlspecialchars($f['resumen']); ?>" data-encargado="<?php echo $f['id_encargado']; ?>" data-toggle="modal" data-target="#modalEditar">
+                              <button class="btn btn-info btn-small btnEditar" title="Editar ticket" data-id="<?php echo $f['id_ticket']; ?>"data-fecha="<?php echo $f['fecha']; ?>" data-categoria="<?php echo $f['id_categoria']; ?>" data-prioridad="<?php echo $f['id_prioridad']; ?>" data-titulo="<?php echo $f['titulo']; ?>" data-editor="<?php echo htmlspecialchars($f['resumen']); ?>" data-encargado="<?php echo $f['id_encargado']; ?>" data-toggle="modal" data-target="#modalEditar">
                                 <i class="fa fa-edit"></i>
                               </button>
                             <?php
                             }
-
-                            if ($f['id_encargado'] == $idUsuario && ($f['id_estado'] != '3' && $f['id_estado'] != '4') && $arregloUsuario['permisos']['per_mistickets'] == '1') {
-                              // Mostrar el botón de cerrar solo si el id_encargado coincide con $idUsuario y permisos permiten
+                            ?>
+                            <?php
+                            if ($f['id_encargado'] == $idUsuario && ($f['id_estado'] != '3' && $f['id_estado'] != '4')) {
                             ?>
                               <button class="btn btn-danger btn-small btncerrar" title="Cerrar ticket" data-id="<?php echo $f['id_ticket']; ?>" data-id_usuario="<?php echo $f['id_usuario']; ?>" data-estado="<?php echo $f['id_estado']; ?>" data-toggle="modal" data-target="#modalcerrar">
                                 <i class="fa fa-clipboard-check"></i>
@@ -365,8 +382,6 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
                             }
                             ?>
                           </td>
-
-
                         </tr>
                       <?php
                       }
@@ -548,6 +563,10 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
               <div class="form-group">
                 <label for="editor">Contenido</label>
                 <textarea name="editor" id="editorDetalles2" class="form-control editorEdit2" readonly></textarea>
+              </div>
+              <div class="form-group">
+                <label for="">Fecha de creacion</label>
+                <input type="date" name="fecha" placeholder="titulo" id="fechaDetalles2" class="form-control" required readonly>
               </div>
               <div class="form-group">
                 <label for="categoriaDetalles2">Categoria (Seccion que se encarga)</label>
@@ -745,6 +764,7 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
       $(".btndetalles").click(function() {
         idDetalles = $(this).data('id');
         id_usuarioDetalles = $(this).data('id_usuario');
+       fechaDetalles = $(this).data('fecha');
         var titulo = $(this).data('titulo');
         var editor = $(this).data('editor');
         var categoria = $(this).data('categoria');
@@ -755,6 +775,7 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
         $("#categoriaDetalles").val(categoria);
         $("#prioridadDetalles").val(prioridad);
         $("#encargadoDetalles").val(encargado);
+        $("#fechaDetalles").val(fechaDetalles);
         $("#id_usuarioDetalles").val(id_usuarioDetalles);
         $("#idDetalles").val(idDetalles);
       });
@@ -762,6 +783,7 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
         idDetalles2 = $(this).data('id');
         var titulo = $(this).data('titulo');
         var editor = $(this).data('editor');
+        fechaDetalles = $(this).data('fecha');
         var categoria = $(this).data('categoria');
         var prioridad = $(this).data('prioridad');
         var encargado = $(this).data('encargado');
@@ -776,6 +798,7 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
         $("#encargadoDetalles2").val(encargado);
         $("#id_estadoDetalles2").val(estado);
         $("#imagenDetalles2").val(imagen);
+        $("#fechaDetalles2").val(fechaDetalles);
         $("#coment_usuarioDetalles2").val(coment_usuario);
         $("#coment_encargadoDetalles2").val(coment_encargado);
         $("#idDetalles2").val(idDetalles2);

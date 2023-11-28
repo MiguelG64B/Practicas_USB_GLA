@@ -24,7 +24,7 @@ if (isset($_POST['id_libro']) && isset($_POST['fecha_reserva']) && isset($_POST[
     $dispo = ($edicion_nueva > 0) ? 'si' : 'no';
 
     // Insertar en la tabla reservas
-    $consulta_insertar_reserva = $conexion->prepare("INSERT INTO reservas (id_usuario, id_libro, fecha_reserva, fecha_limite, comentarios, entregado) VALUES (?, ?, ?, ?, 'N/A', 'no')");
+    $consulta_insertar_reserva = $conexion->prepare("INSERT INTO reservas (id_usuario, id_libro, fecha_reserva, fecha_limite, entregado) VALUES (?, ?, ?, ?, 'no')");
     $consulta_insertar_reserva->bind_param("ssss", $_POST['id_usuario'], $_POST['id_libro'], $_POST['fecha_reserva'], $_POST['fecha_limite']);
     $consulta_insertar_reserva->execute();
 

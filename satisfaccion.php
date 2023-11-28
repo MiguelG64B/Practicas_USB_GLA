@@ -56,7 +56,7 @@ if (isset($_GET['id']) && isset($_GET['comentarios'])) {
     <!-- Navbar -->
     <?php include("./layouts/header.php"); ?>
     <!-- End Navbar -->
-    <div class="container-fluid py-4 mx-auto">
+    <div class="container-fluid py-4">
       <div class="row">
         <div class="col-12">
           <div class="card mb-4">
@@ -175,7 +175,7 @@ if (isset($_GET['id']) && isset($_GET['comentarios'])) {
 
                           <div class="form-group">
                             <label for="editor">Comentarios encargado</label>
-                            <textarea name="coment_encargado" id="coment_encargadoDetalles2" class="form-control editorEdit2" readonly><?php echo $fila[9]; ?></textarea>
+                            <textarea name="coment_encargado" id="coment_encargadoDetalles2" class="form-control editorEdit2" readonly><?php echo $fila[11]; ?></textarea>
                           </div>
 
                           <div class="col-md-6">
@@ -218,7 +218,7 @@ if (isset($_GET['id']) && isset($_GET['comentarios'])) {
                                 <label for="encargadoDetalles2">Satisfacción (No editable)</label>
                                 <select name="satisfaccion" class="form-control" disabled>
                                   <?php
-                              $id_satisfaccion = $fila[11]; // Supongo que aquí tienes el valor de $fila[12]
+                              $id_satisfaccion = $fila[12]; // Supongo que aquí tienes el valor de $fila[12]
 
                               $query = "SELECT s.id_satisfaccion, s.tipo
                                         FROM satisfaccion s
@@ -249,7 +249,7 @@ if (isset($_GET['id']) && isset($_GET['comentarios'])) {
           </div>
         </div>
       </div>
-    </div>
+      </div>
 
 
     <?php include("./layouts/footer.php"); ?>

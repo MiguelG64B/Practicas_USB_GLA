@@ -287,7 +287,7 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
                               <?php
                               if (($f['existe'] == 'si' || $arregloUsuario['permisos']['per_reserva'] == '1') && $f['edicion'] >= 1) {
                               ?>
-                                <button class="btn btn-default btn-small btnReservar" title="Reservar libro" data-id_libro="<?php echo $f['id_libro']; ?>" data-edicion="<?php echo $f['edicion']; ?>" data-toggle="modal" data-target="#modalReserva">
+                                <button class="btn btn-default btn-small btnReservar" title="Reservar libro" data-id_libro="<?php echo $f['id_libro']; ?>"data-id_estado="<?php echo $f['id_estado']; ?>" data-edicion="<?php echo $f['edicion']; ?>" data-toggle="modal" data-target="#modalReserva">
                                   <i class="fa fa-calendar-check-o"></i>
                                 </button>
                               <?php
@@ -697,6 +697,7 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
             <div class="modal-body">
               <input type="hidden" id="id_libroReserva" name="id_libro">
               <input type="hidden" id="edicionReserva" name="edicion">
+              <input type="hidden" id="id_estadoReserva" name="id_estado">
               <input type="hidden" id="id_usuario" name="id_usuario" value="<?php echo $arregloUsuario['id_usuario']; ?>" class="form-control" required>
               <div class="modal-body">
                 <div class="form-group">
@@ -896,6 +897,8 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
         </div>
       </div>
     </div>
+    </div>
+    </div>
 
     <!-- Modal ver sin editar-->
 
@@ -1082,8 +1085,12 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
       $(".btnReservar").click(function() {
         id_libroReserva = $(this).data('id_libro');
         edicionReserva = $(this).data('edicion');
+        id_estadoReserva = $(this).data('id_estado');
+        id_reservaReserva = $(this).data('id_reserva');
         $("#id_libroReserva").val(id_libroReserva);
         $("#edicionReserva").val(edicionReserva);
+        $("#id_estadoReserva").val(id_estadoReserva);
+        $("#id_reservaReserva").val(id_reservaReserva);
       });
     });
   </script>

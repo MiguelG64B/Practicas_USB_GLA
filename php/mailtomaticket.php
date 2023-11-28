@@ -1,58 +1,66 @@
 <?php
-// Varios destinatarios
-$para = $email_usuario; // Usar la variable $email_usuario como destinatario
+// Asegúrate de que $email_usuario esté definido y tenga un valor válido
+if (isset($email_usuario) && filter_var($email_usuario, FILTER_VALIDATE_EMAIL)) {
 
-// Título
-$título = 'Ticket tomado';
+    // Dirección de correo electrónico del destinatario
+    $para = $email_usuario;
 
-// Estilos CSS en línea
-$estilos = '
-<style>
-    body {
-        background-color: #609966; /* Fondo verde */
-        font-family: Arial, sans-serif; /* Fuente moderna */
+    // Asunto del correo
+    $título = 'Ticket tomado';
+
+    // Estilos CSS en línea
+    $estilos = '
+    <style>
+        body {
+            background-color: #609966;
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            text-align: center;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 0 auto;
+            max-width: 600px;
+        }
+    </style>
+    ';
+
+    // Contenido del mensaje
+    $mensaje = '
+    <html>
+    <head>
+        <title>Ticket Tomado</title>
+    </head>
+    <body>
+        <div class="container">
+            <h1>Gimnasio Los Almendros</h1>
+            <p>Ticket Tomado</p>
+            <p>Su ticket ha sido tomado. Para más detalles, por favor, ingrese a la plataforma.</p>
+        </div>
+    </body>
+    </html>
+    ';
+
+    // Cabeceras del correo
+    $cabeceras  = 'MIME-Version: 1.0' . "\r\n";
+    $cabeceras .= 'Content-type: text/html; charset=utf-8' . "\r\n"; // Usar UTF-8 para caracteres latinos
+    $cabeceras .= 'From: proyecto@software.com' . "\r\n";
+
+    // Agregar los estilos CSS en línea al mensaje
+    $mensaje = $estilos . $mensaje;
+
+    // Enviar correo electrónico
+    $enviado = mail($para, $título, $mensaje, $cabeceras);
+
+    // Verificar si el correo se envió correctamente
+    if ($enviado) {
+        echo "¡Correo electrónico enviado correctamente!";
+    } else {
+        echo "Error al enviar el correo.";
     }
-    .container {
-        text-align: center;
-        background-color: #fff; /* Fondo blanco */
-        padding: 20px;
-        border-radius: 10px; /* Bordes redondeados */
-        margin: 0 auto; /* Centrar el contenido horizontalmente */
-        max-width: 600px; /* Ancho máximo del contenedor */
-    }
-</style>
-';
 
-// Mensaje
-$mensaje = '
-<html>
-<head>
-  <title>Ticket Tomado</title>
-</head>
-<body>
-    <div class="container">
-        <h1>Gimnasio Los Almendros</h1>
-        <p>Ticket Tomado</p>
-        <p>Su ticket ha sido tomado para más detalles, por favor ingrese a la plataforma para mas detalles.</p>
-    </div>
-</body>
-</html>
-';
-
-// Para enviar un correo HTML, debe establecerse la cabecera Content-type
-$cabeceras  = 'MIME-Version: 1.0' . "\r\n";
-$cabeceras .= 'Content-type: text/html; charset=utf-8' . "\r\n"; // Usar UTF-8 para caracteres latinos
-
-// Agregar los estilos CSS en línea al mensaje
-$mensaje = $estilos . $mensaje;
-
-$cabeceras .= 'From: proyecto@software.com' . "\r\n";
-
-// Enviar correo electrónico
-$enviado = false;
-if (mail($para, $título, $mensaje, $cabeceras)) {
-    $enviado = true;
+} else {
+    echo "Dirección de correo electrónico no válida.";
 }
-
-// Puedes agregar una lógica adicional aquí para manejar la respuesta de envío de correo
 ?>
