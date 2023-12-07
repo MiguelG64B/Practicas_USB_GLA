@@ -8,9 +8,9 @@ if(isset($_POST['coddew']) && isset($_POST['titulo'])&& isset($_POST['id_autor']
 && isset($_POST['id_clase'])&& isset($_POST['observaciones'])&& isset($_POST['id_seccion'])
 && isset($_POST['temas'])&& isset($_POST['id_ciudad'])&& isset($_POST['codinv'])
 && isset($_POST['npag'])&& isset($_POST['fimpresion'])&& isset($_POST['temas2'])&& isset($_POST['entrainv'])) {
-    $existe = 'si';
+    $existe = ($_POST['entrainv'] == 1) ? 'si' : 'no';
     $conexion->query("INSERT INTO libros 
-        (coddew,titulo,existe,id_autor,edicion,costo,fecha,id_estado,id_origen,id_editorial,id_area,id_clase,observaciones,id_seccion,temas,id_ciudad,codinv,npag,fimpresion,temas2,entrainv) VALUES
+        (coddew,titulo,existe,id_autor,edicion,costo,fecha,id_estado,id_origen,id_editorial,id_area,id_clase,observaciones,id_seccion,temas,id_ciudad,codinv,npag,fimpresion,temas2) VALUES
         (
             '".$_POST['coddew']."',
             '".$_POST['titulo']."',
@@ -31,8 +31,7 @@ if(isset($_POST['coddew']) && isset($_POST['titulo'])&& isset($_POST['id_autor']
             '".$_POST['codinv']."',
             '".$_POST['npag']."',
             '".$_POST['fimpresion']."',
-            '".$_POST['temas2']."',
-            '".$_POST['entrainv']."'
+            '".$_POST['temas2']."'
         )") or die($conexion->error);
     
     header("Location: ../panellibros.php?success");

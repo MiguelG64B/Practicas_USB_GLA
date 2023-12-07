@@ -268,14 +268,14 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
                             </td>
                             <td>
 
-                              <button class="btn btn-primary btn-small btndetalles" title="Ver detalles" data-id_libro="<?php echo $f['id_libro']; ?>" data-coddew="<?php echo $f['coddew']; ?>" data-titulo="<?php echo $f['titulo']; ?>" data-id_autor="<?php echo $f['id_autor']; ?>" data-edicion="<?php echo $f['edicion']; ?>" data-costo="<?php echo $f['costo']; ?>" data-fecha="<?php echo $f['fecha']; ?>" data-id_estado="<?php echo $f['id_estado']; ?>" data-id_origen="<?php echo $f['id_origen']; ?>" data-id_editorial="<?php echo $f['id_editorial']; ?>" data-id_area="<?php echo $f['id_area']; ?>" data-id_clase="<?php echo $f['id_clase']; ?>" data-observaciones="<?php echo $f['observaciones']; ?>" data-id_seccion="<?php echo $f['id_seccion']; ?>" data-temas="<?php echo $f['temas']; ?>" data-id_ciudad="<?php echo $f['id_ciudad']; ?>" data-codinv="<?php echo $f['codinv']; ?>" data-npag="<?php echo $f['npag']; ?>" data-fimpresion="<?php echo $f['fimpresion']; ?>" data-temas2="<?php echo $f['temas2']; ?>" data-entrainv="<?php echo $f['entrainv']; ?>" data-toggle="modal" data-target="#modalDetalles"><i class="fa fa-eye"></i></button>
+                              <button class="btn btn-primary btn-small btndetalles" title="Ver detalles" data-id_libro="<?php echo $f['id_libro']; ?>" data-coddew="<?php echo $f['coddew']; ?>" data-titulo="<?php echo $f['titulo']; ?>" data-id_autor="<?php echo $f['id_autor']; ?>" data-edicion="<?php echo $f['edicion']; ?>" data-costo="<?php echo $f['costo']; ?>" data-fecha="<?php echo $f['fecha']; ?>" data-id_estado="<?php echo $f['id_estado']; ?>" data-id_origen="<?php echo $f['id_origen']; ?>" data-id_editorial="<?php echo $f['id_editorial']; ?>" data-id_area="<?php echo $f['id_area']; ?>" data-id_clase="<?php echo $f['id_clase']; ?>" data-observaciones="<?php echo $f['observaciones']; ?>" data-id_seccion="<?php echo $f['id_seccion']; ?>" data-temas="<?php echo $f['temas']; ?>" data-id_ciudad="<?php echo $f['id_ciudad']; ?>" data-codinv="<?php echo $f['codinv']; ?>" data-npag="<?php echo $f['npag']; ?>" data-fimpresion="<?php echo $f['fimpresion']; ?>" data-temas2="<?php echo $f['temas2']; ?>"  data-toggle="modal" data-target="#modalDetalles"><i class="fa fa-eye"></i></button>
 
 
                               <?php
                               if ($arregloUsuario['permisos']['per_con'] == '1') {
                                 // Mostrar el botón de editar solo si el id_usuario coincide con $idUsuario coment_usuario
                               ?>
-                                <button class="btn btn-info btn-small btnEditar" title="Editar libro" data-id_libro="<?php echo $f['id_libro']; ?>" data-coddew="<?php echo $f['coddew']; ?>" data-titulo="<?php echo $f['titulo']; ?>" data-id_autor="<?php echo $f['id_autor']; ?>" data-edicion="<?php echo $f['edicion']; ?>" data-costo="<?php echo $f['costo']; ?>" data-fecha="<?php echo $f['fecha']; ?>" data-id_estado="<?php echo $f['id_estado']; ?>" data-id_origen="<?php echo $f['id_origen']; ?>" data-id_editorial="<?php echo $f['id_editorial']; ?>" data-id_area="<?php echo $f['id_area']; ?>" data-id_clase="<?php echo $f['id_clase']; ?>" data-observaciones="<?php echo $f['observaciones']; ?>" data-id_seccion="<?php echo $f['id_seccion']; ?>" data-temas="<?php echo $f['temas']; ?>" data-id_ciudad="<?php echo $f['id_ciudad']; ?>" data-codinv="<?php echo $f['codinv']; ?>" data-npag="<?php echo $f['npag']; ?>" data-fimpresion="<?php echo $f['fimpresion']; ?>" data-temas2="<?php echo $f['temas2']; ?>" data-entrainv="<?php echo $f['entrainv']; ?>" data-toggle="modal" data-target="#modalEditar">
+                                <button class="btn btn-info btn-small btnEditar" title="Editar libro" data-id_libro="<?php echo $f['id_libro']; ?>" data-coddew="<?php echo $f['coddew']; ?>" data-titulo="<?php echo $f['titulo']; ?>" data-id_autor="<?php echo $f['id_autor']; ?>" data-edicion="<?php echo $f['edicion']; ?>" data-costo="<?php echo $f['costo']; ?>" data-fecha="<?php echo $f['fecha']; ?>" data-id_estado="<?php echo $f['id_estado']; ?>" data-id_origen="<?php echo $f['id_origen']; ?>" data-id_editorial="<?php echo $f['id_editorial']; ?>" data-id_area="<?php echo $f['id_area']; ?>" data-id_clase="<?php echo $f['id_clase']; ?>" data-observaciones="<?php echo $f['observaciones']; ?>" data-id_seccion="<?php echo $f['id_seccion']; ?>" data-temas="<?php echo $f['temas']; ?>" data-id_ciudad="<?php echo $f['id_ciudad']; ?>" data-codinv="<?php echo $f['codinv']; ?>" data-npag="<?php echo $f['npag']; ?>" data-fimpresion="<?php echo $f['fimpresion']; ?>" data-temas2="<?php echo $f['temas2']; ?>" data-toggle="modal" data-target="#modalEditar">
                                   <i class="fa fa-edit"></i>
                                 </button>
                                 <button class="btn btn-danger btn-small btnEliminar" title="Eliminar Libro" data-id_libro="<?php echo $f['id_libro']; ?>" data-toggle="modal" data-target="#modalEliminar">
@@ -388,7 +388,8 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
               </div>
               <div class="form-group">
                 <label for="id_autor">Autor</label>
-                <select name="id_autor" id="id_autor" class="form-control" required>
+                <select name="id_autor" id="id_autor" class="form-control" >
+                <option value="">Sin autor</option>
                   <?php
                   $res = $conexion->query("select * from autor");
                   while ($f = mysqli_fetch_array($res)) {
@@ -502,16 +503,19 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
               </div>
               <div class="form-group">
                 <label for="fimpresion">Fecha de impresion</label>
-                <input type="date" name="fimpresion" placeholder="Fecha de impresion" id="fimpresion" class="form-control" required>
+                <input type="number" name="fimpresion" placeholder="Fecha de impresion" id="fimpresion" class="form-control" required>
               </div>
               <div class="form-group">
                 <label for="temas2">Temas 2</label>
                 <input type="text" name="temas2" placeholder="Temas 2" id="temas2" class="form-control" required>
               </div>
               <div class="form-group">
-                <label for="entrainv">entrainv</label>
-                <input type="text" name="entrainv" placeholder="entrainv" id="entrainv" class="form-control" required>
-              </div>
+                  <label for="entrainvEdit">Existencia </label>
+                  <select name="entrainv" id="entrainvEdit" class="form-control" required>
+                    <option value="1">si</option>
+                    <option value="2">no</option>
+                  </select>
+                </div>
               <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
                 <button type="submit" class="btn btn-primary editar">Guardar</button>
@@ -547,7 +551,8 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
                 </div>
                 <div class="form-group">
                   <label for="id_autorEdit">Autor</label>
-                  <select name="id_autor" id="id_autorEdit" class="form-control" required>
+                  <select name="id_autor" id="id_autorEdit" class="form-control">
+                  <option value="">Sin autor</option>
                     <?php
                     $res = $conexion->query("select * from autor");
                     while ($f = mysqli_fetch_array($res)) {
@@ -661,17 +666,19 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
                 </div>
                 <div class="form-group">
                   <label for="fimpresionEdit">Fecha de impresion</label>
-                  <input type="date" name="fimpresion" placeholder="Fecha de impresion" id="fimpresionEdit" class="form-control" required>
+                  <input type="number" name="fimpresion" placeholder="Fecha de impresion" id="fimpresionEdit" class="form-control" required>
                 </div>
                 <div class="form-group">
                   <label for="temas2Edit">Temas 2</label>
                   <input type="text" name="temas2" placeholder="Temas 2" id="temas2Edit" class="form-control" required>
                 </div>
                 <div class="form-group">
-                  <label for="entrainvEdit">entrainv</label>
-                  <input type="text" name="entrainv" placeholder="entrainv" id="entrainvEdit" class="form-control" required>
+                  <label for="entrainvEdit">Existencia </label>
+                  <select name="entrainv" id="entrainvEdit" class="form-control" required>
+                    <option value="1">si</option>
+                    <option value="2">no</option>
+                  </select>
                 </div>
-
                 <div class="modal-footer">
                   <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
                   <button type="submit" class="btn btn-primary editar">Guardar</button>
@@ -880,15 +887,11 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
                 </div>
                 <div class="form-group">
                   <label for="fimpresionEdit2">Fecha de impresion</label>
-                  <input type="date" name="fimpresion" placeholder="Fecha de impresion" id="fimpresionEdit2" class="form-control" required readonly>
+                  <input type="text" name="fimpresion" placeholder="Fecha de impresion" id="fimpresionEdit2" class="form-control" required readonly>
                 </div>
                 <div class="form-group">
                   <label for="temas2Edit2">Temas 2</label>
                   <input type="text" name="temas2" placeholder="Temas 2" id="temas2Edit2" class="form-control" required readonly>
-                </div>
-                <div class="form-group">
-                  <label for="entrainvEdit2">entrainv</label>
-                  <input type="text" name="entrainv" placeholder="entrainv" id="entrainvEdit2" class="form-control" required readonly>
                 </div>
                 <div class="modal-footer">
                   <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
@@ -1006,7 +1009,6 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
         var npag = $(this).data('npag');
         var fimpresion = $(this).data('fimpresion');
         var temas2 = $(this).data('temas2');
-        var entrainv = $(this).data('entrainv');
 
         // Asignar valores a los elementos
         $("#id_libroEdit").val(id_libro);
@@ -1030,7 +1032,6 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
         $("#npagEdit").val(npag);
         $("#fimpresionEdit").val(fimpresion);
         $("#temas2Edit").val(temas2);
-        $("#entrainvEdit").val(entrainv);
       });
 
       $(".btndetalles").click(function() {
@@ -1055,7 +1056,6 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
         var npag = $(this).data('npag');
         var fimpresion = $(this).data('fimpresion');
         var temas2 = $(this).data('temas2');
-        var entrainv = $(this).data('entrainv');
 
         // Asignar valores a los elementos
         $("#id_libroEdit2").val(id_libro);
@@ -1079,7 +1079,6 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
         $("#npagEdit2").val(npag);
         $("#fimpresionEdit2").val(fimpresion);
         $("#temas2Edit2").val(temas2);
-        $("#entrainvEdit2").val(entrainv);
       });
 
       $(".btnReservar").click(function() {

@@ -44,6 +44,7 @@ if (isset($email_usuario) && filter_var($email_usuario, FILTER_VALIDATE_EMAIL)) 
     </head>
     <body>
     <div class="container">
+    <img src="https://gimnasiolosalmendros.edu.co/wp-content/uploads/2023/06/escudo.png" width="100" height="80" alt="Gimnasio Los Almendros" id="logo" data-height-percentage="100">
         <h1>Gimnasio Los Almendros</h1>
         <p>Ticket ' . $nombre_estado . '</p>
         <p>Su ticket ha sido ' . $nombre_estado . ' para más detalles. Por favor, ingrese al siguiente link para indicar sus opiniones:</p>

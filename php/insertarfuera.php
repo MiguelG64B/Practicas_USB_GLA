@@ -17,8 +17,9 @@
             $pass=$_POST['pass'];
             $telefono=$_POST['telefono'];
             $tipo=$_POST['tipo'];
+            $p1=sha1($pass);
                 $conexion->query("insert into usuarios  (usuario,nom_persona,id_estado,email,password,tipo_usuario,telefono,id_seccion,id_superior,per_tickets,per_categoria,per_niveles,per_seccion,per_con,per_mistickets,per_reserva) 
-                    values('$documento','$name','5','$email','$pass','$tipo','$telefono','0','0','0','0','0','0','0','1','0')  ")or die($conexion->error);
+                    values('$documento','$name','5','$email','$p1','$tipo','$telefono','0','0','0','0','0','0','0','1','0')  ")or die($conexion->error);
                     header("Location: ../egresadosfamilia.php");
         }else{
            

@@ -8,7 +8,7 @@ if(isset($_POST['coddew']) && isset($_POST['titulo'])&& isset($_POST['id_autor']
 && isset($_POST['temas'])&& isset($_POST['id_ciudad'])&& isset($_POST['codinv'])
 && isset($_POST['npag'])&& isset($_POST['fimpresion'])&& isset($_POST['temas2'])&& isset($_POST['entrainv'])&& isset($_POST['id_libro'])) {
     $id_libro = $_POST['id_libro'];
-    $existe = 'si';
+    $existe = ($_POST['entrainv'] == 1) ? 'si' : 'no';
     $conexion->query("UPDATE libros SET
         coddew = '" .$_POST['coddew']. "',
         titulo = '" . $_POST['titulo'] . "',
@@ -29,8 +29,7 @@ if(isset($_POST['coddew']) && isset($_POST['titulo'])&& isset($_POST['id_autor']
         codinv = '" . $_POST['codinv'] . "',
         npag = '" . $_POST['npag'] . "',
         fimpresion = '" . $_POST['fimpresion'] . "',
-        temas2 = '" . $_POST['temas2'] . "',
-        entrainv = '" . $_POST['entrainv'] . "'
+        temas2 = '" . $_POST['temas2'] . "'
         WHERE id_libro='$id_libro'"
     ) or die($conexion->error);
 

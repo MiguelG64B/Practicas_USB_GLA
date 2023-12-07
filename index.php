@@ -365,7 +365,7 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
                               }
                               echo $botonDetalles;
 
-                              if ($f['id_usuario'] == $idUsuario && ($f['id_estado'] != '3' && $f['id_estado'] != '4')) {
+                              if ($f['id_usuario'] == $idUsuario && ($f['id_estado'] != '3' && $f['id_estado'] != '4'&& $f['id_estado'] == '1')) {
                               ?>
                                 <button class="btn btn-info btn-small btnEditar" title="Editar ticket" data-id="<?php echo $f['id_ticket']; ?>" data-fecha="<?php echo $f['fecha']; ?>" data-categoria="<?php echo $f['id_categoria']; ?>" data-prioridad="<?php echo $f['id_prioridad']; ?>" data-titulo="<?php echo $f['titulo']; ?>" data-editor="<?php echo htmlspecialchars($f['resumen']); ?>" data-encargado="<?php echo $f['id_encargado']; ?>" data-toggle="modal" data-target="#modalEditar">
                                   <i class="fa fa-edit"></i>
@@ -595,28 +595,28 @@ $totalPaginas = ceil($totalRegistros / $registrosPorPagina);
                 </select>
               </div>
               <div class="form-group">
-    <label for="encargadoDetalles">Encargado</label>
-    <select name="encargado" id="encargadoDetalles" class="form-control" required>
-        <?php
-        if ($nivel == 1) {
-            $res = $conexion->query("SELECT u.id, u.nom_persona, t.descrip 
+                <label for="encargadoDetalles">Encargado</label>
+                <select name="encargado" id="encargadoDetalles" class="form-control" required>
+                  <?php
+                  if ($nivel == 1) {
+                    $res = $conexion->query("SELECT u.id, u.nom_persona, t.descrip 
                 FROM usuarios u
                 LEFT JOIN seccion t ON u.id_seccion = t.id
                 WHERE u.id_seccion != 0 OR u.id = $idUsuario");
-        } else {
-            $res = $conexion->query("SELECT u.id, u.nom_persona, t.descrip 
+                  } else {
+                    $res = $conexion->query("SELECT u.id, u.nom_persona, t.descrip 
                 FROM usuarios u
                 LEFT JOIN seccion t ON u.id_seccion = t.id
                 WHERE u.id_seccion != 0
                 AND u.id_superior = $idUsuario OR u.id = $idUsuario");
-        }
+                  }
 
-        while ($f = mysqli_fetch_array($res)) {
-            echo '<option value="' . $f['id'] . '">' . $f['nom_persona'] . ' - ' . $f['descrip'] . '</option>';
-        }
-        ?>
-    </select>
-</div>
+                  while ($f = mysqli_fetch_array($res)) {
+                    echo '<option value="' . $f['id'] . '">' . $f['nom_persona'] . ' - ' . $f['descrip'] . '</option>';
+                  }
+                  ?>
+                </select>
+              </div>
 
 
 
